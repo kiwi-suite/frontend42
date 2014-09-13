@@ -1,0 +1,12 @@
+{
+    "name": "fruit42/frontend42",
+    "type": "zend-module",
+    "require": {
+        "php": ">=5.3.23"
+    },
+    "autoload": {
+        "psr-0": {
+            "Frontend42": "src/"
+        }
+    }
+}
