@@ -55,7 +55,7 @@ class Tree
         foreach ($flatTree as &$treeEntry) {
             if ($treeEntry['model']->getParentId() > 0) {
                 $parent =& $flatTree[$treeEntry['model']->getParentId()];
-                $parent['children'][] = $treeEntry;
+                $parent['children'][] =& $treeEntry;
 
                 continue;
             }
