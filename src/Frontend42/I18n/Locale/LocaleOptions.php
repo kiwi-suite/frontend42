@@ -9,8 +9,6 @@ class LocaleOptions extends AbstractOptions
 
     protected $list = array();
 
-    protected $languageSelection = false;
-
     /**
      * @return mixed
      */
@@ -25,22 +23,6 @@ class LocaleOptions extends AbstractOptions
     public function setDefault($default)
     {
         $this->default = $default;
-    }
-
-    /**
-     * @return boolean|array
-     */
-    public function getLanguageSelection()
-    {
-        return $this->languageSelection;
-    }
-
-    /**
-     * @param boolean|array $languageSelection
-     */
-    public function setLanguageSelection($languageSelection)
-    {
-        $this->languageSelection = $languageSelection;
     }
 
     /**
