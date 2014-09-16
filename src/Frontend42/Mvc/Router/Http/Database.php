@@ -20,7 +20,6 @@ class Database extends TranslatorAwareTreeRouteStack
         $routes = self::parseTree($tree, $localeOptions);
 
         $options['routes'] = array_merge($options['routes'], $routes);
-        var_dump($options['routes']);
         $router = parent::factory($options);
 
         if ($router instanceof TranslatorAwareInterface) {

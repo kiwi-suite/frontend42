@@ -20,6 +20,7 @@ class Module implements
         return array_merge(
             include __DIR__ . '/../../config/module.config.php',
             include __DIR__ . '/../../config/locale.config.php',
+            include __DIR__ . '/../../config/navigation.config.php',
             include __DIR__ . '/../../config/translation.config.php'
         );
     }
