@@ -20,7 +20,7 @@ class Database extends TranslatorAwareTreeRouteStack
         $routes = self::parseTree($tree, $localeOptions);
 
         $options['routes'] = array_merge($options['routes'], $routes);
-
+        var_dump($options['routes']);
         $router = parent::factory($options);
 
         if ($router instanceof TranslatorAwareInterface) {
@@ -39,7 +39,9 @@ class Database extends TranslatorAwareTreeRouteStack
             /** @var \Frontend42\Model\Tree $treeModel */
             $treeModel = $_tree['model'];
 
-            $routes[$treeModel->getId()] = array(
+            $key = 'page_' . $treeModel->getId();
+
+            $routes[$key] = array(
                 'type' => 'segment',
                 'options' => array(
                     'route' => '{slug_'.$treeModel->getId().'}/',
@@ -52,19 +54,19 @@ class Database extends TranslatorAwareTreeRouteStack
 
             if ($treeModel->getRoot() === true) {
                 $rootRoute = (count($localeOptions->getList()) > 0) ? '/:lang/' : '/';
-                $routes[$treeModel->getId()]['options']['route'] = $rootRoute;
+                $routes[$key]['options']['route'] = $rootRoute;
 
                 if ((count($localeOptions->getList()) > 0)) {
                     $languages = $localeOptions->getList();
                     $languages = array_keys($languages);
 
-                    $routes[$treeModel->getId()]['options']['constraints']['lang'] = '('.implode('|',$languages).')?';
+                    $routes[$key]['options']['constraints']['lang'] = '('.implode('|',$languages).')?';
                 }
             }
 
             if (!empty($_tree['children'])) {
-                $routes[$treeModel->getId()]['may_terminate'] = true;
-                $routes[$treeModel->getId()]['child_routes'] = self::parseTree($_tree['children'], $localeOptions);
+                $routes[$key]['may_terminate'] = true;
+                $routes[$key]['child_routes'] = self::parseTree($_tree['children'], $localeOptions);
             }
         }
 
