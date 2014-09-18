@@ -19,4 +19,10 @@ return array(
             'page'    => 'Frontend42\View\Helper\Service\PageFactory',
         ),
     ),
+
+    'controller_plugins' => array(
+        'factories' => array(
+            'page'  => 'Frontend42\Mvc\Controller\Plugin\Service\PageFactory',
+        ),
+    ),
 );
