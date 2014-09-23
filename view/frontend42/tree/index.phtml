@@ -1,0 +1,66 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="fa fa-sitemap"></span>
+        <?= $this->translate('title.sitemap', 'admin') ?>
+        <div class="pull-right">
+            <?php
+            $localeList = $this->locale()->getLocaleArray();
+            ?>
+            <?php if (count($localeList) == 1): ?>
+                <input id="languageSelection" type="hidden" value="<?= current(array_keys($localeList)) ?>">
+            <?php else: ?>
+            <select id="languageSelection" class="form-control input-sm">
+                <?php foreach($localeList as $locale => $display): ?>
+                <option value="<?= $locale ?>"><?= $display ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php endif; ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div id="jstree"></div>
+        <script type="application/javascript">
+            var jsTree = null;
+
+            <?php
+            $urls = array();
+            foreach (array_keys($localeList) as $locale) {
+                $urls[$locale] = $this->url('admin/tree/json', array('locale' => $locale));
+            }
+            ?>
+            var urls = <?= json_encode($urls) ?>;
+            var url = urls[$('#languageSelection').val()];
+
+            var createTree = function() {
+                jsTree = $('#jstree').jstree({
+                    "core": {
+                        "check_callback" : true,
+                        "data": {
+                            "url": url
+                        }
+                    },
+                    "plugins" : ["dnd", "types"]
+                }).bind("select_node.jstree", function (e, data) {
+                    document.location.href = data.node.a_attr.href
+                });
+            };
+
+            $(document).ready(function(){
+                $('#languageSelection').change(function(){
+                    url = urls[$(this).val()];
+                    jsTree.jstree("destroy");
+                    createTree();
+                });
+
+                createTree();
+            });
+        </script>
+    </div>
+    <div class="panel-footer">
+        <a class="btn btn-default" href="<?= $this->url('admin/tree/add', array('locale' => 'de-AT')) ?>">
+            <span class="fa fa-plus-circle"></span>
+            <?= $this->translate('button.page-add', 'admin') ?>
+        </a>
+    </div>
+</div>

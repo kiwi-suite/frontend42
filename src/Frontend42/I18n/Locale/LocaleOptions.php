@@ -5,8 +5,22 @@ use Zend\Stdlib\AbstractOptions;
 
 class LocaleOptions extends AbstractOptions
 {
+    const SELECTION_LANGUAGE = 'language';
+    const SELECTION_LOCALE = 'locale';
+
+    /**
+     * @var string
+     */
     protected $default;
 
+    /**
+     * @var string
+     */
+    protected $selection;
+
+    /**
+     * @var array
+     */
     protected $list = array();
 
     /**
@@ -23,6 +37,26 @@ class LocaleOptions extends AbstractOptions
     public function setDefault($default)
     {
         $this->default = $default;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelection()
+    {
+        return $this->selection;
+    }
+
+    /**
+     * @param $selection
+     * @throws \Exception
+     */
+    public function setSelection($selection)
+    {
+        if (!in_array($selection, array(self::SELECTION_LANGUAGE, self::SELECTION_LOCALE))) {
+            throw new \Exception("invalid locale selection");
+        }
+        $this->selection = $selection;
     }
 
     /**

@@ -17,6 +17,7 @@ class TreeFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $treeTableGateway = $serviceLocator->get('TableGateway')->get('Frontend42\Tree');
-        return new Tree($treeTableGateway);
+        $treeLanguageTableGateway = $serviceLocator->get('TableGateway')->get('Frontend42\TreeLanguage');
+        return new Tree($treeTableGateway, $treeLanguageTableGateway);
     }
 }

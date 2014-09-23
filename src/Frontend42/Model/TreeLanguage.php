@@ -5,6 +5,8 @@ use Core42\Model\AbstractModel;
 
 class TreeLanguage extends AbstractModel
 {
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
 
     /**
      * @param int $id

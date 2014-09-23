@@ -44,6 +44,13 @@ class Page extends AbstractHelper
         $this->container = $container;
     }
 
+    public function getCurrentPage()
+    {
+        $params = $this->getView()->plugin('params');
+
+        return $this->getPage($params->fromRoute('pageId'));
+    }
+
     protected function getPage($pageId)
     {
         if (array_key_exists($pageId, $this->cache)) {
@@ -56,13 +63,24 @@ class Page extends AbstractHelper
         return $page;
     }
 
-    public function __invoke($pageId, array $params = array())
+    public function __invoke($pageId = null, array $params = array())
     {
         $this->pageId = $pageId;
 
         $this->params = $params;
 
         return $this;
+    }
+
+    public function getRoute()
+    {
+        $page = $this->getPage($this->pageId);
+
+        if ($page === null) {
+            return "";
+        }
+
+        return $page->getOption("route");
     }
 
     public function getHref()

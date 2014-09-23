@@ -1,11 +1,10 @@
 <?php
+namespace Frontend42;
 
 return array(
     'locale' => array(
-        'default' => 'de-AT',
-        'list' => array(
-            'de' => 'de-AT',
-            'en' => 'en-US',
-        ),
+        'default' => '',
+        'selection' => 'language', //language or locale
+        'list' => array(),
     ),
 );

@@ -1,7 +1,6 @@
 <?php
 namespace Frontend42\Mvc\Router\Http;
 
-use Frontend42\I18n\Locale\LocaleOptions;
 use Frontend42\Tree\Tree;
 use Zend\I18n\Translator\TranslatorAwareInterface;
 use Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack;
@@ -16,8 +15,7 @@ class Database extends TranslatorAwareTreeRouteStack
         $treeReceiver = $serviceManager->get('Frontend42\Tree');
         $tree = $treeReceiver->getTree();
 
-        $localeOptions = $serviceManager->get('Frontend42\LocaleOptions');
-        $routes = self::parseTree($tree, $localeOptions);
+        $routes = self::parseTree($tree);
 
         $options['routes'] = array_merge($options['routes'], $routes);
         $router = parent::factory($options);
@@ -30,7 +28,7 @@ class Database extends TranslatorAwareTreeRouteStack
         return $router;
     }
 
-    protected static function parseTree($tree, LocaleOptions $localeOptions)
+    protected static function parseTree($tree)
     {
         $routes = array();
 
@@ -40,32 +38,20 @@ class Database extends TranslatorAwareTreeRouteStack
 
             $key = 'page_' . $treeModel->getId();
 
+            $defaults = json_decode($treeModel->getDefaultParams(), true);
+            $defaults['pageId'] =  $treeModel->getId();
+
             $routes[$key] = array(
-                'type' => 'segment',
+                'type' => $treeModel->getRouteClass(),
                 'options' => array(
-                    'route' => '{slug_'.$treeModel->getId().'}/',
-                    'defaults' => array(
-                        'controller' => $treeModel->getController(),
-                        'action' => $treeModel->getAction()
-                    ),
+                    'route' => $treeModel->getRoute(),
+                    'defaults' => $defaults,
                 ),
             );
 
-            if ($treeModel->getRoot() === true) {
-                $rootRoute = (count($localeOptions->getList()) > 0) ? '/:lang/' : '/';
-                $routes[$key]['options']['route'] = $rootRoute;
-
-                if ((count($localeOptions->getList()) > 0)) {
-                    $languages = $localeOptions->getList();
-                    $languages = array_keys($languages);
-
-                    $routes[$key]['options']['constraints']['lang'] = '('.implode('|',$languages).')?';
-                }
-            }
-
             if (!empty($_tree['children'])) {
                 $routes[$key]['may_terminate'] = true;
-                $routes[$key]['child_routes'] = self::parseTree($_tree['children'], $localeOptions);
+                $routes[$key]['child_routes'] = self::parseTree($_tree['children']);
             }
         }
 

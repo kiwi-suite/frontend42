@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42;
 
+use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\Console\Console;
 use Frontend42\I18n\Locale\LocaleOptions;
 use Zend\EventManager\EventInterface;
@@ -21,6 +22,8 @@ class Module implements
             include __DIR__ . '/../../config/module.config.php',
             include __DIR__ . '/../../config/locale.config.php',
             include __DIR__ . '/../../config/navigation.config.php',
+            include __DIR__ . '/../../config/routing.config.php',
+            include __DIR__ . '/../../config/assets.config.php',
             include __DIR__ . '/../../config/translation.config.php'
         );
     }
@@ -33,52 +36,98 @@ class Module implements
      */
     public function onBootstrap(EventInterface $e)
     {
-        $e->getApplication()->getEventManager()->attach(
-            MvcEvent::EVENT_ROUTE,
-            function(MvcEvent $e) {
-                $serviceManager = $e->getApplication()->getServiceManager();
+        $e->getApplication()->getEventManager()->getSharedManager()->attach(
+            'Zend\Mvc\Controller\AbstractController',
+            MvcEvent::EVENT_DISPATCH,
+            function ($e) {
+                $controller      = $e->getTarget();
 
-                /** @var LocaleOptions $localeOptions */
-                $localeOptions = $serviceManager->get('Frontend42\LocaleOptions');
-
-                \Locale::setDefault($localeOptions->getDefault());
-
-                if (count($localeOptions->getList()) <= 1) {
+                if (!($controller instanceof AbstractAdminController)) {
                     return;
                 }
 
-                if (Console::isConsole()) {
-                    return;
-                }
+                $sm = $e->getApplication()->getServiceManager();
+                $viewHelperManager = $sm->get('viewHelperManager');
 
-                $routeMatch = $e->getRouteMatch();
+                $headScript = $viewHelperManager->get('headScript');
+                $headLink = $viewHelperManager->get('headLink');
+                $basePath = $viewHelperManager->get('basePath');
 
-                $lang = $routeMatch->getParam("lang", null);
+                $headScript->appendFile($basePath('/assets/admin/frontend/js/raum42-frontend.min.js'));
+                $headLink->appendStylesheet($basePath('/assets/admin/frontend/css/raum42-frontend.min.css'));
+            }
+        );
 
-                if ($lang === null) {
-                    $httpAcceptLanguage = $serviceManager->get('request')->getServer('HTTP_ACCEPT_LANGUAGE');
+        $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($this, 'localeSelection'));
+    }
 
-                    if (!empty($httpAcceptLanguage)) {
-                        $requestLocale = \Locale::acceptFromHttp($httpAcceptLanguage);
+    public function localeSelection(MvcEvent $e)
+    {
+        $serviceManager = $e->getApplication()->getServiceManager();
 
-                        if (in_array($requestLocale, $localeOptions->getList())) {
-                            \Locale::setDefault($requestLocale);
-                        } elseif (array_key_exists(\Locale::getPrimaryLanguage($requestLocale), $localeOptions->getList())) {
-                            $localeList = $localeOptions->getList();
-                            $requestLocale = $localeList[\Locale::getPrimaryLanguage($requestLocale)];
-                            \Locale::setDefault($requestLocale);
-                        }
-                    }
-                } else {
-                    if (array_key_exists($lang, $localeOptions->getList())) {
-                        $localeList = $localeOptions->getList();
-                        $requestLocale = $localeList[\Locale::getPrimaryLanguage($lang)];
+        /** @var LocaleOptions $localeOptions */
+        $localeOptions = $serviceManager->get('Frontend42\LocaleOptions');
+
+        \Locale::setDefault($localeOptions->getDefault());
+
+        if (Console::isConsole()) {
+            return;
+        }
+
+        $serviceManager->get('MvcTranslator')->setLocale(\Locale::getDefault());
+
+        if (count($localeOptions->getList()) <= 1) {
+            return;
+        }
+
+        $routeMatch = $e->getRouteMatch();
+
+        if ($localeOptions->getSelection() == LocaleOptions::SELECTION_LANGUAGE) {
+            $langList = array();
+            foreach ($localeOptions->getList() as $_locale) {
+                $langList[$_locale] = \Locale::getPrimaryLanguage($_locale);
+            }
+            $lang = $routeMatch->getParam("lang", null);
+
+            if ($lang === null) {
+                $httpAcceptLanguage = $serviceManager->get('request')->getServer('HTTP_ACCEPT_LANGUAGE');
+
+                if (!empty($httpAcceptLanguage)) {
+                    $requestLocale = \Locale::acceptFromHttp($httpAcceptLanguage);
+
+                    if (in_array($requestLocale, $localeOptions->getList())) {
+                        \Locale::setDefault($requestLocale);
+                    } elseif (in_array(\Locale::getPrimaryLanguage($requestLocale), $langList)) {
+                        $requestLocale = array_search(\Locale::getPrimaryLanguage($requestLocale), $langList);
                         \Locale::setDefault($requestLocale);
                     }
                 }
-
-                $serviceManager->get('MvcTranslator')->setLocale(\Locale::getDefault());
+            } else {
+                if (in_array($lang, $langList)) {
+                    $requestLocale = array_search($lang, $langList);
+                    \Locale::setDefault($requestLocale);
+                }
             }
-        );
+        } elseif ($localeOptions->getSelection() == LocaleOptions::SELECTION_LOCALE) {
+            $locale = $routeMatch->getParam("locale", null);
+
+            if ($locale === null) {
+                $httpAcceptLanguage = $serviceManager->get('request')->getServer('HTTP_ACCEPT_LANGUAGE');
+
+                if (!empty($httpAcceptLanguage)) {
+                    $requestLocale = \Locale::acceptFromHttp($httpAcceptLanguage);
+
+                    if (in_array($requestLocale, $localeOptions->getList())) {
+                        \Locale::setDefault($requestLocale);
+                    }
+                }
+            } else {
+                if (in_array($locale, $localeOptions->getList())) {
+                    \Locale::setDefault($locale);
+                }
+            }
+        }
+
+        $serviceManager->get('MvcTranslator')->setLocale(\Locale::getDefault());
     }
 }

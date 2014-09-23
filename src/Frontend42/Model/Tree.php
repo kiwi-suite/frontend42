@@ -6,7 +6,6 @@ use Core42\Model\AbstractModel;
 
 class Tree extends AbstractModel
 {
-
     /**
      * @param int $id
      * @return \Frontend42\Model\Tree
@@ -38,36 +37,54 @@ class Tree extends AbstractModel
     /**
      * @return string
      */
-    public function getController()
+    public function getRoute()
     {
-        return $this->get('controller');
+        return $this->get('route');
     }
 
     /**
-     * @param string $controller
+     * @param string $route
      * @return \Frontend42\Model\Tree
      */
-    public function setController($controller)
+    public function setRoute($route)
     {
-        $this->set('controller', $controller);
+        $this->set('route', $route);
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getAction()
+    public function getRouteClass()
     {
-        return $this->get('action');
+        return $this->get('routeClass');
     }
 
     /**
-     * @param string $action
+     * @param string $routeClass
      * @return \Frontend42\Model\Tree
      */
-    public function setAction($action)
+    public function setRouteClass($routeClass)
     {
-        $this->set('action', $action);
+        $this->set('routeClass', $routeClass);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultParams()
+    {
+        return $this->get('defaultParams');
+    }
+
+    /**
+     * @param string $defaultParams
+     * @return \Frontend42\Model\Tree
+     */
+    public function setDefaultParams($defaultParams)
+    {
+        $this->set('defaultParams', $defaultParams);
         return $this;
     }
 
@@ -130,6 +147,23 @@ class Tree extends AbstractModel
     public function getRoot()
     {
         return $this->get('root');
+    }
+
+    /**
+     * @param string $pageType
+     * @return \Frontend42\Model\Tree
+     */
+    public function setPageType($pageType)
+    {
+        return $this->set('pageType', $pageType);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPageType()
+    {
+        return $this->get('pageType');
     }
 }
 

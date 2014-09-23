@@ -1,0 +1,18 @@
+{
+  "name": "frontend42",
+  "version": "1.0.0",
+  "authors": [
+    "Thomas Payer <payer@raum42.at>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jstree": "~3.0.4"
+  }
+}

@@ -1,0 +1,38 @@
+<?php
+$form->prepare();
+
+?>
+<?php foreach ($form as $_form): ?>
+    <?php
+    $id = $_form->getName();
+    $webSaveId = str_replace("]", "", str_replace("[", "", $id));
+    ?>
+<div id="panel_<?= $webSaveId ?>" class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title pull-left">
+            <a data-toggle="collapse" href="#content_<?= $webSaveId ?>">
+                <span class="fa fa-chevron-down fa-fw"></span>
+                Content
+            </a>
+        </h4>
+        <div class="pull-right">
+            <?php if (false): ?>
+            <a href="#panel_<?= $webSaveId ?>" class="btn btn-danger btn-xs delete-handle">
+                <span class="fa fa-trash-o fa-fw"></span>
+            </a>
+            <a class="btn btn-info btn-xs sortable-handle">
+                <span class="fa fa-sort fa-fw"></span>
+            </a>
+            <?php endif; ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="content_<?= $webSaveId ?>" class="panel-collapse collapse">
+        <div class="panel-body">
+            <input type="hidden" name="<?= $id ?>[order]" value="">
+            <input type="hidden" name="<?= $id ?>[delete]" value="0">
+            <?= $this->formRender($_form) ?>
+        </div>
+    </div>
+</div>
+<?php endforeach ?>
