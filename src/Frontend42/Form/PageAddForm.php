@@ -81,7 +81,7 @@ class PageAddForm extends Form
                 if (isset($_tree['language'])) {
                     $title = $_tree['language']->getTitle();
                 }
-                $values[$_tree['model']->getId()] = str_repeat(" ", $level * 4) . $title;
+                $values[$_tree['model']->getId()] = str_repeat("&nbsp;", $level * 4) . $title;
 
                 if (!empty($_tree['children'])) {
                     $tmp['children'] = $recursiveFunction($_tree['children'], $level + 1);
