@@ -17,8 +17,8 @@ class DatabaseProviderFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new DatabaseProvider(
-            $serviceLocator->get('Frontend42\Tree'),
-            $serviceLocator->get('TableGateway')->get('Frontend42\TreeLanguage')
+            $serviceLocator->get('Frontend42\SitemapProvider'),
+            $serviceLocator->get('TableGateway')->get('Frontend42\Page')
         );
     }
 }

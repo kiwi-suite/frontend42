@@ -26,21 +26,21 @@ class Content extends AbstractModel
     }
 
     /**
-     * @param int $treeLanguageId
+     * @param int $versionId
      * @return \Frontend42\Model\Content
      */
-    public function setTreeLanguageId($treeLanguageId)
+    public function setVersionId($versionId)
     {
-        $this->set('treeLanguageId', $treeLanguageId);
+        $this->set('versionId', $versionId);
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getTreeLanguageId()
+    public function getVersionId()
     {
-        return $this->get('treeLanguageId');
+        return $this->get('versionId');
     }
 
     /**
@@ -62,6 +62,24 @@ class Content extends AbstractModel
     }
 
     /**
+     * @param string $formType
+     * @return \Frontend42\Model\Content
+     */
+    public function setFormType($formType)
+    {
+        $this->set('formType', $formType);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType()
+    {
+        return $this->get('formType');
+    }
+
+    /**
      * @param string $content
      * @return \Frontend42\Model\Content
      */
@@ -77,6 +95,24 @@ class Content extends AbstractModel
     public function getContent()
     {
         return $this->get('content');
+    }
+
+    /**
+     * @param \DateTime $created
+     * @return \Frontend42\Model\Content
+     */
+    public function setCreated($created)
+    {
+        $this->set('created', $created);
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->get('created');
     }
 
 

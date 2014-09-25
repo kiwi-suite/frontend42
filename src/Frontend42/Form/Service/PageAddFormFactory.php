@@ -20,7 +20,7 @@ class PageAddFormFactory implements FactoryInterface
         $config = $config['page_types'];
 
         $form = new PageAddForm(
-            $serviceLocator->getServiceLocator()->get('Frontend42\Tree'),
+            $serviceLocator->getServiceLocator()->get('Frontend42\SitemapProvider'),
             $config
         );
         $form->init();

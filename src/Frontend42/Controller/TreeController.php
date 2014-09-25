@@ -3,9 +3,8 @@ namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\View\Model\JsonModel;
-use Frontend42\Model\TreeLanguage;
-use Frontend42\Page\PageInterface;
-use Zend\Form\Form;
+use Frontend42\Model\Page;
+use Frontend42\PageType\PageTypeInterface;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\ViewModel;
 
@@ -36,13 +35,13 @@ class TreeController extends AbstractAdminController
         $viewModel = new ViewModel();
         $viewModel->locale = $this->params()->fromRoute('locale');
 
-        $treeTableGateway = $this->getTableGateway('Frontend42\Tree');
-        $tree = $treeTableGateway->selectByPrimary((int) $this->params()->fromRoute('id'));
+        $sitemapTableGateway = $this->getTableGateway('Frontend42\Sitemap');
+        $sitemap = $sitemapTableGateway->selectByPrimary((int) $this->params()->fromRoute('id'));
 
-        /** @var PageInterface $pageType */
-        $pageType = $this->getServiceLocator()->get($tree->getPageType());
+        /** @var PageTypeInterface $pageType */
+        $pageType = $this->getServiceLocator()->get('PageType')->get($sitemap->getPageType());
 
-        $form = $pageType->getEditForm($tree->getId(), $this->params()->fromRoute('locale'));
+        $form = $pageType->getEditForm($sitemap->getId(), $this->params()->fromRoute('locale'));
         $viewModel->form = $form;
 
         $prg = $this->prg();
@@ -52,23 +51,23 @@ class TreeController extends AbstractAdminController
 
         if ($prg !== false) {
             $form->setData($prg);
-            $pageType->saveEditForm($prg, $tree->getId(), $this->params()->fromRoute('locale'));
+            $pageType->saveEditForm($prg, $sitemap->getId(), $this->params()->fromRoute('locale'));
             return $this->redirect()->toRoute('admin/tree/edit', array(), true);
         } else {
-            $treeLanguageTableGateway = $this->getTableGateway('Frontend42\TreeLanguage');
-            $result = $treeLanguageTableGateway->select(array(
-                'treeId' => $tree->getId(),
+            $pageTableGateway = $this->getTableGateway('Frontend42\Page');
+            $result = $pageTableGateway->select(array(
+                'sitemapId' => $sitemap->getId(),
                 'locale' => $this->params()->fromRoute('locale')
             ));
             if ($result->count() > 0) {
-                /** @var TreeLanguage $treeLanguage */
-                $treeLanguage = $result->current();
+                /** @var Page $page */
+                $page = $result->current();
                 $form->setData(array(
                     'page' => array(
-                        'title' => $treeLanguage->getTitle(),
-                        'status' => $treeLanguage->getStatus(),
-                        'metaDescription' => $treeLanguage->getMetaDescription(),
-                        'metaKeywords' => $treeLanguage->getMetaKeywords(),
+                        'title' => $page->getTitle(),
+                        'status' => $page->getStatus(),
+                        'metaDescription' => $page->getMetaDescription(),
+                        'metaKeywords' => $page->getMetaKeywords(),
                     ),
                 ));
             }
@@ -93,12 +92,12 @@ class TreeController extends AbstractAdminController
         }
 
         $form = $this->getForm('Frontend42\PageAdd');
-        $form->populateParentIdSelect($this->params()->fromRoute("locale"));
+        $form->populateLocale($this->params()->fromRoute("locale"));
 
         if ($prg !== false) {
             $form->setData($prg);
             if ($form->isValid()) {
-                $pageType = $this->getServiceLocator()->get($prg['pageType']);
+                $pageType = $this->getServiceLocator()->get('PageType')->get($prg['pageType']);
                 $pageType->saveInitForm($form, $this->params()->fromRoute("locale"));
 
                 return $this->redirect()->toRoute('admin/tree');
@@ -115,7 +114,7 @@ class TreeController extends AbstractAdminController
     {
         $locale = $this->params()->fromRoute('locale');
 
-        $tree = $this->getServiceLocator()->get('Frontend42\Tree')->getTreeWithLocale($locale);
+        $tree = $this->getServiceLocator()->get('Frontend42\SitemapProvider')->getTreeWithLocale($locale);
 
         $function = function(array $tree, $level = 0) use(&$function, $locale){
             $return = array();
@@ -130,15 +129,21 @@ class TreeController extends AbstractAdminController
                     )
                 );
 
+                $iconOffline = 'text-danger';
+
                 $title = "<code>#{$_tree['model']->getId()}</code> [missing title]";
                 if (isset($_tree['language'])) {
                     $title = "<code>#{$_tree['model']->getId()}</code> " .$_tree['language']->getTitle();
+
+                    if ($_tree['language']->getStatus() === Page::STATUS_ACTIVE) {
+                        $iconOffline = "text-success";
+                    }
                 }
 
                 $tmp = array(
                     'id' => $_tree['model']->getId(),
                     'text' => $title,
-                    'icon' => 'fa fa-fw fa-edit',
+                    'icon' => 'fa fa-fw fa-circle ' . $iconOffline,
                     'state' => array(
                         'opened' => ($level < 3),
                         'disabled' => false,

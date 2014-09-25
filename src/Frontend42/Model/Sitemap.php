@@ -4,11 +4,11 @@ namespace Frontend42\Model;
 
 use Core42\Model\AbstractModel;
 
-class Tree extends AbstractModel
+class Sitemap extends AbstractModel
 {
     /**
      * @param int $id
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setId($id)
     {
@@ -26,7 +26,7 @@ class Tree extends AbstractModel
 
     /**
      * @param int $parentId
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setParentId($parentId)
     {
@@ -44,7 +44,7 @@ class Tree extends AbstractModel
 
     /**
      * @param string $route
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setRoute($route)
     {
@@ -62,7 +62,7 @@ class Tree extends AbstractModel
 
     /**
      * @param string $routeClass
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setRouteClass($routeClass)
     {
@@ -80,7 +80,7 @@ class Tree extends AbstractModel
 
     /**
      * @param string $defaultParams
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setDefaultParams($defaultParams)
     {
@@ -98,7 +98,7 @@ class Tree extends AbstractModel
 
     /**
      * @param \DateTime $updated
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setUpdated($updated)
     {
@@ -116,7 +116,7 @@ class Tree extends AbstractModel
 
     /**
      * @param \DateTime $created
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setCreated($created)
     {
@@ -134,7 +134,7 @@ class Tree extends AbstractModel
 
     /**
      * @param boolean $root
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setRoot($root)
     {
@@ -151,7 +151,7 @@ class Tree extends AbstractModel
 
     /**
      * @param string $pageType
-     * @return \Frontend42\Model\Tree
+     * @return \Frontend42\Model\Sitemap
      */
     public function setPageType($pageType)
     {
@@ -164,6 +164,24 @@ class Tree extends AbstractModel
     public function getPageType()
     {
         return $this->get('pageType');
+    }
+
+    /**
+     * @param int $orderNr
+     * @return \Frontend42\Model\Sitemap
+     */
+    public function setOrderNr($orderNr)
+    {
+        $this->set('orderNr', $orderNr);
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderNr()
+    {
+        return $this->get('orderNr');
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 namespace Frontend42\Mvc\Router\Http;
 
-use Frontend42\Tree\Tree;
+use Frontend42\Sitemap\SitemapProvider;
 use Zend\I18n\Translator\TranslatorAwareInterface;
 use Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack;
 
@@ -11,9 +11,9 @@ class Database extends TranslatorAwareTreeRouteStack
     {
         $serviceManager = $options['route_plugins']->getServiceLocator();
 
-        /** @var Tree $treeReceiver */
-        $treeReceiver = $serviceManager->get('Frontend42\Tree');
-        $tree = $treeReceiver->getTree();
+        /** @var SitemapProvider $sitemapProvider */
+        $sitemapProvider = $serviceManager->get('Frontend42\SitemapProvider');
+        $tree = $sitemapProvider->getTree();
 
         $routes = self::parseTree($tree);
 
@@ -33,18 +33,18 @@ class Database extends TranslatorAwareTreeRouteStack
         $routes = array();
 
         foreach ($tree as $_tree) {
-            /** @var \Frontend42\Model\Tree $treeModel */
-            $treeModel = $_tree['model'];
+            /** @var \Frontend42\Model\Sitemap $sitemap */
+            $sitemap = $_tree['model'];
 
-            $key = 'page_' . $treeModel->getId();
+            $key = 'page_' . $sitemap->getId();
 
-            $defaults = json_decode($treeModel->getDefaultParams(), true);
-            $defaults['pageId'] =  $treeModel->getId();
+            $defaults = json_decode($sitemap->getDefaultParams(), true);
+            $defaults['sitemapId'] =  $sitemap->getId();
 
             $routes[$key] = array(
-                'type' => $treeModel->getRouteClass(),
+                'type' => $sitemap->getRouteClass(),
                 'options' => array(
-                    'route' => $treeModel->getRoute(),
+                    'route' => $sitemap->getRoute(),
                     'defaults' => $defaults,
                 ),
             );

@@ -1,7 +1,7 @@
 <?php
 namespace Frontend42\Form;
 
-use Frontend42\Tree\Tree;
+use Frontend42\Sitemap\SitemapProvider;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Select;
 use Zend\Form\Element\Text;
@@ -10,25 +10,31 @@ use Zend\Form\Form;
 class PageAddForm extends Form
 {
     /**
-     * @var Tree
+     * @var SitemapProvider
      */
-    private $treeReceiver;
+    private $sitemapProvider;
 
     /**
      * @var array
      */
     private $pageTypeConfig;
 
-
-    public function __construct(Tree $treeReceiver, $pageTypeConfig)
+    /**
+     * @param SitemapProvider $sitemapProvider
+     * @param array $pageTypeConfig
+     */
+    public function __construct(SitemapProvider $sitemapProvider, $pageTypeConfig)
     {
         parent::__construct();
 
-        $this->treeReceiver = $treeReceiver;
+        $this->sitemapProvider = $sitemapProvider;
 
         $this->pageTypeConfig = $pageTypeConfig;
     }
 
+    /**
+     *
+     */
     public function init()
     {
         $this->setName("tree");
@@ -58,9 +64,12 @@ class PageAddForm extends Form
         $this->add($title);
     }
 
-    public function populateParentIdSelect($locale)
+    /**
+     * @param $locale
+     */
+    public function populateLocale($locale)
     {
-        $tree = $this->treeReceiver->getTreeWithLocale($locale);
+        $tree = $this->sitemapProvider->getTreeWithLocale($locale);
 
         $values = array(
             0 => "---"

@@ -17,7 +17,7 @@ class RouteLoaderFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new Router(
-            $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\TreeLanguage')
+            $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Page')
         );
     }
 }

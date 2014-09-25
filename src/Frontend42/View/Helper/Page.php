@@ -48,7 +48,7 @@ class Page extends AbstractHelper
     {
         $params = $this->getView()->plugin('params');
 
-        return $this->getPage($params->fromRoute('pageId'));
+        return $this->getPage($params->fromRoute('sitemapId'));
     }
 
     protected function getPage($pageId)
@@ -56,8 +56,7 @@ class Page extends AbstractHelper
         if (array_key_exists($pageId, $this->cache)) {
             return $this->cache[$pageId];
         }
-
-        $page = $this->container->findOneByOption("pageId", $pageId);
+        $page = $this->container->findOneByOption("sitemapId", $pageId);
         $this->cache[$pageId] = $page;
 
         return $page;

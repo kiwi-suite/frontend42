@@ -4,15 +4,17 @@ namespace Frontend42;
 return array(
     'service_manager' => array(
         'factories' => array(
-            'Frontend42\Tree'           => 'Frontend42\Tree\Service\TreeFactory',
+            'Frontend42\PageTypePluginManager' => 'Frontend42\PageType\Service\PageTypePluginManagerFactory',
+
+            'Frontend42\SitemapProvider' => 'Frontend42\Sitemap\Service\SitemapProviderFactory',
 
             'Frontend42\LocaleOptions'  => 'Frontend42\I18n\Locale\Service\LocaleOptionsFactory',
 
             'Frontend42\Navigation\Provider' => 'Frontend42\Navigation\Provider\Service\DatabaseProviderFactory',
+        ),
 
-            'Frontend42\PageType\Content' => 'Frontend42\Page\Service\ContentPageFactory',
-            'Frontend42\PageType\Locked' => 'Frontend42\Page\Service\LockedPageFactory',
-            'Frontend42\PageType\Start' => 'Frontend42\Page\Service\StartPageFactory',
+        'aliases' => array(
+            'PageType' => 'Frontend42\PageTypePluginManager',
         ),
     ),
 
@@ -41,10 +43,16 @@ return array(
         ),
     ),
 
+    'page_type_manager' => array(
+        'factories' => array(
+            'Frontend42\Content' => 'Frontend42\PageType\Service\ContentPageFactory'
+        )
+    ),
+
     'page_types' => array(
         'content' => array(
             'name' => 'Content',
-            'class' => 'Frontend42\PageType\Content',
+            'class' => 'Frontend42\Content',
         ),
     ),
 );

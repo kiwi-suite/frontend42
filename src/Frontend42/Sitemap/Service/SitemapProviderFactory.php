@@ -1,11 +1,11 @@
 <?php
-namespace Frontend42\Page\Service;
+namespace Frontend42\Sitemap\Service;
 
-use Frontend42\Page\LockedPage;
+use Frontend42\Sitemap\SitemapProvider;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LockedPageFactory implements FactoryInterface
+class SitemapProviderFactory implements FactoryInterface
 {
 
     /**
@@ -16,9 +16,9 @@ class LockedPageFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new LockedPage(
-            $serviceLocator->get('TableGateway')->get('Frontend42\Tree'),
-            $serviceLocator->get('TableGateway')->get('Frontend42\TreeLanguage')
+        return new SitemapProvider(
+            $serviceLocator->get('TableGateway')->get('Frontend42\Sitemap'),
+            $serviceLocator->get('TableGateway')->get('Frontend42\Page')
         );
     }
 }

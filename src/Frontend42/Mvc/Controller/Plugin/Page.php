@@ -39,7 +39,7 @@ class Page extends AbstractPlugin
 
     public function getPage($pageId)
     {
-        return $this->container->findOneByOption("pageId", $pageId);
+        return $this->container->findOneByOption("sitemapId", $pageId);
     }
 
     public function getRoute($pageId)

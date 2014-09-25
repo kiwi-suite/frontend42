@@ -3,14 +3,14 @@ namespace Frontend42\Model;
 
 use Core42\Model\AbstractModel;
 
-class TreeLanguage extends AbstractModel
+class Page extends AbstractModel
 {
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
 
     /**
      * @param int $id
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setId($id)
     {
@@ -28,7 +28,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param string $locale
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setLocale($locale)
     {
@@ -45,26 +45,26 @@ class TreeLanguage extends AbstractModel
     }
 
     /**
-     * @param int $treeId
-     * @return \Frontend42\Model\TreeLanguage
+     * @param int $sitemapId
+     * @return \Frontend42\Model\Page
      */
-    public function setTreeId($treeId)
+    public function setSitemapId($sitemapId)
     {
-        $this->set('treeId', $treeId);
+        $this->set('sitemapId', $sitemapId);
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getTreeId()
+    public function getSitemapId()
     {
-        return $this->get('treeId');
+        return $this->get('sitemapId');
     }
 
     /**
      * @param string $slug
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setSlug($slug)
     {
@@ -82,7 +82,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param string $title
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setTitle($title)
     {
@@ -100,7 +100,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param string $metaDescription
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setMetaDescription($metaDescription)
     {
@@ -118,7 +118,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param string $metaKeywords
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setMetaKeywords($metaKeywords)
     {
@@ -136,7 +136,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param string $status
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setStatus($status)
     {
@@ -154,7 +154,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param \DateTime $publishedFrom
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setPublishedFrom($publishedFrom)
     {
@@ -172,7 +172,7 @@ class TreeLanguage extends AbstractModel
 
     /**
      * @param \DateTime $publishedUntil
-     * @return \Frontend42\Model\TreeLanguage
+     * @return \Frontend42\Model\Page
      */
     public function setPublishedUntil($publishedUntil)
     {

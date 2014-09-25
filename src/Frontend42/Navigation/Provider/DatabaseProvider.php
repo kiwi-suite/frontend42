@@ -4,17 +4,16 @@ namespace Frontend42\Navigation\Provider;
 use Core42\Navigation\Container;
 use Core42\Navigation\Page\PageFactory;
 use Core42\Navigation\Provider\AbstractProvider;
-use Frontend42\Model\TreeLanguage;
-use Frontend42\TableGateway\TreeLanguageTableGateway;
-use Frontend42\Tree\Tree;
-use Zend\Db\Sql\Select;
+use Frontend42\Model\Page;
+use Frontend42\Sitemap\SitemapProvider;
+use Frontend42\TableGateway\PageTableGateway;
 
 class DatabaseProvider extends AbstractProvider
 {
     /**
-     * @var Tree
+     * @var SitemapProvider
      */
-    protected $treeReceiver;
+    protected $sitemapProvider;
 
     /**
      * @var Container
@@ -22,19 +21,19 @@ class DatabaseProvider extends AbstractProvider
     protected $container;
 
     /**
-     * @var TreeLanguageTableGateway
+     * @var PageTableGateway
      */
-    protected $treeLanguageTableGateway;
+    protected $pageTableGateway;
 
     /**
-     * @param Tree $treeReceiver
-     * @param TreeLanguageTableGateway $treeLanguageTableGateway
+     * @param SitemapProvider $sitemapProvider
+     * @param PageTableGateway $pageTableGateway
      */
-    public function __construct(Tree $treeReceiver, TreeLanguageTableGateway $treeLanguageTableGateway)
+    public function __construct(SitemapProvider $sitemapProvider, PageTableGateway $pageTableGateway)
     {
-        $this->treeReceiver = $treeReceiver;
+        $this->sitemapProvider = $sitemapProvider;
 
-        $this->treeLanguageTableGateway = $treeLanguageTableGateway;
+        $this->pageTableGateway = $pageTableGateway;
     }
 
     /**
@@ -49,8 +48,8 @@ class DatabaseProvider extends AbstractProvider
 
         $this->container = new Container();
         $this->container->setContainerName($containerName);
-
-        $result = $this->treeLanguageTableGateway->select(function(Select $select){
+/*
+        $result = $this->pageTableGateway->select(function(Select $select){
             $select->where
                     ->nest()
                         ->isNull('publishedFrom')
@@ -68,14 +67,9 @@ class DatabaseProvider extends AbstractProvider
                     ->and
                     ->equalTo('locale', \Locale::getDefault());
         });
+*/
 
-        $treeLanguage = array();
-        /** @var TreeLanguage $treeLanguageObj */
-        foreach ($result as $treeLanguageObj) {
-            $treeLanguage[$treeLanguageObj->getTreeId()] = $treeLanguageObj;
-        }
-
-        $pages = $this->buildNavigation($this->treeReceiver->getTree(), $treeLanguage);
+        $pages = $this->buildNavigation($this->sitemapProvider->getTreeWithLocale(\Locale::getDefault()));
         foreach ($pages as $page) {
             $this->container->addPage(PageFactory::create($page, $containerName));
         }
@@ -84,40 +78,48 @@ class DatabaseProvider extends AbstractProvider
         return $this->container;
     }
 
-    protected function buildNavigation($tree, array $treeLanguage, $routePrefix = "")
+    protected function buildNavigation($sitemap, $routePrefix = "")
     {
         $pages = array();
 
-        foreach ($tree as $_tree) {
-            /** @var \Frontend42\Model\Tree $treeModel */
-            $treeModel = $_tree['model'];
+        foreach ($sitemap as $_sitemap) {
+            /** @var \Frontend42\Model\Sitemap $sitemapModel */
+            $sitemapModel = $_sitemap['model'];
 
-            if (!array_key_exists($treeModel->getId(), $treeLanguage)) {
+            if (empty($_sitemap['language'])) {
+                continue;
+            }
+            /** @var Page $pageModel */
+            $pageModel = $_sitemap['language'];
+
+            if ($pageModel->getStatus() !== Page::STATUS_ACTIVE) {
                 continue;
             }
 
-            $route = $routePrefix . 'page_' .$treeModel->getId();
+            //TODO published check
+
+            $route = $routePrefix . 'page_' .$sitemapModel->getId();
 
             $page = array(
                 'options' => array(
-                    'label' => $treeLanguage[$treeModel->getId()]->getTitle(),
+                    'label' => $pageModel->getTitle(),
                     'route' => $route,
-                    'pageId' => $treeModel->getId(),
-                    'metaDescription' => $treeLanguage[$treeModel->getId()]->getMetaDescription(),
-                    'metaKeywords' => $treeLanguage[$treeModel->getId()]->getMetaKeywords(),
+                    'sitemapId' => $sitemapModel->getId(),
+                    'metaDescription' => $pageModel->getMetaDescription(),
+                    'metaKeywords' => $pageModel->getMetaKeywords(),
+                    'order' => $sitemapModel->getOrderNr(),
                 ),
             );
 
-            if (!empty($_tree['children'])) {
+            if (!empty($_sitemap['children'])) {
 
                 $page['pages'] = $this->buildNavigation(
-                    $_tree['children'],
-                    $treeLanguage,
+                    $_sitemap['children'],
                     $route . '/'
                 );
             }
 
-            $pages[$treeModel->getId()] = $page;
+            $pages[$sitemapModel->getId()] = $page;
         }
 
         return $pages;

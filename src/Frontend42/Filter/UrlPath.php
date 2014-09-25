@@ -17,7 +17,7 @@ class UrlPath extends AbstractFilter
      */
     public function filter($value)
     {
-        $value = mb_strtolower(trim($value));
+        $value = mb_strtolower(trim($value), 'UTF-8');
         $value = str_replace(" ", "-", $value);
         $value = str_replace("ö", "oe", $value);
         $value = str_replace("ä", "ae", $value);

@@ -1,21 +1,21 @@
 <?php
-namespace Frontend42\Tree;
+namespace Frontend42\Sitemap;
 
-use Frontend42\Model\TreeLanguage;
-use Frontend42\TableGateway\TreeLanguageTableGateway;
-use Frontend42\TableGateway\TreeTableGateway;
+use Frontend42\Model\Page;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\SitemapTableGateway;
 
-class Tree
+class SitemapProvider
 {
     /**
-     * @var TreeTableGateway
+     * @var SitemapTableGateway
      */
-    protected $treeTableGateway;
+    protected $sitemapTableGateway;
 
     /**
-     * @var TreeLanguageTableGateway
+     * @var PageTableGateway
      */
-    protected $treeLanguageTableGateway;
+    protected $pageTableGateway;
 
     /**
      * @var array|null
@@ -28,14 +28,14 @@ class Tree
     protected $treeLocale = array();
 
     /**
-     * @param TreeTableGateway $treeTableGateway
-     * @param TreeLanguageTableGateway $treeLanguageTableGateway
+     * @param SitemapTableGateway $sitemapTableGateway
+     * @param PageTableGateway $pageTableGateway
      */
-    public function __construct(TreeTableGateway $treeTableGateway, TreeLanguageTableGateway $treeLanguageTableGateway)
+    public function __construct(SitemapTableGateway $sitemapTableGateway, PageTableGateway $pageTableGateway)
     {
-        $this->treeTableGateway = $treeTableGateway;
+        $this->sitemapTableGateway = $sitemapTableGateway;
 
-        $this->treeLanguageTableGateway = $treeLanguageTableGateway;
+        $this->pageTableGateway = $pageTableGateway;
     }
 
     /**
@@ -51,17 +51,17 @@ class Tree
     }
 
     /**
-     *
+     * @return array
      */
     protected function loadTree()
     {
-        $result = $this->treeTableGateway->select();
+        $result = $this->sitemapTableGateway->select();
         $flatTree = array();
 
-        /** @var \Frontend42\Model\Tree $treeEntry */
-        foreach ($result as $treeEntry) {
-            $flatTree[$treeEntry->getId()] = array(
-                'model' => $treeEntry,
+        /** @var \Frontend42\Model\Sitemap $_sitemap */
+        foreach ($result as $_sitemap) {
+            $flatTree[$_sitemap->getId()] = array(
+                'model' => $_sitemap,
                 'children' => array()
             );
         }
@@ -91,23 +91,23 @@ class Tree
             return $this->treeLocale[$locale];
         }
 
-        $result = $this->treeLanguageTableGateway->select(array(
+        $result = $this->pageTableGateway->select(array(
             'locale' => $locale
         ));
 
-        /** @var TreeLanguage[] $treeLanguage */
-        $treeLanguage = array();
-        /** @var TreeLanguage $treeLanguageObj */
-        foreach ($result as $treeLanguageObj) {
-            $treeLanguage[$treeLanguageObj->getTreeId()] = $treeLanguageObj;
+        /** @var Page[] $pages */
+        $pages = array();
+        /** @var Page $_page */
+        foreach ($result as $_page) {
+            $pages[$_page->getSitemapId()] = $_page;
         }
 
         $tree = $this->getTree();
 
-        $recursiveFunction = function(&$tree) use (&$recursiveFunction, $treeLanguage){
+        $recursiveFunction = function(&$tree) use (&$recursiveFunction, $pages){
             foreach ($tree as &$_tree) {
-                if (isset($treeLanguage[$_tree['model']->getId()])) {
-                    $_tree['language'] = $treeLanguage[$_tree['model']->getId()];
+                if (isset($pages[$_tree['model']->getId()])) {
+                    $_tree['language'] = $pages[$_tree['model']->getId()];
                 }
 
                 if (!empty($_tree['children'])) {
