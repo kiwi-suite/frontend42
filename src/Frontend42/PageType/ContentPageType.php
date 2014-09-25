@@ -99,26 +99,28 @@ class ContentPageType extends AbstractPageType
         return $form;
     }
 
-    public function saveEditForm($data, $id, $locale)
+    public function saveEditForm($data, $id, $locale, $approved)
     {
-        parent::saveEditForm($data, $id, $locale);
+        parent::saveEditForm($data, $id, $locale, $approved);
 
         $page = $this->pageTableGateway->select(array(
             'sitemapId' => $id,
             'locale' => $locale
         ))->current();
 
-        $this->pageVersionTableGateway->update(array(
-            'approved' => false,
-        ), array(
-            'pageId' => $page->getId()
-        ));
+        if ($approved === true) {
+            $this->pageVersionTableGateway->update(array(
+                'approved' => false,
+            ), array(
+                'pageId' => $page->getId()
+            ));
+        }
 
         $dateTime = new \DateTime();
 
         $pageVersion = new PageVersion();
         $pageVersion->setPageId($page->getId())
-            ->setApproved(true)
+            ->setApproved($approved)
             ->setCreated($dateTime);
         $this->pageVersionTableGateway->insert($pageVersion);
 

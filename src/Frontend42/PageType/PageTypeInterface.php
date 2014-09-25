@@ -15,5 +15,5 @@ interface PageTypeInterface
 
     public function getEditForm($id, $locale);
 
-    public function saveEditForm($data, $id, $locale);
+    public function saveEditForm($data, $id, $locale, $approved);
 }

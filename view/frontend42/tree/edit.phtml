@@ -91,6 +91,11 @@ $this->form->prepare();
                         <span class="fa fa-save"></span>
                         <?= $this->translate('button.save', 'admin') ?>
                     </button>
+
+                    <button type="submit" class="btn btn-primary" id="preview">
+                        <span class="fa fa-save"></span>
+                        <?= $this->translate('button.preview', 'admin') ?>
+                    </button>
                 </div>
             </div>
         </div>
@@ -186,5 +191,19 @@ $this->form->prepare();
             var url = urls[$(this).val()];
             document.location.href = url;
         });
+
+        $('#preview').click(function(event){
+            event.preventDefault();
+
+            var form = $(this).closest('form');
+            var oldAction = form.attr('action');
+
+            form.attr('action', '<?= $this->url('admin/tree/preview', array(), array(), true)?>')
+                .attr('target', '_blank')
+                .submit();
+
+            form.attr('action', oldAction)
+                .attr('target', '_self');
+        })
     });
 </script>

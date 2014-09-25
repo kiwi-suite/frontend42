@@ -124,7 +124,7 @@ abstract class AbstractPageType implements PageTypeInterface
         return $form;
     }
 
-    public function saveEditForm($data, $id, $locale)
+    public function saveEditForm($data, $id, $locale, $approved)
     {
         $sitemap = $this->sitemapTableGateway->selectByPrimary($id);
 

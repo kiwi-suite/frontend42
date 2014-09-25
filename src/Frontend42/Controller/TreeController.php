@@ -30,6 +30,38 @@ class TreeController extends AbstractAdminController
         return $viewModel;
     }
 
+    public function previewAction()
+    {
+        $sitemapTableGateway = $this->getTableGateway('Frontend42\Sitemap');
+        $sitemap = $sitemapTableGateway->selectByPrimary((int) $this->params()->fromRoute('id'));
+
+        /** @var PageTypeInterface $pageType */
+        $pageType = $this->getServiceLocator()->get('PageType')->get($sitemap->getPageType());
+
+        $form = $pageType->getEditForm($sitemap->getId(), $this->params()->fromRoute('locale'));
+
+        $prg = $this->prg();
+        if ($prg instanceof Response) {
+            return $prg;
+        }
+
+        if ($prg !== false) {
+            $form->setData($prg);
+            $pageType->saveEditForm($prg, $sitemap->getId(), $this->params()->fromRoute('locale'), false);
+
+            $container = $this->getServiceLocator()->get('Core42\Navigation')->getContainer('frontend42');
+            //$navigation = $this->getServiceLocator()->get('Core42\Navigation');
+
+            $page = $container->findOneByOption('sitemapId', $sitemap->getId());
+
+            $url = $this->url()->fromRoute($page->getOption('route'), array('locale' => $this->params()->fromRoute('locale')));
+
+            return $this->redirect()->toUrl($url . '?preview=true');
+        }
+
+        return $this->redirect()->toRoute('admin/tree/edit', array(), true);
+    }
+
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -51,7 +83,7 @@ class TreeController extends AbstractAdminController
 
         if ($prg !== false) {
             $form->setData($prg);
-            $pageType->saveEditForm($prg, $sitemap->getId(), $this->params()->fromRoute('locale'));
+            $pageType->saveEditForm($prg, $sitemap->getId(), $this->params()->fromRoute('locale'), true);
             return $this->redirect()->toRoute('admin/tree/edit', array(), true);
         } else {
             $pageTableGateway = $this->getTableGateway('Frontend42\Page');

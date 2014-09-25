@@ -28,6 +28,16 @@ return array(
                                     ),
                                 ),
                             ),
+                            'preview' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => array(
+                                    'route' => 'preview/:locale/:id/',
+                                    'defaults' => array(
+                                        'controller' => __NAMESPACE__ . '\Tree',
+                                        'action' => 'preview',
+                                    ),
+                                ),
+                            ),
                             'add' => array(
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => array(
