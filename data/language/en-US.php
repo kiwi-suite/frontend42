@@ -7,6 +7,7 @@ return array(
     'title.sitemap' => 'Sitemap',
     'title.tree-add' => 'Add Page',
     'button.page-add' => 'Add Page',
+    'button.preview' => 'Preview',
 
     'label.title' => 'Title',
     'label.subtitle' => 'Subtitle',
