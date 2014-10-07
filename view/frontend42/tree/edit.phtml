@@ -54,14 +54,12 @@ $this->form->prepare();
                             </a>
                         </h4>
                         <div class="pull-right">
-                            <?php if (false): ?>
-                            <a href="#panel_<?= $id ?>" class="btn btn-danger btn-xs delete-handle">
+                            <a href="#panel_<?= $webSaveId ?>" class="btn btn-danger btn-xs delete-handle">
                                 <span class="fa fa-trash-o fa-fw"></span>
                             </a>
                             <a class="btn btn-info btn-xs sortable-handle">
                                 <span class="fa fa-sort fa-fw"></span>
                             </a>
-                            <?php endif; ?>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -126,7 +124,8 @@ $this->form->prepare();
                 }
             });
 
-            $(settings.deleteHandle).on('click', $this, deleteElement);
+            console.log(settings.deleteHandle);
+            $($this).on('click', settings.deleteHandle, deleteElement);
             $('#add-element').on('click', $this, addElement);
 
             return $this;
