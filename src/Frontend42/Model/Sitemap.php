@@ -89,6 +89,24 @@ class Sitemap extends AbstractModel
     }
 
     /**
+     * @return string
+     */
+    public function getRouteConstraints()
+    {
+        return $this->get('routeConstraints');
+    }
+
+    /**
+     * @param string $routeConstraints
+     * @return \Frontend42\Model\Sitemap
+     */
+    public function setRouteConstraints($routeConstraints)
+    {
+        $this->set('routeConstraints', $routeConstraints);
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getParentId()

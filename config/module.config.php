@@ -55,4 +55,10 @@ return array(
             'class' => 'Frontend42\Content',
         ),
     ),
+
+    'migration' => array(
+        'directory'     => array(
+            __NAMESPACE__ => __DIR__ . '/../data/migrations'
+        ),
+    ),
 );

@@ -49,6 +49,10 @@ class Database extends TranslatorAwareTreeRouteStack
                 ),
             );
 
+            if ($sitemap->getRouteConstraints() !== null) {
+                $routes[$key]['options']['constraints'] = json_decode($sitemap->getRouteConstraints(), true);
+            }
+
             if (!empty($_tree['children'])) {
                 $routes[$key]['may_terminate'] = true;
                 $routes[$key]['child_routes'] = self::parseTree($_tree['children']);

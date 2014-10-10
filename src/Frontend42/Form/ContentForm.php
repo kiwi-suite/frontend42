@@ -2,6 +2,7 @@
 namespace Frontend42\Form;
 
 use Admin42\FormElements\Wysiwyg;
+use File42\FormElements\FileSelector;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 
@@ -18,6 +19,10 @@ class ContentForm extends Form
         $title = new Text("subtitle");
         $title->setLabel("label.subtitle");
         $form->add($title);
+
+        $fileSelector = new FileSelector("image");
+        $fileSelector->setLabel("label.image");
+        $form->add($fileSelector);
 
         $wysiwyg = new Wysiwyg("text");
         $wysiwyg->setLabel("label.text");
