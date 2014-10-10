@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Mvc\Router\Http;
 
 use Frontend42\Sitemap\SitemapProvider;
@@ -7,6 +15,10 @@ use Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack;
 
 class Database extends TranslatorAwareTreeRouteStack
 {
+    /**
+     * @param array $options
+     * @return \Zend\Mvc\Router\SimpleRouteStack
+     */
     public static function factory($options = array())
     {
         $serviceManager = $options['route_plugins']->getServiceLocator();
@@ -28,6 +40,10 @@ class Database extends TranslatorAwareTreeRouteStack
         return $router;
     }
 
+    /**
+     * @param array $tree
+     * @return array
+     */
     protected static function parseTree($tree)
     {
         $routes = array();

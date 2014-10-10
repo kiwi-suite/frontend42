@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Navigation\Provider;
 
 use Core42\Navigation\Container;
@@ -78,6 +86,11 @@ class DatabaseProvider extends AbstractProvider
         return $this->container;
     }
 
+    /**
+     * @param array $sitemap
+     * @param string $routePrefix
+     * @return array
+     */
     protected function buildNavigation($sitemap, $routePrefix = "")
     {
         $pages = array();

@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Form;
 
 use Frontend42\Sitemap\SitemapProvider;
@@ -47,7 +55,7 @@ class PageAddForm extends Form
             $pageType = new Select("pageType");
             $pageType->setLabel("label.pageType");
             $pageTypeValues = array();
-            foreach($this->pageTypeConfig as $_pageType) {
+            foreach ($this->pageTypeConfig as $_pageType) {
                 $pageTypeValues[$_pageType['class']] = $_pageType['name'];
             }
             $pageType->setValueOptions($pageTypeValues);
@@ -74,7 +82,7 @@ class PageAddForm extends Form
         $values = array(
             0 => "---"
         );
-        $recursiveFunction = function($tree, $level = 0) use (&$recursiveFunction, &$values){
+        $recursiveFunction = function ($tree, $level = 0) use (&$recursiveFunction, &$values) {
             foreach ($tree as $_tree) {
 
                 $title = "[missing title]";

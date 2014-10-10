@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\PageType;
 
 use Frontend42\Filter\UrlPath;
@@ -34,16 +42,27 @@ abstract class AbstractPageType implements PageTypeInterface
      */
     protected $routeClass = "segment";
 
+    /**
+     * @param SitemapTableGateway $sitemapTableGateway
+     */
     public function setSitemapTableGateway(SitemapTableGateway $sitemapTableGateway)
     {
         $this->sitemapTableGateway = $sitemapTableGateway;
     }
 
+    /**
+     * @param PageTableGateway $pageTableGateway
+     */
     public function setPageTableGateway(PageTableGateway $pageTableGateway)
     {
         $this->pageTableGateway = $pageTableGateway;
     }
 
+    /**
+     * @param PageAddForm $form
+     * @param $locale
+     * @return Sitemap
+     */
     public function saveInitForm(PageAddForm $form, $locale)
     {
         $values = $form->getData();
@@ -73,6 +92,11 @@ abstract class AbstractPageType implements PageTypeInterface
         return $sitemap;
     }
 
+    /**
+     * @param $title
+     * @param $locale
+     * @return mixed
+     */
     protected function getUniqueSlugFromTitle($title, $locale)
     {
         $urlPathFilter = new UrlPath();
@@ -83,6 +107,10 @@ abstract class AbstractPageType implements PageTypeInterface
         return $slug;
     }
 
+    /**
+     * @param Sitemap $sitemap
+     * @throws \Exception
+     */
     protected function saveRoutingInformation(Sitemap $sitemap)
     {
         $sitemap->setRoute('{slug_'.$sitemap->getId().'}/')
@@ -92,6 +120,11 @@ abstract class AbstractPageType implements PageTypeInterface
         $this->sitemapTableGateway->update($sitemap);
     }
 
+    /**
+     * @param $id
+     * @param $locale
+     * @return Form
+     */
     public function getEditForm($id, $locale)
     {
         $form = new Form();
@@ -124,6 +157,13 @@ abstract class AbstractPageType implements PageTypeInterface
         return $form;
     }
 
+    /**
+     * @param $data
+     * @param $id
+     * @param $locale
+     * @param $approved
+     * @throws \Exception
+     */
     public function saveEditForm($data, $id, $locale, $approved)
     {
         $sitemap = $this->sitemapTableGateway->selectByPrimary($id);

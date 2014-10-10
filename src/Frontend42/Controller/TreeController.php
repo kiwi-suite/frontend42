@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
@@ -10,16 +18,25 @@ use Zend\View\Model\ViewModel;
 
 class TreeController extends AbstractAdminController
 {
+    /**
+     * @return array|void
+     */
     public function indexAction()
     {
 
     }
 
+    /**
+     *
+     */
     public function indexSidebarAction()
     {
 
     }
 
+    /**
+     * @return ViewModel
+     */
     public function addElementAction()
     {
         $viewModel = new ViewModel();
@@ -30,6 +47,10 @@ class TreeController extends AbstractAdminController
         return $viewModel;
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Exception
+     */
     public function previewAction()
     {
         $sitemapTableGateway = $this->getTableGateway('Frontend42\Sitemap');
@@ -54,7 +75,12 @@ class TreeController extends AbstractAdminController
 
             $page = $container->findOneByOption('sitemapId', $sitemap->getId());
 
-            $url = $this->url()->fromRoute($page->getOption('route'), array('locale' => $this->params()->fromRoute('locale')));
+            $url = $this->url()->fromRoute(
+                $page->getOption('route'),
+                array(
+                    'locale' => $this->params()->fromRoute('locale')
+                )
+            );
 
             return $this->redirect()->toUrl($url . '?preview=true');
         }
@@ -62,6 +88,10 @@ class TreeController extends AbstractAdminController
         return $this->redirect()->toRoute('admin/tree/edit', array(), true);
     }
 
+    /**
+     * @return ViewModel
+     * @throws \Exception
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -116,6 +146,9 @@ class TreeController extends AbstractAdminController
         return $viewModel;
     }
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     */
     public function addAction()
     {
         $prg = $this->prg();
@@ -142,13 +175,16 @@ class TreeController extends AbstractAdminController
         return $viewModel;
     }
 
+    /**
+     * @return JsonModel
+     */
     public function jsonAction()
     {
         $locale = $this->params()->fromRoute('locale');
 
         $tree = $this->getServiceLocator()->get('Frontend42\SitemapProvider')->getTreeWithLocale($locale);
 
-        $function = function(array $tree, $level = 0) use(&$function, $locale){
+        $function = function (array $tree, $level = 0) use (&$function, $locale) {
             $return = array();
 
             foreach ($tree as $_tree) {

@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\PageType\Service;
 
 use Frontend42\PageType\PageTypeInterface;
@@ -16,9 +24,13 @@ class PageTypePluginManager extends AbstractPluginManager
 
         $this->addAbstractFactory(new PageTypeFallbackAbstractFactory(), false);
 
-        $this->addInitializer(function(PageTypeInterface $instance, $serviceLocator){
-            $instance->setSitemapTableGateway($serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Sitemap'));
-            $instance->setPageTableGateway($serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Page'));
+        $this->addInitializer(function (PageTypeInterface $instance, $serviceLocator) {
+            $instance->setSitemapTableGateway(
+                $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Sitemap')
+            );
+            $instance->setPageTableGateway(
+                $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Page')
+            );
         });
     }
 

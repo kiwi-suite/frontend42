@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\PageType;
 
 use Core42\Form\Service\FormPluginManager;
@@ -48,6 +56,11 @@ class ContentPageType extends AbstractPageType
         $this->formPluginManager = $formPluginManager;
     }
 
+    /**
+     * @param $id
+     * @param $locale
+     * @return Form
+     */
     public function getEditForm($id, $locale)
     {
         $form = parent::getEditForm($id, $locale);
@@ -69,7 +82,7 @@ class ContentPageType extends AbstractPageType
 
             $page = $result->current();
 
-            $pageVersion = $this->pageVersionTableGateway->select(function (Select $select) use($page){
+            $pageVersion = $this->pageVersionTableGateway->select(function (Select $select) use ($page) {
                 $select->where(array('pageId' => $page->getId()));
                 $select->order("created DESC, id DESC");
                 $select->limit(1);
@@ -99,6 +112,13 @@ class ContentPageType extends AbstractPageType
         return $form;
     }
 
+    /**
+     * @param $data
+     * @param $id
+     * @param $locale
+     * @param $approved
+     * @throws \Exception
+     */
     public function saveEditForm($data, $id, $locale, $approved)
     {
         parent::saveEditForm($data, $id, $locale, $approved);

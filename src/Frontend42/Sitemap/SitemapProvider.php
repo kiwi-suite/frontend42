@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Sitemap;
 
 use Frontend42\Model\Page;
@@ -104,7 +112,7 @@ class SitemapProvider
 
         $tree = $this->getTree();
 
-        $recursiveFunction = function(&$tree) use (&$recursiveFunction, $pages){
+        $recursiveFunction = function (&$tree) use (&$recursiveFunction, $pages) {
             foreach ($tree as &$_tree) {
                 if (isset($pages[$_tree['model']->getId()])) {
                     $_tree['language'] = $pages[$_tree['model']->getId()];

@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\View\Helper;
 
 use Core42\Navigation\Container;
@@ -44,6 +52,9 @@ class Page extends AbstractHelper
         $this->container = $container;
     }
 
+    /**
+     * @return \Core42\Navigation\Page\Page|null
+     */
     public function getCurrentPage()
     {
         $params = $this->getView()->plugin('params');
@@ -51,6 +62,10 @@ class Page extends AbstractHelper
         return $this->getPage($params->fromRoute('sitemapId'));
     }
 
+    /**
+     * @param $pageId
+     * @return \Core42\Navigation\Page\Page|null
+     */
     public function getPage($pageId)
     {
         if (array_key_exists($pageId, $this->cache)) {
@@ -62,6 +77,11 @@ class Page extends AbstractHelper
         return $page;
     }
 
+    /**
+     * @param null $pageId
+     * @param array $params
+     * @return $this
+     */
     public function __invoke($pageId = null, array $params = array())
     {
         $this->pageId = $pageId;
@@ -71,6 +91,9 @@ class Page extends AbstractHelper
         return $this;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getRoute()
     {
         $page = $this->getPage($this->pageId);
@@ -82,6 +105,9 @@ class Page extends AbstractHelper
         return $page->getOption("route");
     }
 
+    /**
+     * @return null|string
+     */
     public function getHref()
     {
         $page = $this->getPage($this->pageId);
@@ -93,6 +119,9 @@ class Page extends AbstractHelper
         return $this->navigation->getHref($page);
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getTitle()
     {
         $page = $this->getPage($this->pageId);
@@ -104,6 +133,9 @@ class Page extends AbstractHelper
         return $page->getOption("label");
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $page = $this->getPage($this->pageId);

@@ -1,4 +1,12 @@
 <?php
+/**
+ * frontend42 (www.raum42.at)
+ *
+ * @link http://www.raum42.at
+ * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
+ *
+ */
+
 namespace Frontend42\Mvc\Controller\Plugin;
 
 use Core42\Navigation\Container;
@@ -28,6 +36,10 @@ class Page extends AbstractPlugin
         $this->container = $container;
     }
 
+    /**
+     * @param int $pageId
+     * @return $this|\Core42\Navigation\Page\Page|null
+     */
     public function __invoke($pageId = null)
     {
         if ($pageId !== null) {
@@ -37,11 +49,19 @@ class Page extends AbstractPlugin
         return $this;
     }
 
+    /**
+     * @param int $pageId
+     * @return \Core42\Navigation\Page\Page|null
+     */
     public function getPage($pageId)
     {
         return $this->container->findOneByOption("sitemapId", $pageId);
     }
 
+    /**
+     * @param int $pageId
+     * @return mixed|string
+     */
     public function getRoute($pageId)
     {
         $page = $this->getPage($pageId);
