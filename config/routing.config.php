@@ -48,6 +48,16 @@ return array(
                                     ),
                                 ),
                             ),
+                            'delete' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => array(
+                                    'route' => 'delete/',
+                                    'defaults' => array(
+                                        'controller' => __NAMESPACE__ . '\Tree',
+                                        'action' => 'delete',
+                                    ),
+                                ),
+                            ),
                             'add-element' => array(
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => array(

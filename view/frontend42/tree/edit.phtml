@@ -94,6 +94,15 @@ $this->form->prepare();
                         <span class="fa fa-save"></span>
                         <?= $this->translate('button.preview', 'admin') ?>
                     </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-danger dynamic-form-submit"
+                        data-action="<?= $this->url('admin/tree/delete')?>"
+                        data-form-id="<?= $this->params()->fromRoute('id') ?>">
+                        <span class="fa fa-trash-o"></span>
+                        <?= $this->translate('button.delete', 'admin') ?>
+                    </button>
                 </div>
             </div>
         </div>

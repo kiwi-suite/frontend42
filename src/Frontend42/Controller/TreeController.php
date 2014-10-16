@@ -146,6 +146,12 @@ class TreeController extends AbstractAdminController
         return $viewModel;
     }
 
+    public function deleteAction()
+    {
+        $this->getTableGateway('Frontend42\Sitemap')->delete(array('id' => $this->params()->fromPost("id")));
+        return $this->redirect()->toRoute('admin/tree');
+    }
+
     /**
      * @return \Zend\Http\Response|ViewModel
      */
