@@ -1,78 +1,156 @@
 module.exports = function(grunt) {
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+        vendor_dir: 'bower_components',
+        dist: 'dist',
 
-        js_src_path: 'javascripts',
-        js_dest_path: 'dist/js',
-        css_dest_path: 'dist/css',
-        img_dest_path: 'dist/images',
-        img_gen_path: 'dist/images/gen',
-        sass_path: 'sass',
-        font_path: 'dist/fonts',
-        sprites_path: 'sprites',
+        bower: {
+            install: {
+                options: {
+                    copy: false
+                }
+            }
+        },
+
+        concurrent: {
+            all: ['compile-vendor-js', 'compile-app-js', 'less:app', 'copy']
+        },
 
         concat: {
             options: {
                 separator: ';'
             },
-            js: {
+            vendor: {
                 src: [
-                    'bower_components/jstree/dist/jstree.js',
-                    '<%= js_src_path %>/*.js'
+                    '<%= vendor_dir %>/jquery/dist/jquery.js',
+                    '<%= vendor_dir %>/angular/angular.js',
+                    '<%= vendor_dir %>/angular-bootstrap/ui-bootstrap.js',
+                    '<%= vendor_dir %>/angular-bootstrap/ui-bootstrap-tpls.js',
+                    '<%= vendor_dir %>/angular-animate/angular-animate.js',
+                    '<%= vendor_dir %>/angular-smart-table/dist/smart-table.min.js',
+                    '<%= vendor_dir %>/angular-ui-utils/ui-utils.js',
+                    '<%= vendor_dir %>/screenfull/dist/screenfull.js',
+                    '<%= vendor_dir %>/moment/min/moment-with-locales.js',
+                    '<%= vendor_dir %>/moment-timezone/builds/moment-timezone-with-data.js'
                 ],
-                dest: '<%= js_dest_path %>/<%= pkg.name %>.js'
+                dest: '<%= dist %>/js/vendor.js'
+            },
+            app: {
+                src: [
+                    'javascripts/*.js',
+                    'javascripts/directive/*.js',
+                    'javascripts/filter/*.js',
+                    'javascripts/controller/*.js'
+                ],
+                dest: '<%= dist %>/js/admin42.js'
             }
         },
+
         uglify: {
             options: {
-                banner: '<%= banner %>'
+                mangle: false
             },
-            main: {
-                src: ['<%= concat.js.dest %>'],
-                dest: '<%= js_dest_path %>/<%= pkg.name %>.min.js'
+            vendor: {
+                src: '<%= dist %>/js/vendor.js',
+                dest: '<%= dist %>/js/vendor.min.js'
+            },
+            app: {
+                src: '<%= dist %>/js/admin42.js',
+                dest: '<%= dist %>/js/admin42.min.js'
             }
         },
-        clean: {
-            js : {
-                src: [ '<%= js_dest_path %>/**/*.*', '!<%= js_dest_path %>/**/*.min.js' ]
+
+        less: {
+            options: {
+                compress: true,
+                cleancss: true
             },
-            css : {
-                src: [ '<%= css_dest_path %>/**/*.*', '!<%= css_dest_path %>/**/*.min.css' ]
-            },
-            img : {
-                src: [ '<%= img_dest_path %>/**/*.*', '!<%= img_dest_path %>/**/*.{png,jpg,gif,jpeg,svg}', '!<%= img_gen_path %>' ]
-            },
-            fonts: {
-                src: [ '<%= font_path %>/**/*.*', '!<%= font_path %>/**/*.{eot,svg,ttf,woff,otf}' ]
-            }
-        },
-        compass: {
-            dist: {
-                options: {
-                    config: 'config.rb'
+            app: {
+                files: {
+                    '<%= dist %>/css/admin42.min.css': [
+                        '<%= vendor_dir %>/animate.css/animate.css',
+                        'less/main.less'
+                    ]
                 }
             }
         },
-        cssmin: {
-            minify: {
-                src: '<%= css_dest_path %>/raum42-frontend.css',
-                dest: '<%= css_dest_path %>/raum42-frontend.min.css'
+
+        copy: {
+            bootstrap: {
+                files: [
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['<%= vendor_dir %>/bootstrap/fonts/*'],
+                        dest: '<%= dist %>/fonts/',
+                        filter: 'isFile'
+                    }
+                ]
+            },
+            fontawesome: {
+                files: [
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['<%= vendor_dir %>/font-awesome/fonts/*'],
+                        dest: '<%= dist %>/fonts/',
+                        filter: 'isFile'
+                    }
+                ]
+            },
+            simpleline: {
+                files: [
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['<%= vendor_dir %>/simple-line-icons/fonts/*'],
+                        dest: '<%= dist %>/fonts/',
+                        filter: 'isFile'
+                    }
+                ]
+            },
+            images: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'images/',
+                        src: '**',
+                        dest: '<%= dist %>/images/'
+                    }
+                ]
             }
         },
+
+        clean: {
+            all: ['<%= dist %>/fonts/', '<%= dist %>/css/', '<%= dist %>/js/', '<%= dist %>/images/'],
+
+            vendorjs: ['<%= dist %>/js/vendor.js'],
+            appjs: ['<%= dist %>/js/admin42.js']
+        },
+
         watch: {
-            js: {
-                files: ['<%= js_src_path %>/**/*.js'],
-                tasks: ['concat:js', 'uglify', 'clean:js']
+            grunt: {
+                files: ['Gruntfile.js', 'bower.json'],
+                tasks: ['default']
+
             },
-            sass: {
-                files: ['<%= sass_path %>/**/*.scss', '<%= sprites_path %>',  '<%= img_dest_path %>/**/*.{png,jpg,gif,jpeg,svg}', '!<%= img_gen_path %>/**'],
-                tasks: ['compass', 'cssmin', 'clean:css', 'clean:img']
+            js: {
+                files: ['javascripts/**/*.js'],
+                tasks: ['compile-app-js']
+            },
+            less: {
+                files: ['less/*.less', 'less/**/*.less'],
+                tasks: ['compile-css']
             }
         }
     });
 
-    grunt.registerTask('default', ['compass', 'concat', 'uglify', 'cssmin', 'clean']);
+    grunt.registerTask('default', ['bower', 'concurrent:all']);
+    grunt.registerTask('compile-vendor-js', ['concat:vendor', 'uglify:vendor', 'clean:vendorjs']);
+    grunt.registerTask('compile-app-js', ['concat:app', 'uglify:app', 'clean:appjs']);
+    grunt.registerTask('compile-css', ['less:app']);
+    grunt.registerTask('clear', ['clean:all']);
+
+
 
     require('load-grunt-tasks')(grunt);
 };
