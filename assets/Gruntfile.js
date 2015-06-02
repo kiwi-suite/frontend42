@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         },
 
         concurrent: {
-            all: ['compile-vendor-js', 'compile-app-js', 'less:app', 'copy']
+            all: ['compile-vendor-js', 'compile-app-js', 'less:app']
         },
 
         concat: {
@@ -21,16 +21,7 @@ module.exports = function(grunt) {
             },
             vendor: {
                 src: [
-                    '<%= vendor_dir %>/jquery/dist/jquery.js',
-                    '<%= vendor_dir %>/angular/angular.js',
-                    '<%= vendor_dir %>/angular-bootstrap/ui-bootstrap.js',
-                    '<%= vendor_dir %>/angular-bootstrap/ui-bootstrap-tpls.js',
-                    '<%= vendor_dir %>/angular-animate/angular-animate.js',
-                    '<%= vendor_dir %>/angular-smart-table/dist/smart-table.min.js',
-                    '<%= vendor_dir %>/angular-ui-utils/ui-utils.js',
-                    '<%= vendor_dir %>/screenfull/dist/screenfull.js',
-                    '<%= vendor_dir %>/moment/min/moment-with-locales.js',
-                    '<%= vendor_dir %>/moment-timezone/builds/moment-timezone-with-data.js'
+                    '<%= vendor_dir %>/angular-ui-tree/dist/angular-ui-tree.js'
                 ],
                 dest: '<%= dist %>/js/vendor.js'
             },
@@ -41,7 +32,7 @@ module.exports = function(grunt) {
                     'javascripts/filter/*.js',
                     'javascripts/controller/*.js'
                 ],
-                dest: '<%= dist %>/js/admin42.js'
+                dest: '<%= dist %>/js/frontend42.js'
             }
         },
 
@@ -54,8 +45,8 @@ module.exports = function(grunt) {
                 dest: '<%= dist %>/js/vendor.min.js'
             },
             app: {
-                src: '<%= dist %>/js/admin42.js',
-                dest: '<%= dist %>/js/admin42.min.js'
+                src: '<%= dist %>/js/frontend42.js',
+                dest: '<%= dist %>/js/frontend42.min.js'
             }
         },
 
@@ -66,57 +57,10 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    '<%= dist %>/css/admin42.min.css': [
-                        '<%= vendor_dir %>/animate.css/animate.css',
+                    '<%= dist %>/css/frontend42.min.css': [
                         'less/main.less'
                     ]
                 }
-            }
-        },
-
-        copy: {
-            bootstrap: {
-                files: [
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['<%= vendor_dir %>/bootstrap/fonts/*'],
-                        dest: '<%= dist %>/fonts/',
-                        filter: 'isFile'
-                    }
-                ]
-            },
-            fontawesome: {
-                files: [
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['<%= vendor_dir %>/font-awesome/fonts/*'],
-                        dest: '<%= dist %>/fonts/',
-                        filter: 'isFile'
-                    }
-                ]
-            },
-            simpleline: {
-                files: [
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['<%= vendor_dir %>/simple-line-icons/fonts/*'],
-                        dest: '<%= dist %>/fonts/',
-                        filter: 'isFile'
-                    }
-                ]
-            },
-            images: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'images/',
-                        src: '**',
-                        dest: '<%= dist %>/images/'
-                    }
-                ]
             }
         },
 
@@ -124,7 +68,7 @@ module.exports = function(grunt) {
             all: ['<%= dist %>/fonts/', '<%= dist %>/css/', '<%= dist %>/js/', '<%= dist %>/images/'],
 
             vendorjs: ['<%= dist %>/js/vendor.js'],
-            appjs: ['<%= dist %>/js/admin42.js']
+            appjs: ['<%= dist %>/js/frontend42.js']
         },
 
         watch: {

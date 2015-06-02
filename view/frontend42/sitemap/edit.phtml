@@ -1,0 +1,164 @@
+<div class="hbox hbox-auto-xs" ng-init="app.appContentFull = true">
+    <div class="col">
+        <div class="vbox">
+            <div class="wrapper-md bg-white b-b">
+                <h1 class="m-n font-thin h3">
+                    <span class="fa fa-sitemap"></span>
+                    <?= $this->translate('title.edit-sitemap', 'admin') ?>
+                </h1>
+            </div>
+            <div class="row-row">
+                <div class="wrapper-md">
+                    <div class="tab-container">
+                        <ul class="nav nav-tabs">
+                            <?php
+                            $k = array_keys($this->sections);
+                            $currentSection = $this->params()->fromRoute('section', current($k));
+                            ?>
+                            <?php foreach ($this->sections as $section => $sectionLabel): ?>
+                                <li<?= ($currentSection == $section) ? ' class="active"': ''?>>
+                                    <a href="<?= $this->url(null, ['section' => $section], [], true)?>">
+                                        <?= $this->translate($sectionLabel, 'admin') ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <form class="form-horizontal" role="form" action="<?= $this->url(null, array(), array(), true) ?>" method="post">
+                                    <?= $this->form($this->pageForm)?>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col w-md lter b-l bg-light">
+        <div class="vbox">
+            <div class="wrapper-md b-b">
+                <div class="m-n font-thin h3">Information</div>
+            </div>
+            <div class="row-row">
+                <?php if (false): ?>
+                <div class="wrapper-md b-b">
+                    <form>
+                        <div class="form-group">
+                            Status
+                            <label class="i-switch m-t-xs m-r">
+                                <input type="checkbox" checked>
+                                <i></i>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Published From</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Published Until</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <?php endif; ?>
+                <div class="wrapper-md">
+                    <ul class="timeline">
+                        <li class="tl-header">
+                            <div class="b-a b-l bg-white text-left">
+                                <dl class="wrapper-xs">
+                                    <dt>Created</dt>
+                                    <dd>2015-01-01 12:12:12</dd>
+                                    <dt>Last Modified</dt>
+                                    <dd>2015-01-01 12:12:12</dd>
+                                    <dt>Created By</dt>
+                                    <dd>Thomas Payer</dd>
+                                </dl>
+                            </div>
+                        </li>
+                        <li class="tl-item">
+                            <div class="tl-wrap b-primary">
+                                <span class="tl-date text-xs">
+                                    2015-12-12<br/>
+                                    12:12:12
+                                </span>
+                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
+                                    <span class="arrow left pull-up"></span>
+                                    <a class="text-xs">
+                                        Version <code>#1</code><br>
+                                        Thomas Payer
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tl-item">
+                            <div class="tl-wrap b-primary">
+                                <span class="tl-date text-xs">
+                                    2015-12-12<br/>
+                                    12:12:12
+                                </span>
+                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
+                                    <span class="arrow left pull-up"></span>
+                                    <a class="text-xs">
+                                        Version <code>#1</code><br>
+                                        Thomas Payer
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tl-item">
+                            <div class="tl-wrap b-primary">
+                                <span class="tl-date text-xs">
+                                    2015-12-12<br/>
+                                    12:12:12
+                                </span>
+                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
+                                    <span class="arrow left pull-up"></span>
+                                    <a class="text-xs">
+                                        Version <code>#1</code><br>
+                                        Thomas Payer
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tl-item">
+                            <div class="tl-wrap b-primary">
+                                <span class="tl-date text-xs">
+                                    2015-12-12<br/>
+                                    12:12:12
+                                </span>
+                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
+                                    <span class="arrow left pull-up"></span>
+                                    <a class="text-xs">
+                                        Version <code>#1</code><br>
+                                        Thomas Payer
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tl-header">
+                            <span class="bg-white b-a">
+                                <i class="fa fa-crosshairs"></i>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

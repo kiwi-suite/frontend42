@@ -1,19 +1,13 @@
 <?php
 
 return array(
-    'label.content' => 'Content',
-    'label.content.tree' => 'Sitemap',
+    'label.sitemap'                     => 'Sitemap',
 
-    'title.sitemap' => 'Sitemap',
-    'title.tree-add' => 'Add Page',
-    'button.page-add' => 'Add Page',
-    'button.preview' => 'Preview',
+    'title.sitemap'                     => 'Sitemap',
 
-    'label.title' => 'Title',
-    'label.subtitle' => 'Subtitle',
-    'label.text' => 'Text',
-    'label.parentId' => 'Create under Page',
-    'label.status' => 'Status',
-    'label.meta-description' => 'Meta Description',
-    'label.meta-keywords' => 'Meta Keywords',
+    'button.page-add'                   => 'Add Page',
+
+    'modal.sitemap.sorting-title'       => 'Save sorting',
+    'modal.sitemap.sorting-warning'     => 'Do you really want to save the new sorting?',
+    'modal.sitemap.sorting-lang-warning'=> 'Be careful! The new sorting will affect all languages.',
 );

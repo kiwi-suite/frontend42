@@ -1,7 +1,7 @@
 {
-  "name": "raum42-admin",
+  "name": "raum42-frontend",
   "version": "2.0.0",
-  "title": "raum42-admin",
+  "title": "raum42-frontend",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-bower-task": "^0.4.0",

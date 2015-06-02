@@ -1,5 +1,5 @@
 {
-  "name": "admin42",
+  "name": "frontend42",
   "version": "2.0.0",
   "authors": [
     "Thomas Payer <payer@raum42.at>"
@@ -15,21 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.3.13",
-    "jquery": "~2.1.3",
-    "bootstrap": "~3.3.2",
-    "font-awesome": "~4.3.0",
-    "angular-bootstrap": "~0.12.1",
-    "screenfull": "~2.0.0",
-    "angular-animate": "~1.3.13",
-    "angular-ui-utils": "~0.2.2",
-    "animate.css": "~3.2.1",
-    "angular-smart-table": "~1.4.12",
-    "simple-line-icons": "~1.0.0",
-    "moment": "~2.10.2",
-    "moment-timezone": "~0.3.1"
-  },
-  "resolutions": {
-    "angular": "~1.3.13"
+    "angular-ui-tree": "~2.3.0"
   }
 }
