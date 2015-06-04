@@ -47,7 +47,7 @@ return [
                             'edit' => [
                                 'type' => 'Core42\Mvc\Router\Http\AngularSegment',
                                 'options' => [
-                                    'route' => 'edit/:id/[:section/[:version/]]',
+                                    'route' => 'edit/:id/[:version/]',
                                     'defaults' => [
                                         'action' => 'edit',
                                     ],

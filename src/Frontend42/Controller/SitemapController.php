@@ -3,10 +3,14 @@ namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\View\Model\JsonModel;
+use Frontend42\Model\Page;
+use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeProvider;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
-use Zend\View\Model\ViewModel;
 
 class SitemapController extends AbstractAdminController
 {
@@ -79,15 +83,56 @@ class SitemapController extends AbstractAdminController
 
     public function editAction()
     {
+        $prg = $this->prg();
+        if ($prg instanceof Response) {
+            return $prg;
+        }
+
         /** @var PageTypeProvider $pageTypeProvider */
         $pageTypeProvider = $this->getServiceLocator()->get('Frontend42\PageTypeProvider');
 
+        /** @var Page page */
+        $page = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->params('id'));
+
         /** @var Sitemap $sitemap */
-        $sitemap = $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary((int) $this->params('id'));
+        $sitemap = $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary($page->getSitemapId());
+
+        $pageForm = $pageTypeProvider->getPageForm($sitemap->getPageType());
+
+        $pageVersion = new PageVersion();
+        $pageVersionResult = $this
+            ->getTableGateway('Frontend42\PageVersion')
+            ->select(function(Select $select) use ($page){
+                $select->where(function(Where $where) use ($page){
+                    $where->equalTo('pageId', $page->getId());
+                    $where->isNotNull('approved');
+                });
+        });
+
+        if ($pageVersionResult->count() > 0) {
+            $pageVersion = $pageVersionResult->current();
+        }
+
+        if ($prg !== false) {
+            $pageForm->setData($prg);
+
+            if ($pageForm->isValid()) {
+                $pageVersion->setContent(Json::encode($pageForm->getInputFilter()->getValues()));
+
+                if ($pageVersion->hasChanged('content')) {
+                    $pageNewVersion = new PageVersion();
+                    $pageNewVersion->setPageId($page->getId())
+                        ->setContent($pageVersion->getContent());
+
+
+                    $this->getTableGateway('Frontend42\PageVersion')->insert($pageNewVersion);
+                }
+            }
+        }
 
         return [
             'sections' => $pageTypeProvider->getDisplayFormSections($sitemap->getPageType()),
-            'pageForm' => $pageTypeProvider->getPageForm($sitemap->getPageType(), $this->params('section'))
+            'pageForm' => $pageForm,
         ];
     }
 }

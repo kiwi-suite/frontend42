@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\PageType;
 
+use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\Stdlib\Glob;
 
@@ -67,10 +68,9 @@ class PageTypeProvider
 
     /**
      * @param string $handle
-     * @param string $section
      * @return Form
      */
-    public function getPageForm($handle, $section = null)
+    public function getPageForm($handle)
     {
         $form = new Form();
 
@@ -79,15 +79,13 @@ class PageTypeProvider
 
         $forms = $pageTypeOptions->getForm();
 
-        $currentSection = current($forms);
-        if ($section !== null) {
-            $currentSection = $forms[$section];
-        }
-
-
-
-        foreach ($currentSection['elements'] as $element) {
-            $form->add($pageTypeOptions->getElements()[$element]);
+        foreach ($forms as $sectionHandle => $subformInfo) {
+            $fieldset = new Fieldset($sectionHandle);
+            $fieldset->setLabel($subformInfo['label']);
+            foreach ($subformInfo['elements'] as $element) {
+                $fieldset->add($pageTypeOptions->getElements()[$element]);
+            }
+            $form->add($fieldset);
         }
 
         return $form;
