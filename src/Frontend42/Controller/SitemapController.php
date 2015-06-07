@@ -3,12 +3,10 @@ namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\View\Model\JsonModel;
+use Frontend42\Command\Sitemap\EditPageCommand;
 use Frontend42\Model\Page;
-use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeProvider;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
 
@@ -81,6 +79,10 @@ class SitemapController extends AbstractAdminController
         return new JsonModel(['success' => true]);
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * @throws \Exception
+     */
     public function editAction()
     {
         $prg = $this->prg();
@@ -99,35 +101,23 @@ class SitemapController extends AbstractAdminController
 
         $pageForm = $pageTypeProvider->getPageForm($sitemap->getPageType());
 
-        $pageVersion = new PageVersion();
-        $pageVersionResult = $this
-            ->getTableGateway('Frontend42\PageVersion')
-            ->select(function(Select $select) use ($page){
-                $select->where(function(Where $where) use ($page){
-                    $where->equalTo('pageId', $page->getId());
-                    $where->isNotNull('approved');
-                });
-        });
-
-        if ($pageVersionResult->count() > 0) {
-            $pageVersion = $pageVersionResult->current();
-        }
-
         if ($prg !== false) {
             $pageForm->setData($prg);
 
             if ($pageForm->isValid()) {
-                $pageVersion->setContent(Json::encode($pageForm->getInputFilter()->getValues()));
+                $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
 
-                if ($pageVersion->hasChanged('content')) {
-                    $pageNewVersion = new PageVersion();
-                    $pageNewVersion->setPageId($page->getId())
-                        ->setContent($pageVersion->getContent());
+                /** @var EditPageCommand $cmd */
+                $cmd = $this->getCommand('Frontend42\Sitemap\EditPage');
+                $cmd->setPage($page)
+                    ->setCreatedUser($authenticationService->getIdentity())
+                    ->setContent($pageForm->getInputFilter()->getValues());
 
-
-                    $this->getTableGateway('Frontend42\PageVersion')->insert($pageNewVersion);
-                }
+                $pageVersion = $cmd->run();
             }
+        } else {
+            $pageVersion = $this->getSelector('Frontend42\PageVersion')->setPageId($page->getId())->getResult();
+            $pageForm->setData(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
         }
 
         return [
