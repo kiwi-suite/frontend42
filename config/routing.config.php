@@ -4,6 +4,15 @@ namespace Frontend42;
 return [
     'router' => [
         'routes' => [
+            /*
+            'frontend' => [
+                'type' => 'Frontend42\FrontendRouter',
+                'may_terminate' => true,
+                'child_routes' => [
+                ],
+            ],
+            */
+            'frontend' => include 'data/routing/frontend.php',
             'admin' => [
                 'child_routes' => [
                     'sitemap' => [
