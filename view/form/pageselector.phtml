@@ -5,6 +5,9 @@ $this->admin()->addJsonTemplate($jsonDataId, $this->element->getSitemapData())
 <div
     class="form-group<?= ($this->hasErrors) ? ' has-error has-feedback' : ''?>"
     ng-init="<?= $this->admin()->generateAngularModelName($this->element->getName())?> = '<?= $this->element->getValue()?>'"
+    ng-controller="PageSelectorController"
+    json-data-id="<?= $jsonDataId ?>"
+    data-active-locale="<?= $this->localization()->getDefaultLocale() ?>"
     >
     <label class="col-sm-2 control-label">
         <?= $this->translate($this->element->getLabel(), 'admin') ?>
@@ -12,18 +15,14 @@ $this->admin()->addJsonTemplate($jsonDataId, $this->element->getSitemapData())
             <abbr title="required">*</abbr>
         <?php endif; ?>
     </label>
-    <div class="col-sm-8"
-         ng-controller="PageSelectorController"
-         json-data-id="<?= $jsonDataId ?>"
-         data-active-locale="<?= $this->localization()->getDefaultLocale() ?>"
-        >
+    <div class="col-sm-8">
         <input type="hidden" ng-model="<?= $this->admin()->generateAngularModelName($this->element->getName())?>" name="<?= $this->element->getName() ?>" value="{{ page.selected.pageId }}">
         <ui-select ng-model="page.selected" reset-search-input="false" on-select="<?= $this->admin()->generateAngularModelName($this->element->getName())?> = page.selected.pageId">
             <ui-select-match placeholder="<?= $this->translate('placeholder.pageselector', 'admin')?>">{{$select.selected.name}}</ui-select-match>
             <ui-select-choices repeat="page in pages | filter: $select.search">
-                <div>
+                <div style="margin-left: {{ page.level * 10 }}px">
                     <small class="label" ng-class="{'label-success': page.status == 'online', 'label-danger': page.status == 'offline'}">{{ page.status }}</small>
-                    <span ng-bind-html="page.name | highlight: $select.search" style="padding-left: {{ page.level * 10 }}px"></span>
+                    <span ng-bind-html="page.name | highlight: $select.search"></span>
                 </div>
             </ui-select-choices>
         </ui-select>

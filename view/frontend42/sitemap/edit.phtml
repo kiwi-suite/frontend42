@@ -17,15 +17,20 @@
                             <?php foreach ($this->pageForm as $fieldset): ?>
                                 <tab>
                                     <tab-heading>
-                                        <?= $fieldset->getLabel() ?>
+                                        <?= $this->translate($fieldset->getLabel(), 'admin') ?>
                                     </tab-heading>
                                     <?= $this->formCollection($fieldset) ?>
                                 </tab>
                             <?php endforeach; ?>
                         </tabset>
-                        <button type="submit">
-                            Save
-                        </button>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <button class="btn btn-success" type="submit">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -37,43 +42,8 @@
                 <div class="m-n font-thin h3">Information</div>
             </div>
             <div class="row-row">
-                <?php if (false): ?>
-                <div class="wrapper-md b-b">
-                    <form>
-                        <div class="form-group">
-                            Status
-                            <label class="i-switch m-t-xs m-r">
-                                <input type="checkbox" checked>
-                                <i></i>
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label>Published From</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default">
-                                        <i class="glyphicon glyphicon-calendar"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Published Until</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default">
-                                        <i class="glyphicon glyphicon-calendar"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <?php endif; ?>
                 <div class="wrapper-md">
-                    <ul class="timeline">
+                    <ul class="timeline timeline-sidebar">
                         <li class="tl-header">
                             <div class="b-a b-l bg-white text-left">
                                 <dl class="wrapper-xs">
@@ -86,66 +56,27 @@
                                 </dl>
                             </div>
                         </li>
-                        <li class="tl-item">
-                            <div class="tl-wrap b-primary">
-                                <span class="tl-date text-xs">
-                                    2015-12-12<br/>
-                                    12:12:12
-                                </span>
-                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
-                                    <span class="arrow left pull-up"></span>
-                                    <a class="text-xs">
-                                        Version <code>#1</code><br>
-                                        Thomas Payer
-                                    </a>
+                        <?php if ($this->versions->count() > 0) :?>
+                        <?php foreach ($this->versions as $version): ?>
+                            <li class="tl-item">
+                                <div class="tl-wrap <?= $version->getId()!== $this->currentVersion->getId() ? 'b-dark' : 'b-primary' ?>">
+                                    <span class="tl-date text-xs">
+                                        <?= $version->getCreated()->format("Y-m-d H:i:s") ?>
+                                    </span>
+                                    <div class="tl-content b-a panel<?= $version->getId() !== $this->currentVersion->getId() ? '' : ' bg-primary' ?>" style="padding: 5px; 2px;">
+                                        <span class="arrow left pull-up<?= $version->getId() !== $this->currentVersion->getId() ? '': ' arrow-primary' ?>"></span>
+                                        <a class="text-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
+
+                                            <code>#<?= $version->getVersionId() ?></code>
+                                            <br>
+                                            Thomas Payer
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li class="tl-item">
-                            <div class="tl-wrap b-primary">
-                                <span class="tl-date text-xs">
-                                    2015-12-12<br/>
-                                    12:12:12
-                                </span>
-                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
-                                    <span class="arrow left pull-up"></span>
-                                    <a class="text-xs">
-                                        Version <code>#1</code><br>
-                                        Thomas Payer
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="tl-item">
-                            <div class="tl-wrap b-primary">
-                                <span class="tl-date text-xs">
-                                    2015-12-12<br/>
-                                    12:12:12
-                                </span>
-                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
-                                    <span class="arrow left pull-up"></span>
-                                    <a class="text-xs">
-                                        Version <code>#1</code><br>
-                                        Thomas Payer
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="tl-item">
-                            <div class="tl-wrap b-primary">
-                                <span class="tl-date text-xs">
-                                    2015-12-12<br/>
-                                    12:12:12
-                                </span>
-                                <div class="tl-content panel b-a" style="padding: 5px; 2px;">
-                                    <span class="arrow left pull-up"></span>
-                                    <a class="text-xs">
-                                        Version <code>#1</code><br>
-                                        Thomas Payer
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
+                            </li>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+
                         <li class="tl-header">
                             <span class="bg-white b-a">
                                 <i class="fa fa-crosshairs"></i>

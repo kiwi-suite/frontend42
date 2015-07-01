@@ -4,6 +4,7 @@
     "require": {
         "php": ">=5.5",
         "zendframework/zendframework": "=2.5.0",
+        "cocur/slugify": "v1.1",
         "fruit42/core42": "dev-feature/core2.0",
         "fruit42/admin42": "dev-develop"
     },

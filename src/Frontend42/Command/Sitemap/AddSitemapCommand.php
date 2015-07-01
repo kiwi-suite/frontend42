@@ -91,6 +91,8 @@ class AddSitemapCommand extends AbstractCommand
 
         $pageTypeObject->prepareForAdd($sitemap);
 
-        var_dump($sitemap);
+        $this->getTableGateway('Frontend42\Sitemap')->insert($sitemap);
+
+        return $sitemap;
     }
 }

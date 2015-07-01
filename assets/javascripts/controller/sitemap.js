@@ -1,4 +1,4 @@
-angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', '$modal', function($scope, $http, $attrs, $modal){
+angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', '$modal', '$window', function($scope, $http, $attrs, $modal, $window){
     $scope.isLoading = true;
     $scope.showOnline = true;
     $scope.showOffline = true;
@@ -64,6 +64,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             modalInstance.result.then(function () {
                 saveTree();
             }, function () {
+                loadTree();
             });
         }
     };
@@ -83,8 +84,8 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             }
         });
 
-        modalInstance.result.then(function () {
-
+        modalInstance.result.then(function (data) {
+            $window.location.href = data.url;
         }, function () {
 
         });
@@ -94,7 +95,6 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
 angular.module('frontend42').controller('AddPageModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', function ($scope, $modalInstance, $http, addSitemapUrl) {
     $scope.ok = function () {
-        console.log($scope.formElement);
         $http({
                 method: 'POST',
                 url: addSitemapUrl,
@@ -110,8 +110,8 @@ angular.module('frontend42').controller('AddPageModalController', ['$scope', '$m
                     return str.join("&");
                 }
             })
-            .success(function (){
-                //$modalInstance.close();
+            .success(function (data){
+                $modalInstance.close(data);
             })
             .error(function (){
 

@@ -13,10 +13,9 @@ interface PageTypeInterface
     public function prepareForAdd(Sitemap $sitemap);
 
     /**
-     * @param Sitemap $sitemap
+     * @param PageTypeContent $content
      * @param PageModel $page
-     * @return null
+     * @return mixed
      */
-    public function addPage(Sitemap $sitemap, PageModel $page);
-
+    public function savePage(PageTypeContent $content, PageModel $page);
 }

@@ -1,32 +1,26 @@
 <?php
 namespace Frontend42\PageType;
 
+use Zend\Form\Factory;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\Exception;
 use Zend\Stdlib\Glob;
 
-class PageTypeProvider
+class PageTypeProvider extends AbstractPluginManager
 {
-    /**
-     * @var array
-     */
-    protected $config;
-
     /**
      * @var array
      */
     protected $pageTypes = [];
 
-    public function __construct(array $config)
+    /**
+     * @param $pageTypePaths
+     */
+    public function loadPageTypes($pageTypePaths)
     {
-        $this->config = $config;
-
-        $this->loadPageTypes();
-    }
-
-    protected function loadPageTypes()
-    {
-        foreach ($this->config['paths'] as $path) {
+        foreach ($pageTypePaths as $path) {
             $entries = Glob::glob($path);
             foreach ($entries as $file) {
                 $pageTypeOptions = new PageTypeOptions(require_once $file);
@@ -36,6 +30,9 @@ class PageTypeProvider
         }
     }
 
+    /**
+     * @return array
+     */
     public function getDisplayPageTypes()
     {
         $pageTypeDisplay = [];
@@ -81,6 +78,7 @@ class PageTypeProvider
 
         foreach ($forms as $sectionHandle => $subformInfo) {
             $fieldset = new Fieldset($sectionHandle);
+
             $fieldset->setLabel($subformInfo['label']);
             foreach ($subformInfo['elements'] as $element) {
                 $fieldset->add($pageTypeOptions->getElements()[$element]);
@@ -91,8 +89,37 @@ class PageTypeProvider
         return $form;
     }
 
-    public function getPageType($pageTypeHandle)
+    /**
+     * @param string $handle
+     * @return PageTypeInterface
+     */
+    public function getPageType($handle)
     {
-        return new Page();
+        /** @var PageTypeOptions $pageTypeOptions */
+        $pageTypeOptions = $this->pageTypes[$handle];
+
+        return $this->get($pageTypeOptions->getClass());
+    }
+
+    /**
+     * Validate the plugin
+     *
+     * Checks that the filter loaded is either a valid callback or an instance
+     * of FilterInterface.
+     *
+     * @param  mixed $plugin
+     * @return void
+     * @throws Exception\RuntimeException if invalid
+     */
+    public function validatePlugin($plugin)
+    {
+        if ($plugin instanceof PageTypeInterface) {
+            return;
+        }
+
+        throw new \RuntimeException(sprintf(
+            "Plugin of type %s is invalid; must implement \\Frontend42\\PageType\\PageTypeInterface",
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin))
+        ));
     }
 }
