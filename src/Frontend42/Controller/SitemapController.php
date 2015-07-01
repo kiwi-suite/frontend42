@@ -7,6 +7,8 @@ use Frontend42\Command\Sitemap\EditPageCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeProvider;
+use Frontend42\Selector\PageVersionSelector;
+use Zend\Db\Sql\Select;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
 
@@ -39,7 +41,7 @@ class SitemapController extends AbstractAdminController
             $node = [
                 'id'        => $_item['sitemap']->getId(),
                 'locale'    => $_item['page']->getLocale(),
-                'title'     => $_item['page']->getLocale() . ' ' . $_item['sitemap']->getId(),
+                'title'     => $_item['page']->getName(),
                 'status'    => $_item['page']->getStatus(),
                 'viewCount' => $_item['page']->getViewCount(),
                 'pageType'  => $_item['sitemap']->getPageType(),
@@ -71,12 +73,15 @@ class SitemapController extends AbstractAdminController
             ->selectByPrimary((int) $this->params()->fromPost('page_selector'));
 
 
-        $this->getCommand('Frontend42\Sitemap\AddSitemap')
+        $sitemap = $this->getCommand('Frontend42\Sitemap\AddSitemap')
             ->setPageType($this->params()->fromPost('page_type_selector'))
             ->setParentId($page->getSitemapId())
             ->run();
 
-        return new JsonModel(['success' => true]);
+        return new JsonModel([
+            'success' => true,
+            'url' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $sitemap->getId()])]
+        );
     }
 
     /**
@@ -116,13 +121,25 @@ class SitemapController extends AbstractAdminController
                 $pageVersion = $cmd->run();
             }
         } else {
-            $pageVersion = $this->getSelector('Frontend42\PageVersion')->setPageId($page->getId())->getResult();
+            /** @var PageVersionSelector $selector */
+            $selector = $this->getSelector('Frontend42\PageVersion')->setPageId($page->getId());
+            if ($this->params()->fromRoute('version') !== null) {
+                $selector->setVersionName($this->params()->fromRoute("version"));
+            }
+            $pageVersion = $selector->getResult();
             $pageForm->setData(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
         }
+
+        $versions = $this->getTableGateway('Frontend42\PageVersion')->select(function(Select $select) use($page) {
+            $select->where(['pageId' => $page->getId()]);
+            $select->order('created DESC');
+        });
 
         return [
             'sections' => $pageTypeProvider->getDisplayFormSections($sitemap->getPageType()),
             'pageForm' => $pageForm,
+            'versions' => $versions,
+            'currentVersion' => $pageVersion,
         ];
     }
 }

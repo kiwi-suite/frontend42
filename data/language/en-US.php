@@ -1,7 +1,13 @@
 <?php
 
 return array(
+    'title.edit-sitemap'                => 'Edit Page',
+
     'label.sitemap'                     => 'Sitemap',
+    'label.pageType'                    => 'Page Type',
+    'label.pageSelector'                => 'Page',
+
+    'placeholder.pageselector'          => 'Select a Page',
 
     'title.sitemap'                     => 'Sitemap',
 

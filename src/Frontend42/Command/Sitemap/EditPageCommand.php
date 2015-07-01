@@ -6,6 +6,7 @@ use Core42\Command\AbstractCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
+use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeInterface;
 use Frontend42\Selector\PageVersionSelector;
 use Zend\Json\Json;
@@ -46,6 +47,11 @@ class EditPageCommand extends AbstractCommand
      * @var PageTypeInterface
      */
     protected $pageType;
+
+    /**
+     * @var PageTypeContent
+     */
+    protected $pageTypeContent;
 
     /**
      * @param Page $page
@@ -120,9 +126,12 @@ class EditPageCommand extends AbstractCommand
             ->setVersionName(PageVersionSelector::VERSION_HEAD)
             ->getResult();
 
-        $this->pageType = $this->getServiceLocator()
+        $this->pageType = $this->getServiceManager()
             ->get('Frontend42\PageTypeProvider')
-            ->getPageType($this->sitemap->getHandle());
+            ->getPageType($this->sitemap->getPageType());
+
+        $this->pageTypeContent = $this->getServiceManager()->get('Frontend42\PageTypeContent');
+        $this->pageTypeContent->setRawContent($this->content);
     }
 
     /**
@@ -145,7 +154,7 @@ class EditPageCommand extends AbstractCommand
 
         $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
 
-        $this->pageType->savePage($this->content, $this->page);
+        $this->pageType->savePage($this->pageTypeContent, $this->page);
 
         $this->getTableGateway('Frontend42\Page')->update($this->page);
 

@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\PageType;
 
+use Cocur\Slugify\Slugify;
 use Frontend42\Model\Page as PageModel;
 use Frontend42\Model\Sitemap;
 
@@ -17,12 +18,16 @@ class Page implements PageTypeInterface
     }
 
     /**
-     * @param array $content
+     * @param PageTypeContent $content
      * @param PageModel $page
      * @return mixed
      */
-    public function savePage(array $content, PageModel $page)
+    public function savePage(PageTypeContent $content, PageModel $page)
     {
+        $name = $content->getElement("name");
 
+        $slugify = new Slugify();
+        $page->setSlug($slugify->slugify($name))
+            ->setName($name);
     }
 }

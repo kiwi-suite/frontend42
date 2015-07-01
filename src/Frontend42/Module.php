@@ -26,6 +26,7 @@ class Module implements
     {
         return array_merge(
             include __DIR__ . '/../../config/module.config.php',
+            include __DIR__ . '/../../config/pagetypes.config.php',
             include __DIR__ . '/../../config/assets.config.php',
             include __DIR__ . '/../../config/admin.config.php',
             include __DIR__ . '/../../config/navigation.config.php',

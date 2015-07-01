@@ -2,6 +2,7 @@
 namespace Frontend42\PageType\Service;
 
 use Frontend42\PageType\PageTypeProvider;
+use Zend\ServiceManager\Config;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -16,9 +17,11 @@ class PageTypeProviderFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('config');
-        $config = (array_key_exists('page_types', $config)) ? $config['page_types'] : [];
+        $config = $serviceLocator->get('config')['page_types'];
 
-        return new PageTypeProvider($config);
+        $pageTypeProvider = new PageTypeProvider(new Config($config['service_manager']));
+        $pageTypeProvider->loadPageTypes($config['paths']);
+
+        return $pageTypeProvider;
     }
 }
