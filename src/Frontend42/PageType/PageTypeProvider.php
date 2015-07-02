@@ -4,6 +4,7 @@ namespace Frontend42\PageType;
 use Zend\Form\Factory;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
+use Zend\Form\FormElementManager;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\Exception;
 use Zend\Stdlib\Glob;
@@ -14,6 +15,11 @@ class PageTypeProvider extends AbstractPluginManager
      * @var array
      */
     protected $pageTypes = [];
+
+    /**
+     * @var FormElementManager
+     */
+    protected $formElementManager;
 
     /**
      * @param $pageTypePaths
@@ -28,6 +34,11 @@ class PageTypeProvider extends AbstractPluginManager
                 $this->pageTypes[$pageTypeOptions->getHandle()] = $pageTypeOptions;
             }
         }
+    }
+
+    public function setFormElementManager(FormElementManager $formElementManager)
+    {
+        $this->formElementManager = $formElementManager;
     }
 
     /**
@@ -70,6 +81,7 @@ class PageTypeProvider extends AbstractPluginManager
     public function getPageForm($handle)
     {
         $form = new Form();
+        $form->setFormFactory(new Factory($this->formElementManager));
 
         /** @var PageTypeOptions $pageTypeOptions */
         $pageTypeOptions = $this->pageTypes[$handle];
@@ -78,6 +90,7 @@ class PageTypeProvider extends AbstractPluginManager
 
         foreach ($forms as $sectionHandle => $subformInfo) {
             $fieldset = new Fieldset($sectionHandle);
+            $fieldset->setFormFactory($form->getFormFactory());
 
             $fieldset->setLabel($subformInfo['label']);
             foreach ($subformInfo['elements'] as $element) {

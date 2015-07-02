@@ -2,11 +2,11 @@
 namespace Frontend42;
 
 return [
-    'view_manager' => [
-        'template_path_stack'       => [
+    'view_manager' => array(
+        'template_path_stack'       => array(
             __NAMESPACE__               => __DIR__ . '/../view',
-        ],
-    ],
+        ),
+    ),
 
     'migration' => [
         'directory'     => [
@@ -18,6 +18,7 @@ return [
         'factories' => [
             'page_type_selector'        => 'Frontend42\FormElements\Service\PageTypeSelectorFactory',
             'page_selector'             => 'Frontend42\FormElements\Service\PageSelectorFactory',
+            'block'                     => 'Frontend42\FormElements\Service\BlockFactory',
         ],
     ],
 
@@ -27,6 +28,7 @@ return [
         ],
         'factories' => [
             'Frontend42\PageTypeProvider'    => 'Frontend42\PageType\Service\PageTypeProviderFactory',
+            'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',
         ],
     ],
 ];

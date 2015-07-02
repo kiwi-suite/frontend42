@@ -50,6 +50,8 @@ class SavePageSortingCommand extends AbstractCommand
             ->getResult();
 
         $this->recursiveSave($result);
+
+        $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
     }
 
     /**

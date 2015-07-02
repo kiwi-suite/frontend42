@@ -38,23 +38,13 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
             foreach ($sitemapResult as $sitemap) {
 
                 $key = $locale . '-' . $sitemap['sitemap']->getId();
-                $childRoutes[$key] = $this->buildRoutes($sitemap, $locale);
+                $tmpRoutes = $this->buildRoutes($sitemap, $locale);
+
+                if (!empty($tmpRoutes)) $childRoutes[$key] = $tmpRoutes;
             }
         }
 
-        $routerConfig = [
-            'type' => 'Zend\Mvc\Router\Http\Literal',
-            'options' => [
-                'route' => '/',
-                'defaults' => [
-                    'controller' => __NAMESPACE__ . '\Sitemap',
-                    'action' => 'index',
-                ],
-            ],
-            'child_routes' => $childRoutes,
-        ];
-
-        file_put_contents('data/routing/frontend.php', var_export($routerConfig, true));
+        file_put_contents('data/routing/frontend.php', "<?php\n return " . var_export($childRoutes, true) . ";");
     }
 
     /**
@@ -69,14 +59,22 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         $page = $sitemap['page'];
         $pageRoute = json_decode($page->getRoute(), true);
 
+        if (empty($pageRoute)) {
+            return;
+        }
+
         if (count($sitemap['children']) > 0) {
             foreach ($sitemap['children'] as $child) {
 
                 $key = $locale . '-' . $child['sitemap']->getId();
-                $childRoutes[$key] = $this->buildRoutes($child, $locale);
+
+                $tmpRoutes = $this->buildRoutes($child, $locale);
+
+                if (!empty($tmpRoutes)) $childRoutes[$key] = $tmpRoutes;
             }
         }
 
+        $pageRoute['may_terminate'] = true;
         $pageRoute['child_routes'] = $childRoutes;
 
         return $pageRoute;

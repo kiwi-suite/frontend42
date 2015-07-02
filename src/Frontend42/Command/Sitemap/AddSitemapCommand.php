@@ -93,6 +93,8 @@ class AddSitemapCommand extends AbstractCommand
 
         $this->getTableGateway('Frontend42\Sitemap')->insert($sitemap);
 
-        return $sitemap;
+        $this->getCommand('Frontend42\Sitemap\AddMissingPages')->run();
+
+        return $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary($sitemap->getId());
     }
 }

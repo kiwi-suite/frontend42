@@ -40,6 +40,7 @@ class SitemapController extends AbstractAdminController
         foreach ($items as $_item) {
             $node = [
                 'id'        => $_item['sitemap']->getId(),
+                'pageId'    => $_item['page']->getId(),
                 'locale'    => $_item['page']->getLocale(),
                 'title'     => $_item['page']->getName(),
                 'status'    => $_item['page']->getStatus(),
@@ -69,18 +70,23 @@ class SitemapController extends AbstractAdminController
 
     public function addSitemapAction()
     {
-        $page = $this->getTableGateway('Frontend42\Page')
-            ->selectByPrimary((int) $this->params()->fromPost('page_selector'));
+        $parentId = (int) $this->params()->fromPost('page_selector');
 
+        $cmd = $this->getCommand('Frontend42\Sitemap\AddSitemap')
+            ->setPageType($this->params()->fromPost('page_type_selector'));
 
-        $sitemap = $this->getCommand('Frontend42\Sitemap\AddSitemap')
-            ->setPageType($this->params()->fromPost('page_type_selector'))
-            ->setParentId($page->getSitemapId())
-            ->run();
+        if ($parentId > 0) {
+            $page = $this->getTableGateway('Frontend42\Page')
+                ->selectByPrimary($parentId);
+
+            $cmd->setParentId($page->getSitemapId());
+        }
+
+        $page = $cmd->run();
 
         return new JsonModel([
             'success' => true,
-            'url' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $sitemap->getId()])]
+            'url' => $this->url()->fromRoute('admin/sitemap')]
         );
     }
 
@@ -116,9 +122,22 @@ class SitemapController extends AbstractAdminController
                 $cmd = $this->getCommand('Frontend42\Sitemap\EditPage');
                 $cmd->setPage($page)
                     ->setCreatedUser($authenticationService->getIdentity())
-                    ->setContent($pageForm->getInputFilter()->getValues());
+                    ->setContent($prg);
 
                 $pageVersion = $cmd->run();
+                $this->flashMessenger()->addSuccessMessage([
+                    'title' => 'Page saved',
+                    'message' => 'Page successfully saved',
+                ]);
+
+                return $this->redirect()->toRoute('admin/sitemap/edit', array('id' => $pageVersion->getPageId()));
+            } else {
+                /** @var PageVersionSelector $selector */
+                $selector = $this->getSelector('Frontend42\PageVersion')->setPageId($page->getId());
+                if ($this->params()->fromRoute('version') !== null) {
+                    $selector->setVersionName($this->params()->fromRoute("version"));
+                }
+                $pageVersion = $selector->getResult();
             }
         } else {
             /** @var PageVersionSelector $selector */

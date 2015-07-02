@@ -158,6 +158,8 @@ class EditPageCommand extends AbstractCommand
 
         $this->getTableGateway('Frontend42\Page')->update($this->page);
 
+        $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
+
         return $pageVersion;
     }
 }

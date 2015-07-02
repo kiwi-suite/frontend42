@@ -26,8 +26,16 @@ class Page implements PageTypeInterface
     {
         $name = $content->getElement("name");
 
+        $publishedFrom = $content->getElement('publishedFrom');
+        $publishedFrom = empty($publishedFrom) ? null : \DateTime::createFromFormat('Y-m-d H:i', $publishedFrom);
+        $publishedUntil = $content->getElement('publishedUntil');
+        $publishedUntil = empty($publishedUntil) ? null : \DateTime::createFromFormat('Y-m-d H:i', $publishedUntil);
+
         $slugify = new Slugify();
         $page->setSlug($slugify->slugify($name))
-            ->setName($name);
+            ->setName($name)
+            ->setStatus($content->getElement('status'))
+            ->setPublishedFrom($publishedFrom)
+            ->setPublishedUntil($publishedUntil);
     }
 }

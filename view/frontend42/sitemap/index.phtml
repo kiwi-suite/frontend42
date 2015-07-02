@@ -33,7 +33,7 @@
                             <a class="btn btn-link btn-xs" ng-click="toggle(this)">
                                 <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
                             </a>
-                            <code>#{{item.id}}</code> {{item.title}}
+                            <code>#{{item.pageId}}</code> {{item.title}}
                         </div>
                         <div class="col-md-1 text-center">
                             <span class="label" ng-class="{'label-success': item.status == 'online', 'label-danger': item.status == 'offline'}">{{ item.status }}</span>
@@ -45,7 +45,7 @@
                             <span class="label label-default">{{ item.pageType }}</span>
                         </div>
                         <div class="col-md-1 text-right">
-                            <a class="btn btn-info btn-sm" ng-href="<?= $this->url('admin/sitemap/edit', ['id' => '{{ item.id }}']) ?>">
+                            <a class="btn btn-info btn-sm" ng-href="<?= $this->url('admin/sitemap/edit', ['id' => '{{ item.pageId }}']) ?>">
                                 <span class="fa fa-pencil"></span>
                                 <?= $this->translate('button.edit', 'admin') ?>
                             </a>
