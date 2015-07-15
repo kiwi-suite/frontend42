@@ -12,7 +12,6 @@ return [
                 'may_terminate' => false,
                 'child_routes' => include 'data/routing/frontend.php',
             ],
-            //'frontend' => include 'data/routing/frontend.php',
             'admin' => [
                 'child_routes' => [
                     'sitemap' => [

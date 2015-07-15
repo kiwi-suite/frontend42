@@ -10,6 +10,7 @@
 namespace Frontend42;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
+use Core42\Console\Console;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -72,5 +73,31 @@ class Module implements
             },
             100
         );
+
+        $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($this, 'localeSelection'));
+    }
+
+    public function localeSelection(MvcEvent $e)
+    {
+        if (Console::isConsole()) {
+            return;
+        }
+
+        $serviceManager = $e->getApplication()->getServiceManager();
+
+        $routeMatch = $e->getRouteMatch();
+
+        //check if frontend route
+        if (!($routeMatch->getParam("pageId", null) > 0)) {
+            return;
+        }
+
+        $localization = $serviceManager->get('Localization');
+
+        $locale = $routeMatch->getParam("locale", $localization->getLocaleFromHeader());
+        $localization->acceptLocale($locale);
+        $serviceManager->get('MvcTranslator')->setLocale($locale);
+
+        $serviceManager->get('Frontend42\Navigation\PageHandler')->loadCurrentPage($routeMatch->getParam("pageId"));
     }
 }

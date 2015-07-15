@@ -29,9 +29,10 @@ class PageTypeContent
 
     /**
      * @param string $element
+     * @param mixed $default
      * @return mixed
      */
-    public function getElement($element)
+    public function getElement($element, $default = null)
     {
         $elementArr = array_values($this->rawContent);
 
@@ -41,6 +42,6 @@ class PageTypeContent
             }
         }
 
-        return null;
+        return $default;
     }
 }

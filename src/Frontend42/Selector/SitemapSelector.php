@@ -16,12 +16,28 @@ class SitemapSelector extends AbstractDatabaseSelector
     protected $locale;
 
     /**
+     * @var bool
+     */
+    protected $includeExclude = true;
+
+    /**
      * @param string $locale
      * @return $this
      */
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $includeExclude
+     * @return $this
+     */
+    public function setIncludeExclude($includeExclude)
+    {
+        $this->includeExclude = $includeExclude;
 
         return $this;
     }
@@ -83,6 +99,10 @@ class SitemapSelector extends AbstractDatabaseSelector
         ], "s.id=p.sitemapId");
 
         $select->where(['p.locale' => $this->locale]);
+
+        if ($this->includeExclude === false) {
+            $select->where(['s.exclude' => 'false']);
+        }
 
         $select->order('s.orderNr ASC');
 

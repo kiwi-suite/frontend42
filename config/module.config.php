@@ -14,6 +14,12 @@ return [
         ],
     ],
 
+    'view_helpers' => [
+        'factories' => [
+            'page'            => 'Frontend42\View\Helper\Service\PageFactory',
+        ],
+    ],
+
     'form_elements' => [
         'factories' => [
             'page_type_selector'        => 'Frontend42\FormElements\Service\PageTypeSelectorFactory',
@@ -29,6 +35,8 @@ return [
         'factories' => [
             'Frontend42\PageTypeProvider'    => 'Frontend42\PageType\Service\PageTypeProviderFactory',
             'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',
+            'Frontend42\Navigation\Provider' => 'Frontend42\Navigation\Provider\Service\ProviderFactory',
+            'Frontend42\Navigation\PageHandler' => 'Frontend42\Navigation\Service\PageHandlerFactory',
         ],
     ],
 ];

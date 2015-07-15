@@ -14,6 +14,8 @@ use Core42\Model\AbstractModel;
  * @method string getPageType() getPageType()
  * @method Sitemap setTerminal() setTerminal(boolean $terminal)
  * @method boolean getTerminal() getTerminal()
+ * @method Sitemap setExclude() setExclude(boolean $exclude)
+ * @method boolean getExclude() getExclude()
  * @method Sitemap setLockedFrom() setLockedFrom(\DateTime $lockedFrom)
  * @method \DateTime getLockedFrom() getLockedFrom()
  * @method Sitemap setLockedBy() setLockedBy(int $lockedBy)
@@ -33,6 +35,7 @@ class Sitemap extends AbstractModel
         'orderNr',
         'pageType',
         'terminal',
+        'exclude',
         'lockedFrom',
         'lockedBy',
         'handle',
