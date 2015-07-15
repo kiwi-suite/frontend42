@@ -15,6 +15,9 @@ return [
     ],
 
     'view_helpers' => [
+        'invokables' => [
+            'block'                => __NAMESPACE__ . '\View\Helper\Block',
+        ],
         'factories' => [
             'page'            => 'Frontend42\View\Helper\Service\PageFactory',
         ],
