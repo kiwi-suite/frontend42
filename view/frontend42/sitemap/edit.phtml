@@ -26,8 +26,16 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <button class="btn btn-success" type="submit">
-                                    Save
+                                    <span class="fa fa-save"></span>
+                                    <?= $this->translate('button.save', 'admin') ?>
                                 </button>
+                                <delete
+                                    url="<?= $this->url('admin/sitemap/delete') ?>"
+                                    title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
+                                    content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
+                                    request-id="<?= $this->page->getSitemapId() ?>"
+                                    >
+                                </delete>
                             </div>
                         </div>
 

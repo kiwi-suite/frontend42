@@ -59,6 +59,41 @@ class SitemapController extends AbstractAdminController
         return $tree;
     }
 
+    public function deleteAction()
+    {
+        if ($this->getRequest()->isDelete()) {
+            $deleteCmd = $this->getCommand('Frontend42\Sitemap\DeleteSitemap');
+
+            $deleteParams = array();
+            parse_str($this->getRequest()->getContent(), $deleteParams);
+
+            $deleteCmd->setSitemapId((int) $deleteParams['id'])
+                ->run();
+
+            return new JsonModel(array(
+                'success' => true,
+            ));
+        } elseif ($this->getRequest()->isPost()) {
+            $deleteCmd = $this->getCommand('Frontend42\Sitemap\DeleteSitemap');
+
+            $deleteCmd->setSitemapId((int) $this->params()->fromPost('id'))
+                ->run();
+
+            $this->flashMessenger()->addSuccessMessage([
+                'title' => 'toaster.sitemap.delete.title.success',
+                'message' => 'toaster.sitemap.delete.message.success',
+            ]);
+
+            return new JsonModel([
+                'redirect' => $this->url()->fromRoute('admin/sitemap')
+            ]);
+        }
+
+        return new JsonModel([
+            'redirect' => $this->url()->fromRoute('admin/sitemap')
+        ]);
+    }
+
     public function saveAction()
     {
         $this->getCommand('Frontend42\Sitemap\SavePageSorting')
@@ -159,6 +194,7 @@ class SitemapController extends AbstractAdminController
             'pageForm' => $pageForm,
             'versions' => $versions,
             'currentVersion' => $pageVersion,
+            'page'     => $page,
         ];
     }
 }

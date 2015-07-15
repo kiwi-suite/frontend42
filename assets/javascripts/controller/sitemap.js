@@ -91,6 +91,10 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
         });
     };
 
+    $scope.deleteCallback = function() {
+        loadTree();
+    }
+
 }]);
 
 angular.module('frontend42').controller('AddPageModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', function ($scope, $modalInstance, $http, addSitemapUrl) {
