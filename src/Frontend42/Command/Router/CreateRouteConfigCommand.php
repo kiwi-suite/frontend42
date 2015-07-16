@@ -44,7 +44,8 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
             }
         }
 
-        file_put_contents('data/routing/frontend.php', "<?php\n return " . var_export($childRoutes, true) . ";");
+        $cache = $this->getServiceManager()->get('Cache\Sitemap');
+        $cache->setItem("sitemap", $childRoutes);
     }
 
     /**

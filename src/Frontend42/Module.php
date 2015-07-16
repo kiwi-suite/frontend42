@@ -34,6 +34,7 @@ class Module implements
             include __DIR__ . '/../../config/navigation.config.php',
             include __DIR__ . '/../../config/routing.config.php',
             include __DIR__ . '/../../config/cli.config.php',
+            include __DIR__ . '/../../config/caches.config.php',
             include __DIR__ . '/../../config/translation.config.php'
         );
     }

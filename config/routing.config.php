@@ -3,14 +3,15 @@ namespace Frontend42;
 
 return [
     'router' => [
+        'router_class' => 'Frontend42\Mvc\Router\FrontendRouter',
         'routes' => [
             'frontend' => [
                 'type' => 'method',
                 'options' => [
-                    'verb' => 'post,get',
+                    'verb' => 'post,get,put,delete',
                 ],
                 'may_terminate' => false,
-                'child_routes' => include 'data/routing/frontend.php',
+                'child_routes' => [],
             ],
             'admin' => [
                 'child_routes' => [
