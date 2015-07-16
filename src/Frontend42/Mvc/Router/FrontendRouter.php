@@ -18,7 +18,7 @@ class FrontendRouter extends TreeRouteStack
 
         $serviceManager = $options['route_plugins']->getServiceLocator();
         $cache = $serviceManager->get('Cache\Sitemap');
-        if ($cache->hasItem('sitemap')) {
+        if (!$cache->hasItem('sitemap')) {
             $serviceManager->get('Command')->get('Frontend42\Router\CreateRouteConfig')->run();
         }
         $frontendRoutes = $cache->getItem("sitemap");
