@@ -71,7 +71,7 @@ class PageHandler
                 ->getResult();
 
             $pageContent = new PageTypeContent();
-            $pageContent->setRawContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
+            $pageContent->setContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
 
             $this->cache[$cacheKey] = [
                 'page'      => $page,

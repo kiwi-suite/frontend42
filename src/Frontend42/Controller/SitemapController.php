@@ -6,6 +6,7 @@ use Core42\View\Model\JsonModel;
 use Frontend42\Command\Sitemap\EditPageCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
+use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeProvider;
 use Frontend42\Selector\PageVersionSelector;
 use Zend\Db\Sql\Select;
@@ -16,7 +17,6 @@ class SitemapController extends AbstractAdminController
 {
     public function indexAction()
     {
-        $this->getCommand('Frontend42\Sitemap\AddMissingPages')->run();
         return [
             'createForm' => $this->getForm('Frontend42\Sitemap\Create'),
         ];
@@ -105,24 +105,20 @@ class SitemapController extends AbstractAdminController
 
     public function addSitemapAction()
     {
-        $parentId = (int) $this->params()->fromPost('page_selector');
+        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
 
         $cmd = $this->getCommand('Frontend42\Sitemap\AddSitemap')
-            ->setPageType($this->params()->fromPost('page_type_selector'));
-
-        if ($parentId > 0) {
-            $page = $this->getTableGateway('Frontend42\Page')
-                ->selectByPrimary($parentId);
-
-            $cmd->setParentId($page->getSitemapId());
-        }
+            ->setPageType($this->params()->fromPost('page_type_selector'))
+            ->setCreatedBy($authenticationService->getIdentity()->getId())
+            ->setName($this->params()->fromPost('name'))
+            ->setParentPageId($this->params()->fromPost('page_selector'));
 
         $page = $cmd->run();
 
         return new JsonModel([
             'success' => true,
-            'url' => $this->url()->fromRoute('admin/sitemap')]
-        );
+            'url' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $page->getId()])
+        ]);
     }
 
     /**
@@ -181,7 +177,14 @@ class SitemapController extends AbstractAdminController
                 $selector->setVersionName($this->params()->fromRoute("version"));
             }
             $pageVersion = $selector->getResult();
-            $pageForm->setData(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
+
+            $pageTypeContent = new PageTypeContent();
+            $formData = $pageTypeContent->generateFormData(
+                $pageTypeProvider->getPageTypeOptions($sitemap->getPageType())->getForm(),
+                Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY)
+            );
+
+            $pageForm->setData($formData);
         }
 
         $versions = $this->getTableGateway('Frontend42\PageVersion')->select(function(Select $select) use($page) {
@@ -195,6 +198,36 @@ class SitemapController extends AbstractAdminController
             'versions' => $versions,
             'currentVersion' => $pageVersion,
             'page'     => $page,
+            'changePageTypeForm' => $this->getForm('Frontend42\Sitemap\ChangePageType')
         ];
+    }
+
+    public function changeLanguageAction()
+    {
+        $result = $this->getTableGateway('Frontend42\Page')->select([
+            'locale' => $this->params("locale"),
+            'sitemapId' => $this->params('sitemapId')
+        ]);
+
+        if ($result->count() > 0) {
+            return $this->redirect()->toRoute('admin/sitemap/edit', ['id' => $result->current()->getId()]);
+        }
+
+        return $this->redirect()->toRoute('admin/sitemap');
+    }
+
+    public function changePageTypeAction()
+    {
+        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+        
+        $this->getCommand('Frontend42\Sitemap\ChangePageType')
+            ->setPageType($this->params()->fromPost("page_type"))
+            ->setSitemapId($this->params("sitemapId"))
+            ->setCreatedBy($authenticationService->getIdentity()->getId())
+            ->run();
+
+        return new JsonModel([
+            'redirect' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $this->params('pageId')])
+        ]);
     }
 }

@@ -48,6 +48,6 @@ class Page extends AbstractHelper
      */
     public function getParam($name, $default = null)
     {
-        return $this->selectedPage['content']->getElement($name, $default);
+        return $this->selectedPage['content']->getParam($name, $default);
     }
 }

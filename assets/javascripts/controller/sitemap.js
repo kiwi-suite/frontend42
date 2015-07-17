@@ -85,7 +85,10 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
         });
 
         modalInstance.result.then(function (data) {
-            $window.location.href = data.url;
+            if (angular.isDefined(data.url)) {
+                $window.location.href = data.url;
+            }
+
         }, function () {
 
         });
@@ -105,7 +108,8 @@ angular.module('frontend42').controller('AddPageModalController', ['$scope', '$m
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 data: {
                     page_selector: $scope.formElement.page_selector,
-                    page_type_selector: $scope.formElement.page_type_selector
+                    page_type_selector: $scope.formElement.page_type_selector,
+                    name: $scope.formElement.name
                 },
                 transformRequest: function(obj) {
                     var str = [];

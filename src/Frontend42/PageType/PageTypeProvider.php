@@ -115,6 +115,15 @@ class PageTypeProvider extends AbstractPluginManager
     }
 
     /**
+     * @param $handle
+     * @return PageTypeOptions
+     */
+    public function getPageTypeOptions($handle)
+    {
+        return $this->pageTypes[$handle];
+    }
+
+    /**
      * Validate the plugin
      *
      * Checks that the filter loaded is either a valid callback or an instance

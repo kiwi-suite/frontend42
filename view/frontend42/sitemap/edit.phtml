@@ -3,8 +3,11 @@
         <div class="vbox">
             <div class="wrapper-md bg-white b-b">
                 <h1 class="m-n font-thin h3">
-                    <span class="fa fa-sitemap"></span>
+                    <i class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($this->page->getLocale()))?>"></i>
                     <?= $this->translate('title.edit-sitemap', 'admin') ?>
+                    <?php if (strlen($this->page->getName())): ?>
+                        : "<?= $this->page->getName() ?>"
+                    <?php endif; ?>
                 </h1>
             </div>
             <div class="row-row">
@@ -51,6 +54,30 @@
             </div>
             <div class="row-row">
                 <div class="wrapper-md">
+                    <div class="tl-header">
+                        <div class="b-a b-l bg-white text-left m-b-md">
+                            <div class="wrapper-xs">
+                                <div class="text-center">
+                                    <?php foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $displayName): ?>
+                                        <?php if ($this->page->getLocale() == $locale) continue; ?>
+                                        <a href="<?= $this->url('admin/sitemap/change-language', ['locale' => $locale, 'sitemapId' => $this->page->getSitemapId()]) ?>" title="<?= $displayName ?>">
+                                            <i class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($locale))?> m-r-xs"></i>
+                                        </a>
+                                    <?php endforeach; ?>
+                                    <div class="line line-dashed b-b line-lg"></div>
+                                </div>
+                                <div class="text-center"
+                                     ng-controller="ChangePageTypeController"
+                                     change-url="<?= $this->url('admin/sitemap/change-page-type', ['pageId' => $this->page->getId(), 'sitemapId' => $this->page->getSitemapId()]) ?>">
+                                    <button class="btn btn-default btn-sm" type="button" ng-click="change()">
+                                        <?= $this->translate('button.change-pageType', 'admin') ?>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <ul class="timeline timeline-sidebar">
                         <li class="tl-header">
                             <div class="b-a b-l bg-white text-left">
@@ -96,3 +123,26 @@
         </div>
     </div>
 </div>
+
+
+<script type="text/ng-template" id="changePageTypeModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title"><?= $this->translate('sitemap.modal.change-page-type.title', 'admin') ?></h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="m-b-md">
+                <?= $this->translate('sitemap.modal.change-page-type.content', 'admin') ?>
+            </div>
+            <form class="form-horizontal" role="form">
+                <?= $this->form($this->changePageTypeForm) ?>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" ng-click="ok()">
+            <?= $this->translate('button.change-pageType', 'admin') ?>
+        </button>
+        <button class="btn btn-default" ng-click="cancel()"><?= $this->translate('button.cancel', 'admin') ?></button>
+    </div>
+</script>

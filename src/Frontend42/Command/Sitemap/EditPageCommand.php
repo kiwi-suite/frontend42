@@ -131,7 +131,7 @@ class EditPageCommand extends AbstractCommand
             ->getPageType($this->sitemap->getPageType());
 
         $this->pageTypeContent = $this->getServiceManager()->get('Frontend42\PageTypeContent');
-        $this->pageTypeContent->setRawContent($this->content);
+        $this->pageTypeContent->setFromFormData($this->content);
     }
 
     /**
@@ -139,7 +139,7 @@ class EditPageCommand extends AbstractCommand
      */
     protected function execute()
     {
-        $this->pageVersion->setContent(Json::encode($this->content));
+        $this->pageVersion->setContent(Json::encode($this->pageTypeContent->getContent()));
 
         if (!$this->pageVersion->hasChanged("content")) {
             return $this->pageVersion;
