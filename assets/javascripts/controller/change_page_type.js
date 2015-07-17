@@ -15,7 +15,9 @@ angular.module('frontend42')
             });
 
             modalInstance.result.then(function (data) {
-                $window.location.href = data.redirect;
+                if (angular.isDefined(data.redirect)) {
+                    $window.location.href = data.redirect;
+                }
             }, function () {
             });
         };
