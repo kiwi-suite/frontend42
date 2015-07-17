@@ -30,7 +30,7 @@
                 <div class="dd3-content">
                     <div class="row">
                         <div class="col-md-8">
-                            <a class="btn btn-link btn-xs" ng-click="toggle(this)">
+                            <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
                                 <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
                             </a>
                             <code>#{{item.pageId}}</code> {{item.title}}
