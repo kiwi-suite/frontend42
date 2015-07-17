@@ -71,6 +71,24 @@ return [
                                     ],
                                 ],
                             ],
+                            'change-language' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route' => 'change-language/:locale/:sitemapId/',
+                                    'defaults' => [
+                                        'action' => 'change-language',
+                                    ],
+                                ],
+                            ],
+                            'change-page-type' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route' => 'change-page-type/:pageId/:sitemapId/',
+                                    'defaults' => [
+                                        'action' => 'change-page-type',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],

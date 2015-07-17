@@ -6,6 +6,7 @@ return array(
     'label.sitemap'                     => 'Sitemap',
     'label.pageType'                    => 'Page Type',
     'label.pageSelector'                => 'Page',
+    'label.name'                        => 'Name',
 
     'placeholder.pageselector'          => 'Select a Page',
 
@@ -19,6 +20,8 @@ return array(
 
     'sitemap.modal.delete.title'        => 'Delete Page',
     'sitemap.modal.delete.content'      => 'Do you really want to delete the page? Be careful! All subpages will be deletetd too.',
+    'sitemap.modal.change-page-type.title'      => 'Change PageType',
+    'sitemap.modal.change-page-type.content'      => 'Do you really want to change the PageType? All data and versions associated will be deleted.',
     'toaster.sitemap.delete.title.success'      => 'Page deleted',
     'toaster.sitemap.delete.message.success'    => 'Page with all subpages successfully deleted.',
 
