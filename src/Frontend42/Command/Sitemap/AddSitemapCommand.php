@@ -15,11 +15,6 @@ use Zend\Json\Json;
 class AddSitemapCommand extends AbstractCommand
 {
     /**
-     * @var int|null
-     */
-    protected $parentId;
-
-    /**
      * @var string
      */
     protected $pageType;
@@ -95,13 +90,15 @@ class AddSitemapCommand extends AbstractCommand
 
     protected function preExecute()
     {
-        $this->parentPage = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->parentPageId);
+        if (!empty($this->parentPageId)) {
+            $this->parentPage = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->parentPageId);
+        }
 
         $select = $this->getTableGateway('Frontend42\Sitemap')
             ->getSql()
             ->select();
 
-        $select->where(['parentId' => $this->parentPage->getId()]);
+        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parentPage->getId()]);
         $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
         $statement = $this->getTableGateway('Frontend42\Sitemap')->getSql()->prepareStatementForSqlObject($select);
         $result = $statement->execute()->current();
@@ -118,9 +115,12 @@ class AddSitemapCommand extends AbstractCommand
     protected function execute()
     {
         $sitemap = new Sitemap();
-        $sitemap->setParentId($this->parentId)
-            ->setPageType($this->pageType)
+        $sitemap->setPageType($this->pageType)
             ->setOrderNr($this->orderNr);
+
+        if (!empty($this->parentPage)) {
+            $sitemap->setParentId($this->parentPage->getId());
+        }
 
         /** @var PageTypeInterface $pageTypeObject */
         $pageTypeObject = $this->getServiceManager()->get('Frontend42\PageTypeProvider')->getPageType($this->pageType);
@@ -128,6 +128,11 @@ class AddSitemapCommand extends AbstractCommand
         $pageTypeObject->prepareForAdd($sitemap);
 
         $this->getTableGateway('Frontend42\Sitemap')->insert($sitemap);
+
+        $defaultLocale = $this->getServiceManager()->get('Localization')->getDefaultLocale();
+        if (!empty($this->parentPage)) {
+            $defaultLocale = $this->parentPage->getLocale();
+        }
 
         foreach ($this->getServiceManager()->get('Localization')->getAvailableLocales() as $locale) {
             $page = new Page();
@@ -139,7 +144,7 @@ class AddSitemapCommand extends AbstractCommand
                 'status' => Page::STATUS_OFFLINE
             ];
 
-            if ($locale === $this->parentPage->getLocale()) {
+            if ($locale === $defaultLocale) {
                 $page->setName($this->name);
 
                 $pageContent['name'] = $this->name;
@@ -164,7 +169,7 @@ class AddSitemapCommand extends AbstractCommand
 
         return $this->getTableGateway('Frontend42\Page')->select([
             'sitemapId' => $sitemap->getId(),
-            'locale'    => $this->parentPage->getLocale()
+            'locale'    => $defaultLocale
         ])->current();
     }
 }
