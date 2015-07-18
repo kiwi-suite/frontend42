@@ -42,12 +42,23 @@ class Page extends AbstractHelper
     }
 
     /**
+     * @return \Frontend42\Model\Page
+     */
+    public function getCurrentPage()
+    {
+        return $this->pageHandler->getCurrentPageInfo()['page'];
+    }
+
+    /**
      * @param string $name
      * @param mixed $default
      * @return mixed
      */
     public function getParam($name, $default = null)
     {
+        if (empty($this->selectedPage['content'])) {
+            return $default;
+        }
         return $this->selectedPage['content']->getParam($name, $default);
     }
 }

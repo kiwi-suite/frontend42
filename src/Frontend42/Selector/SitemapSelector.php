@@ -20,6 +20,8 @@ class SitemapSelector extends AbstractDatabaseSelector
      */
     protected $includeExclude = true;
 
+    protected $includeOffline = true;
+
     /**
      * @param string $locale
      * @return $this
@@ -38,6 +40,17 @@ class SitemapSelector extends AbstractDatabaseSelector
     public function setIncludeExclude($includeExclude)
     {
         $this->includeExclude = $includeExclude;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $includeOffline
+     * @return $this
+     */
+    public function setIncludeOffline($includeOffline)
+    {
+        $this->includeOffline = $includeOffline;
 
         return $this;
     }
@@ -102,6 +115,10 @@ class SitemapSelector extends AbstractDatabaseSelector
 
         if ($this->includeExclude === false) {
             $select->where(['s.exclude' => 'false']);
+        }
+
+        if ($this->includeOffline === false) {
+            $select->where(['p.status' => 'online']);
         }
 
         $select->order('s.orderNr ASC');

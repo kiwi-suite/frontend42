@@ -54,7 +54,11 @@ class Provider extends AbstractProvider
 
     protected function getSitemap($locale)
     {
-        return $this->sitemapSelector->setLocale($locale)->getResult();
+        return $this->sitemapSelector
+            ->setLocale($locale)
+            ->setIncludeOffline(false)
+            ->setIncludeExclude(false)
+            ->getResult();
     }
 
     /**

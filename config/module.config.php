@@ -20,6 +20,7 @@ return [
         ],
         'factories' => [
             'page'            => 'Frontend42\View\Helper\Service\PageFactory',
+            'pageRoute'       => 'Frontend42\View\Helper\Service\PageRouteFactory',
         ],
     ],
 

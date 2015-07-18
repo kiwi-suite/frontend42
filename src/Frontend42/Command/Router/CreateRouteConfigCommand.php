@@ -17,6 +17,53 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
     use \Core42\Command\ConsoleAwareTrait;
 
     /**
+     * @var array
+     */
+    protected $pageMapping = [];
+
+    /**
+     * @var array
+     */
+    protected $handleMapping = [];
+
+    /**
+     * @var array
+     */
+    protected $localeMapping = [];
+
+    /**
+     * @var bool
+     */
+    protected $caching = true;
+
+    /**
+     * @var bool
+     */
+    protected $includeOffline = false;
+
+    /**
+     * @param boolean $caching
+     * @return $this
+     */
+    public function setCaching($caching)
+    {
+        $this->caching = $caching;
+
+        return $this;
+    }
+
+    /**
+     * @param $includeOffline
+     * @return $this
+     */
+    public function setIncludeOffline($includeOffline)
+    {
+        $this->includeOffline = $includeOffline;
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     protected function execute()
@@ -32,53 +79,85 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         $childRoutes = [];
         foreach ($locales as $locale) {
 
-            $sitemapSelector->setLocale($locale);
-            $sitemapResult = $sitemapSelector->getResult();
+            $sitemapResult = $sitemapSelector
+                ->setIncludeExclude(false)
+                ->setIncludeOffline($this->includeOffline)
+                ->setLocale($locale)
+                ->getResult();
 
-            foreach ($sitemapResult as $sitemap) {
-
-                $key = $locale . '-' . $sitemap['sitemap']->getId();
-                $tmpRoutes = $this->buildRoutes($sitemap, $locale);
-
-                if (!empty($tmpRoutes)) $childRoutes[$key] = $tmpRoutes;
-            }
+            $childRoutes = array_merge($this->buildRoutes($sitemapResult, $locale, 'frontend'), $childRoutes);
         }
 
-        $cache = $this->getServiceManager()->get('Cache\Sitemap');
-        $cache->setItem("sitemap", $childRoutes);
+        $this->finalize();
+
+        if ($this->caching ===  true) {
+            $cache = $this->getServiceManager()->get('Cache\Sitemap');
+            $cache->setItem("sitemap", $childRoutes);
+            $cache->setItem("pageMapping", $this->pageMapping);
+            $cache->setItem("handleMapping", $this->handleMapping);
+        }
+
+        return [
+            'sitemap' => $childRoutes,
+            'pageMapping' => $this->pageMapping,
+            'handleMapping' => $this->handleMapping,
+        ];
     }
 
     /**
      * @param array $sitemap
      * @return array
      */
-    protected function buildRoutes($sitemap, $locale)
+    protected function buildRoutes($sitemap, $locale, $routePrefix)
     {
-        $childRoutes = [];
+        $pageRoutes = [];
 
-        /* @var Page $page*/
-        $page = $sitemap['page'];
-        $pageRoute = json_decode($page->getRoute(), true);
+        foreach ($sitemap as $_sitemap) {
+            /* @var Page $page*/
+            $page = $_sitemap['page'];
+            $pageRoute = json_decode($page->getRoute(), true);
 
-        if (empty($pageRoute)) {
-            return;
-        }
-
-        if (count($sitemap['children']) > 0) {
-            foreach ($sitemap['children'] as $child) {
-
-                $key = $locale . '-' . $child['sitemap']->getId();
-
-                $tmpRoutes = $this->buildRoutes($child, $locale);
-
-                if (!empty($tmpRoutes)) $childRoutes[$key] = $tmpRoutes;
+            if (empty($pageRoute)) {
+                continue;
             }
+
+            if ($_sitemap['sitemap']->getExclude() === true) {
+                continue;
+            }
+
+            $key = $locale . '-' . $_sitemap['sitemap']->getId();
+
+            $this->pageMapping[$_sitemap['page']->getId()] = [
+                'route'     => $routePrefix . '/' . $key,
+                'sitemapId' => $_sitemap['sitemap']->getId(),
+            ];
+            $this->localeMapping[$_sitemap['sitemap']->getId()][$locale] = $_sitemap['page']->getId();
+
+            if ($_sitemap['sitemap']->getHandle()) {
+                $this->handleMapping[$_sitemap['sitemap']->getHandle()][$locale] = $_sitemap['page']->getId();
+            }
+
+            if (count($_sitemap['children']) > 0) {
+                $tmpRoutes = $this->buildRoutes($_sitemap['children'], $locale, $routePrefix . '/' . $key);
+
+                if (!empty($tmpRoutes)) {
+                    $pageRoute['may_terminate'] = true;
+                    $pageRoute['child_routes'] = $tmpRoutes;
+                }
+            }
+
+            $pageRoutes[$key] = $pageRoute;
         }
 
-        $pageRoute['may_terminate'] = true;
-        $pageRoute['child_routes'] = $childRoutes;
+        return $pageRoutes;
+    }
 
-        return $pageRoute;
+    protected function finalize()
+    {
+        foreach ($this->pageMapping as $key => $_mapping) {
+            unset($this->pageMapping[$key]['sitemapId']);
+            $this->pageMapping[$key]['locale'] = $this->localeMapping[$_mapping['sitemapId']];
+        }
     }
 
     /**
