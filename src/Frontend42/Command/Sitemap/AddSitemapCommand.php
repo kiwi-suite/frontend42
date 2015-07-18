@@ -119,7 +119,7 @@ class AddSitemapCommand extends AbstractCommand
             ->setOrderNr($this->orderNr);
 
         if (!empty($this->parentPage)) {
-            $sitemap->setParentId($this->parentPage->getId());
+            $sitemap->setParentId($this->parentPage->getSitemapId());
         }
 
         /** @var PageTypeInterface $pageTypeObject */
