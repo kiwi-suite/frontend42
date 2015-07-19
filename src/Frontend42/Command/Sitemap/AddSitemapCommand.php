@@ -98,15 +98,16 @@ class AddSitemapCommand extends AbstractCommand
             ->getSql()
             ->select();
 
-        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parentPage->getId()]);
+        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parentPage->getSitemapId()]);
         $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
         $statement = $this->getTableGateway('Frontend42\Sitemap')->getSql()->prepareStatementForSqlObject($select);
         $result = $statement->execute()->current();
 
         $this->orderNr = $result['orderNr'];
         if (empty($this->orderNr)) {
-            $this->orderNr = 1;
+            $this->orderNr = 0;
         }
+        $this->orderNr++;
     }
 
     /**

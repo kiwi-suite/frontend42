@@ -125,24 +125,28 @@
 </div>
 
 
-<script type="text/ng-template" id="changePageTypeModal.html">
-    <div class="modal-header">
-        <h3 class="modal-title"><?= $this->translate('sitemap.modal.change-page-type.title', 'admin') ?></h3>
-    </div>
-    <div class="modal-body">
-        <div class="container-fluid">
-            <div class="m-b-md">
-                <?= $this->translate('sitemap.modal.change-page-type.content', 'admin') ?>
-            </div>
-            <form class="form-horizontal" role="form">
-                <?= $this->form($this->changePageTypeForm) ?>
-            </form>
+<?php
+$modalContent = <<<EOT
+<div class="modal-header">
+    <h3 class="modal-title">{$this->translate('sitemap.modal.change-page-type.title', 'admin')}</h3>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="m-b-md">
+            {$this->translate('sitemap.modal.change-page-type.content', 'admin')}
         </div>
+        <form class="form-horizontal" role="form">
+            {$this->form($this->changePageTypeForm)}
+        </form>
     </div>
-    <div class="modal-footer">
-        <button class="btn btn-danger" ng-click="ok()">
-            <?= $this->translate('button.change-pageType', 'admin') ?>
-        </button>
-        <button class="btn btn-default" ng-click="cancel()"><?= $this->translate('button.cancel', 'admin') ?></button>
-    </div>
-</script>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="ok()">
+        {$this->translate('button.change-pageType', 'admin')}
+    </button>
+    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
+</div>
+EOT;
+
+$this->admin()->addHtmlTemplate("changePageTypeModal.html", $modalContent);
+?>

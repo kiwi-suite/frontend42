@@ -71,7 +71,33 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     $scope.sitemap = [];
     loadTree();
 
-    $scope.addPage = function() {
+    $scope.addSubPage = function(parentId) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'addSubPageModalContent.html',
+            controller: 'AddPageModalController',
+            size: 'lg',
+            resolve: {
+                addSitemapUrl: function(){
+                    return $attrs.addUrl;
+                },
+                parentId: function(){
+                    return parentId;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (data) {
+            if (angular.isDefined(data.url)) {
+                $window.location.href = data.url;
+            }
+
+        }, function () {
+
+        });
+    };
+
+    $scope.addPage = function(parentId) {
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: 'addPageModalContent.html',
@@ -80,6 +106,9 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             resolve: {
                 addSitemapUrl: function(){
                     return $attrs.addUrl;
+                },
+                parentId: function(){
+                    return null;
                 }
             }
         });
@@ -100,14 +129,18 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
 }]);
 
-angular.module('frontend42').controller('AddPageModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', function ($scope, $modalInstance, $http, addSitemapUrl) {
+angular.module('frontend42').controller('AddPageModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', 'parentId', function ($scope, $modalInstance, $http, addSitemapUrl, parentId) {
     $scope.ok = function () {
+        if (parentId !== null) {
+        } else {
+            parentId = $scope.formElement.page_selector;
+        }
         $http({
                 method: 'POST',
                 url: addSitemapUrl,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 data: {
-                    page_selector: $scope.formElement.page_selector,
+                    page_selector: parentId,
                     page_type_selector: $scope.formElement.page_type_selector,
                     name: $scope.formElement.name
                 },
