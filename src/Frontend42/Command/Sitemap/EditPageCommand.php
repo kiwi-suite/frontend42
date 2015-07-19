@@ -177,7 +177,7 @@ class EditPageCommand extends AbstractCommand
 
         $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
 
-        $this->pageType->savePage($this->pageTypeContent, $this->page);
+        $this->pageType->savePage($this->pageTypeContent, $this->page, $this->approve);
 
         $this->page->setUpdated(new \DateTime())
                    ->setUpdatedBy($this->updatedUser->getId());

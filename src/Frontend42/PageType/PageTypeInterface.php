@@ -15,7 +15,8 @@ interface PageTypeInterface
     /**
      * @param PageTypeContent $content
      * @param PageModel $page
+     * @param $approved
      * @return mixed
      */
-    public function savePage(PageTypeContent $content, PageModel $page);
+    public function savePage(PageTypeContent $content, PageModel $page, $approved);
 }

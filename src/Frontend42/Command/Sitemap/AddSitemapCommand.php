@@ -183,7 +183,7 @@ class AddSitemapCommand extends AbstractCommand
             $pageTypeContent = new PageTypeContent();
             $pageTypeContent->setContent($pageContent);
 
-            $pageTypeObject->savePage($pageTypeContent, $page);
+            $pageTypeObject->savePage($pageTypeContent, $page, true);
 
             $this->getTableGateway('Frontend42\Page')->insert($page);
 

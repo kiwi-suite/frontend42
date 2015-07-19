@@ -4,11 +4,8 @@ namespace Frontend42\Command\Sitemap;
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
 use Frontend42\Model\Page;
-use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeContent;
-use Frontend42\PageType\PageTypeInterface;
-use Frontend42\Selector\PageVersionSelector;
 use Zend\Json\Json;
 
 class ApproveCommand extends AbstractCommand
@@ -32,6 +29,11 @@ class ApproveCommand extends AbstractCommand
      * @var int
      */
     protected $pageVersionId;
+
+    /**
+     * @var Sitemap
+     */
+    protected $sitemap;
 
 
     /**
@@ -109,7 +111,11 @@ class ApproveCommand extends AbstractCommand
     {
         $pageVersionTableGateway = $this->getTableGateway('Frontend42\PageVersion');
 
-        $result = $pageVersionTableGateway->select(['pageId' => $this->page->getId(), 'versionId' => $this->pageVersionId]);
+        $result = $pageVersionTableGateway->select([
+            'pageId' => $this->page->getId(),
+            'versionId' => $this->pageVersionId
+        ]);
+
         if ($result->count() <> 1) {
             return;
         }
@@ -123,6 +129,15 @@ class ApproveCommand extends AbstractCommand
 
         $this->page->setUpdated(new \DateTime())
                    ->setUpdatedBy($this->updatedUser->getId());
+
+        $pageTypeContent = new PageTypeContent();
+        $pageTypeContent->setContent(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
+
+        $pageTypeObject = $this->getServiceManager()
+            ->get('Frontend42\PageTypeProvider')
+            ->getPageType($this->sitemap->getPageType());
+        $pageTypeObject->savePage($pageTypeContent, $this->page, true);
+
 
         $this->getTableGateway('Frontend42\Page')->update($this->page);
 
