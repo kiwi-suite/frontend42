@@ -1,9 +1,85 @@
-<div>
-    <?= $this->partial('form/dynamic', [
-        'elements' => $this->elements,
-        'legend' => $this->legend,
-        'templateProtoTypes' => $this->templateProtoTypes,
-        'element' => $this->element,
-    ])?>
-</div>
 
+<?php
+if ($this->element->getEnableInheritance() === true) {
+    $templateContent = <<<EOT
+<div class="modal-header">
+    <h3 class="modal-title">Anchor</h3>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <form class="form-horizontal" role="form">
+            <div ng-show="isLoading" class="angular-ui-tree-loading text-center">
+                <i class="fa fa-spin fa-refresh"></i>
+            </div>
+            <div ng-hide="isLoading" class="dd" ui-tree="treeOptions" data-drag-enabled="false">
+                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
+                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'sitemapNode.html'"></li>
+                </ol>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok()">
+        <span class="fa fa-anchor"></span>
+        {$this->translate('button.save', 'admin')}
+    </button>
+    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
+</div>
+EOT;
+    $this->admin()->addHtmlTemplate("saveBlockAnchorModal.html", $templateContent);
+
+    $sitemapContent = <<<EOT
+<div class="dd3-content" style="padding-left:10px;" ng-style="selectableStyle(item)" ng-click="select(item)">
+    <div class="row">
+        <div class="col-md-10">
+            <code>#{{item.pageId}}</code> {{item.title}}
+        </div>
+        <div class="col-md-2 text-right">
+            <span ng-if="targetPageId == item.pageId" class="fa fa-check"></span>
+        </div>
+    </div>
+</div>
+<ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'sitemapNode.html'"></li>
+</ol>
+EOT;
+$this->admin()->addHtmlTemplate("sitemapNode.html", $sitemapContent);
+
+$blockInheritanceInfo = $this->block()->getRelatedPageInfo($this->params('id'), $this->element->getInternName());
+$jsonDataId = uniqid("block/inheritance/") .'.json';
+$this->admin()->addJsonTemplate($jsonDataId, $blockInheritanceInfo);
+}else {
+    $jsonDataId = uniqid("block/inheritance/") .'.json';
+    $this->admin()->addJsonTemplate($jsonDataId, []);
+}
+
+?>
+<div ng-controller="BlockAnchorController" json-data-id="<?= $jsonDataId ?>">
+    <div ng-if="!inheritanceInfo">
+        <?= $this->partial('form/dynamic', [
+            'elements' => $this->elements,
+            'legend' => $this->legend,
+            'templateProtoTypes' => $this->templateProtoTypes,
+            'element' => $this->element,
+        ])?>
+    </div>
+    <?php if ($this->element->getEnableInheritance() === true):?>
+    <div ng-if="inheritanceInfo" class="bg-light b b-light wrapper-md">
+        <h4 class="text-center">
+            <?= $this->translate('Section inherited from: ', 'admin')?> <a href="<?= $this->url('admin/sitemap/edit', ['id' => '{{ inheritanceInfo.id }}'])?>">{{ inheritanceInfo.name }}</a>
+        </h4>
+
+    </div>
+    <div>
+        <button ng-if="!inheritanceInfo" class="btn btn-xs btn-default" type="button" ng-click="saveAnchor('<?= $this->url('admin/block/inheritance-list') ?>', '<?= $this->url('admin/block/inheritance-save') ?>', '<?= $this->element->getInternName() ?>', <?= $this->params('id')?>)">
+            <span class="fa fa-anchor"></span>
+            Inherit from another Page
+        </button>
+        <button ng-if="inheritanceInfo" class="btn btn-xs btn-default" type="button" ng-click="cleanAnchor('<?= $this->url('admin/block/inheritance-clean') ?>', '<?= $this->element->getInternName() ?>', <?= $this->params('id')?>)">
+            <span class="fa fa-trash-o"></span>
+            Clean Inheritance
+        </button>
+    </div>
+    <?php endif; ?>
+</div>

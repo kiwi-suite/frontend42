@@ -15,12 +15,10 @@ return [
     ],
 
     'view_helpers' => [
-        'invokables' => [
-            'block'                => __NAMESPACE__ . '\View\Helper\Block',
-        ],
         'factories' => [
             'page'            => 'Frontend42\View\Helper\Service\PageFactory',
             'pageRoute'       => 'Frontend42\View\Helper\Service\PageRouteFactory',
+            'block'           => 'Frontend42\View\Helper\Service\BlockFactory',
         ],
     ],
 

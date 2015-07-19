@@ -24,12 +24,29 @@ class Block extends Dynamic
      */
     protected $availableBlocks = [];
 
+    protected $enableInheritance = false;
+
+    protected $interName;
+
     /**
      * @param BlockProvider $blockProvider
      */
     public function setBlockProvider(BlockProvider $blockProvider)
     {
         $this->blockProvider = $blockProvider;
+    }
+
+    /**
+     * @param string $name
+     * @return \Zend\Form\Element|\Zend\Form\ElementInterface
+     */
+    public function setName($name)
+    {
+        if ($this->interName === null) {
+            $this->interName = $name;
+        }
+
+        return parent::setName($name);
     }
 
     /**
@@ -46,6 +63,27 @@ class Block extends Dynamic
                 $this->addTargetElement($blockType, $this->blockProvider->getBlockForm($blockType));
             }
         }
+
+        if (isset($options['enable_inheritance'])) {
+            $this->enableInheritance = $options['enable_inheritance'];
+        }
+
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInternName()
+    {
+        return $this->interName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableInheritance()
+    {
+        return $this->enableInheritance;
     }
 }

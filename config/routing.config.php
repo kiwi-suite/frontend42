@@ -111,6 +111,45 @@ return [
                             ],
                         ],
                     ],
+                    'block' => [
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => [
+                            'route' => 'block/',
+                            'defaults' => [
+                                'controller' => __NAMESPACE__ . '\Block',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'inheritance-save' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route' => 'inheritance-save/',
+                                    'defaults' => [
+                                        'action' => 'save-inheritance',
+                                    ],
+                                ],
+                            ],
+                            'inheritance-clean' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route' => 'inheritance-clean/',
+                                    'defaults' => [
+                                        'action' => 'clean-inheritance',
+                                    ],
+                                ],
+                            ],
+                            'inheritance-list' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route' => 'inheritance-list/',
+                                    'defaults' => [
+                                        'action' => 'list-inheritance-page',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
