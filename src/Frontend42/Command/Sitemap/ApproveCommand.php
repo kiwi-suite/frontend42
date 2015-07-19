@@ -11,7 +11,7 @@ use Frontend42\PageType\PageTypeInterface;
 use Frontend42\Selector\PageVersionSelector;
 use Zend\Json\Json;
 
-class EditPageCommand extends AbstractCommand
+class ApproveCommand extends AbstractCommand
 {
     /**
      * @var Page
@@ -24,39 +24,15 @@ class EditPageCommand extends AbstractCommand
     protected $pageId;
 
     /**
-     * @var mixed
-     */
-    protected $content;
-
-    /**
-     * @var Sitemap
-     */
-    protected $sitemap;
-
-    /**
      * @var User
      */
     protected $updatedUser;
 
     /**
-     * @var PageVersion
+     * @var int
      */
-    protected $pageVersion;
+    protected $pageVersionId;
 
-    /**
-     * @var PageTypeInterface
-     */
-    protected $pageType;
-
-    /**
-     * @var PageTypeContent
-     */
-    protected $pageTypeContent;
-
-    /**
-     * @var bool
-     */
-    protected $approve = false;
 
     /**
      * @param Page $page
@@ -81,12 +57,12 @@ class EditPageCommand extends AbstractCommand
     }
 
     /**
-     * @param string $content
+     * @param int $pageVersionId
      * @return $this
      */
-    public function setContent($content)
+    public function setPageVersionId($pageVersionId)
     {
-        $this->content = $content;
+        $this->pageVersionId = $pageVersionId;
 
         return $this;
     }
@@ -98,17 +74,6 @@ class EditPageCommand extends AbstractCommand
     public function setUpdatedUser(User $updatedUser)
     {
         $this->updatedUser = $updatedUser;
-
-        return $this;
-    }
-
-    /**
-     * @param boolean $approve
-     * @return $this
-     */
-    public function setApprove($approve)
-    {
-        $this->approve = $approve;
 
         return $this;
     }
@@ -135,19 +100,6 @@ class EditPageCommand extends AbstractCommand
 
             return;
         }
-
-        $this->pageVersion = $this
-            ->getSelector('Frontend42\PageVersion')
-            ->setPageId($this->page->getId())
-            ->setVersionName(PageVersionSelector::VERSION_HEAD)
-            ->getResult();
-
-        $this->pageType = $this->getServiceManager()
-            ->get('Frontend42\PageTypeProvider')
-            ->getPageType($this->sitemap->getPageType());
-
-        $this->pageTypeContent = $this->getServiceManager()->get('Frontend42\PageTypeContent');
-        $this->pageTypeContent->setFromFormData($this->content);
     }
 
     /**
@@ -155,29 +107,19 @@ class EditPageCommand extends AbstractCommand
      */
     protected function execute()
     {
-        $this->pageVersion->setContent(Json::encode($this->pageTypeContent->getContent()));
-
-        if (!$this->pageVersion->hasChanged("content")) {
-            return $this->pageVersion;
-        }
-
         $pageVersionTableGateway = $this->getTableGateway('Frontend42\PageVersion');
 
-        $pageVersion = new PageVersion();
-        $pageVersion->setVersionId($this->pageVersion->getVersionId() + 1)
-            ->setContent($this->pageVersion->getContent())
-            ->setPageId($this->page->getId())
-            ->setCreated(new \DateTime())
-            ->setCreatedBy($this->updatedUser->getId());
-
-        if ($this->approve) {
-            $pageVersionTableGateway->update(['approved' => null], ['pageId' => $this->page->getId()]);
-            $pageVersion->setApproved(new \DateTime());
+        $result = $pageVersionTableGateway->select(['pageId' => $this->page->getId(), 'versionId' => $this->pageVersionId]);
+        if ($result->count() <> 1) {
+            return;
         }
 
-        $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
+        $pageVersionTableGateway->update(['approved' => null], ['pageId' => $this->page->getId()]);
 
-        $this->pageType->savePage($this->pageTypeContent, $this->page);
+        $pageVersion = $result->current();
+        $pageVersion->setApproved(new \DateTime());
+
+        $pageVersionTableGateway->update($pageVersion);
 
         $this->page->setUpdated(new \DateTime())
                    ->setUpdatedBy($this->updatedUser->getId());

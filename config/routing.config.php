@@ -59,6 +59,26 @@ return [
                                     'route' => 'edit/:id/[:version/]',
                                     'defaults' => [
                                         'action' => 'edit',
+                                        'approve' => false,
+                                    ],
+                                ],
+                            ],
+                            'edit-approve' => [
+                                'type' => 'Core42\Mvc\Router\Http\AngularSegment',
+                                'options' => [
+                                    'route' => 'edit/:id/[:version/]',
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                        'approve' => true,
+                                    ],
+                                ],
+                            ],
+                            'approve' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route' => 'approve/:id/:version',
+                                    'defaults' => [
+                                        'action' => 'approve',
                                     ],
                                 ],
                             ],

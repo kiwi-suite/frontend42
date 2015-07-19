@@ -22,6 +22,14 @@ use Core42\Model\AbstractModel;
  * @method int getLockedBy() getLockedBy()
  * @method Sitemap setHandle() setHandle(string $handle)
  * @method string getHandle() getHandle()
+ * @method Sitemap setUpdated(\DateTime $updated)
+ * @method string getUpdated()
+ * @method Sitemap setUpdatedBy(int $updatedBy)
+ * @method int getUpdatedBy()
+ * @method Sitemap setCreated(\DateTime $created)
+ * @method string getCreated()
+ * @method Sitemap setCreatedBy(int $createdBy)
+ * @method int getCreatedBy()
  */
 class Sitemap extends AbstractModel
 {
@@ -39,6 +47,10 @@ class Sitemap extends AbstractModel
         'lockedFrom',
         'lockedBy',
         'handle',
+        'updated',
+        'updatedBy',
+        'created',
+        'createdBy',
     );
 
 

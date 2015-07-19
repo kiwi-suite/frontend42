@@ -10,6 +10,7 @@
 namespace Frontend42;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
+use Core42\Authentication\AuthenticationService;
 use Core42\Console\Console;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -99,6 +100,18 @@ class Module implements
         $localization->acceptLocale($locale);
         $serviceManager->get('MvcTranslator')->setLocale($locale);
 
-        $serviceManager->get('Frontend42\Navigation\PageHandler')->loadCurrentPage($routeMatch->getParam("pageId"));
+        $versionId = $e->getRequest()->getQuery('versionId');
+
+        $pageHandler = $serviceManager->get('Frontend42\Navigation\PageHandler');
+        if ($versionId !== null) {
+            /* @var AuthenticationService $authenticationService */
+            $authenticationService = $serviceManager->get('Admin42\Authentication');
+            if ($authenticationService->hasIdentity()) {
+                $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"), $versionId);
+                return;
+            }
+        }
+
+        $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"));
     }
 }

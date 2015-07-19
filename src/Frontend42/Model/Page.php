@@ -24,6 +24,14 @@ use Core42\Model\AbstractModel;
  * @method string getRoute() getRoute()
  * @method Page setViewCount() setViewCount(int $viewCount)
  * @method string getViewCount() getViewCount()
+ * @method Page setUpdated(\DateTime $updated)
+ * @method string getUpdated()
+ * @method Page setUpdatedBy(int $updatedBy)
+ * @method int getUpdatedBy()
+ * @method Page setCreated(\DateTime $created)
+ * @method string getCreated()
+ * @method Page setCreatedBy(int $createdBy)
+ * @method int getCreatedBy()
  */
 class Page extends AbstractModel
 {
@@ -44,6 +52,10 @@ class Page extends AbstractModel
         'slug',
         'route',
         'viewCount',
+        'updated',
+        'updatedBy',
+        'created',
+        'createdBy',
     );
 
 

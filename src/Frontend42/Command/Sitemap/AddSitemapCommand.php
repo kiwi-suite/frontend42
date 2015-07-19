@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\Command\Sitemap;
 
+use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
@@ -18,6 +19,11 @@ class AddSitemapCommand extends AbstractCommand
      * @var string
      */
     protected $pageType;
+
+    /**
+     * @var User
+     */
+    protected $createdUser;
 
     /**
      * @var int
@@ -78,7 +84,18 @@ class AddSitemapCommand extends AbstractCommand
     }
 
     /**
-     * @param string $createdBy
+     * @param User $createdUser
+     * @return $this
+     */
+    public function setCreatedUser(User $createdUser)
+    {
+        $this->createdUser = $createdUser;
+
+        return $this;
+    }
+
+    /**
+     * @param int $createdBy
      * @return $this
      */
     public function setCreatedBy($createdBy)
@@ -92,6 +109,10 @@ class AddSitemapCommand extends AbstractCommand
     {
         if (!empty($this->parentPageId)) {
             $this->parentPage = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->parentPageId);
+        }
+
+        if ($this->createdUser !== null) {
+            $this->createdBy = $this->createdUser->getId();
         }
 
         $select = $this->getTableGateway('Frontend42\Sitemap')
@@ -117,7 +138,11 @@ class AddSitemapCommand extends AbstractCommand
     {
         $sitemap = new Sitemap();
         $sitemap->setPageType($this->pageType)
-            ->setOrderNr($this->orderNr);
+            ->setOrderNr($this->orderNr)
+            ->setCreated(new \DateTime())
+            ->setCreatedBy($this->createdBy)
+            ->setUpdated(new \DateTime())
+            ->setUpdatedBy($this->createdBy);
 
         if (!empty($this->parentPage)) {
             $sitemap->setParentId($this->parentPage->getSitemapId());
@@ -139,7 +164,11 @@ class AddSitemapCommand extends AbstractCommand
             $page = new Page();
             $page->setLocale($locale)
                 ->setStatus(Page::STATUS_OFFLINE)
-                ->setSitemapId($sitemap->getId());
+                ->setSitemapId($sitemap->getId())
+                ->setCreated(new \DateTime())
+                ->setCreatedBy($this->createdBy)
+                ->setUpdated(new \DateTime())
+                ->setUpdatedBy($this->createdBy);
 
             $pageContent = [
                 'status' => Page::STATUS_OFFLINE
@@ -161,8 +190,9 @@ class AddSitemapCommand extends AbstractCommand
             $pageVersion = new PageVersion();
             $pageVersion->setPageId($page->getId())
                 ->setVersionId(1)
-                ->setCreated(new \DateTime())
                 ->setContent(Json::encode($pageTypeContent->getContent()))
+                ->setApproved(new \DateTime())
+                ->setCreated(new \DateTime())
                 ->setCreatedBy($this->createdBy);
 
             $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);

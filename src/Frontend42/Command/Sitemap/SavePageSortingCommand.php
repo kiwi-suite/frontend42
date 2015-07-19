@@ -69,7 +69,8 @@ class SavePageSortingCommand extends AbstractCommand
 
             $sitemapNewOptions = $this->flatTree[$sitemap->getId()];
             $sitemap->setParentId($sitemapNewOptions['parentId'])
-                ->setOrderNr($sitemapNewOptions['orderNr']);
+                ->setOrderNr($sitemapNewOptions['orderNr'])
+                ->setUpdated(new \DateTime());
 
             $this->getTableGateway('Frontend42\Sitemap')->update($sitemap);
 

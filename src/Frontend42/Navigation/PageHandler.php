@@ -39,7 +39,7 @@ class PageHandler
      * @param int $pageId
      * @param string $version
      */
-    public function loadCurrentPage($pageId, $version = PageVersionSelector::VERSION_HEAD)
+    public function loadCurrentPage($pageId, $version = PageVersionSelector::VERSION_APPROVED)
     {
         $this->currentInfo = $this->loadByPageId($pageId, $version);
     }

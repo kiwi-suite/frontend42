@@ -10,6 +10,14 @@
                     <?php endif; ?>
                 </h1>
             </div>
+
+            <?php if($this->versions->count() > 2 && $this->versions->current()->getApproved() === null): ?>
+            <div class="alert alert-warning">
+                <?= $this->translate('alert.unpublished-version', 'admin') ?>
+            </div>
+            <?php endif; ?>
+            <?php $this->versions->rewind() ?>
+
             <div class="row-row">
                 <div class="wrapper-md">
                     <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
@@ -28,9 +36,13 @@
                         </tabset>
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <button class="btn btn-success" type="submit">
+                                <button class="btn btn-success" type="submit" name="save" value="save">
                                     <span class="fa fa-save"></span>
                                     <?= $this->translate('button.save', 'admin') ?>
+                                </button>
+                                <button class="btn btn-success" type="submit" name="save" value="approve">
+                                    <span class="fa fa-save"></span>
+                                    <?= $this->translate('button.save-approve', 'admin') ?>
                                 </button>
                                 <delete
                                     url="<?= $this->url('admin/sitemap/delete') ?>"
@@ -83,11 +95,11 @@
                             <div class="b-a b-l bg-white text-left">
                                 <dl class="wrapper-xs">
                                     <dt>Created</dt>
-                                    <dd>2015-01-01 12:12:12</dd>
+                                    <dd><?= $this->page->getCreated()->format("Y-m-d H:i:s") ?></dd>
                                     <dt>Last Modified</dt>
-                                    <dd>2015-01-01 12:12:12</dd>
+                                    <dd><?= $this->page->getUpdated()->format("Y-m-d H:i:s") ?></dd>
                                     <dt>Created By</dt>
-                                    <dd>Thomas Payer</dd>
+                                    <dd><?= $this->admin()->getUserDisplayNameById($this->page->getCreatedBy()) ?></dd>
                                 </dl>
                             </div>
                         </li>
@@ -104,8 +116,13 @@
 
                                             <code>#<?= $version->getVersionId() ?></code>
                                             <br>
-                                            Thomas Payer
+                                            <?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>
                                         </a>
+                                        <?php if ($version->getApproved() === null): ?>
+                                        <div class="center-block">
+                                            <a class="btn btn-default btn-xs" href="<?= $this->url('admin/sitemap/approve', ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">Approve</a>
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </li>
