@@ -100,7 +100,7 @@ class BlockController extends AbstractAdminController
                 'items'     => [],
                 'selectable'=> $selectable,
             ];
-            if (!empty($_item['children'])) {
+            if (!empty($_item['children']) && !$_item['sitemap']->getTerminal()) {
                 $node['items'] = $this->prepareJsonTree($_item['children'], $sitemap, $page, $section);
             }
 
