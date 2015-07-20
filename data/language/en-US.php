@@ -13,6 +13,10 @@ return array(
     'title.sitemap'                     => 'Sitemap',
 
     'button.page-add'                   => 'Add Page',
+    'button.change-pageType'            => 'Change PageType',
+    'button.save-approve'               => 'Save & Approve',
+
+    'alert.unpublished-version'         => "The most recent version of this page is pending approval.",
 
     'modal.sitemap.sorting-title'       => 'Save sorting',
     'modal.sitemap.sorting-warning'     => 'Do you really want to save the new sorting?',
