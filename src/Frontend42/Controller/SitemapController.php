@@ -14,6 +14,7 @@ use Frontend42\Selector\PageVersionSelector;
 use Zend\Db\Sql\Select;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
+use Zend\View\Model\ViewModel;
 
 class SitemapController extends AbstractAdminController
 {
@@ -205,14 +206,17 @@ class SitemapController extends AbstractAdminController
         });
         $versions->buffer();
 
-        return [
+        $viewModel = new ViewModel([
             'sections' => $pageTypeProvider->getDisplayFormSections($sitemap->getPageType()),
             'pageForm' => $pageForm,
             'versions' => $versions,
             'currentVersion' => $pageVersion,
             'page'     => $page,
             'changePageTypeForm' => $this->getForm('Frontend42\Sitemap\ChangePageType')
-        ];
+        ]);
+        $viewModel->setTemplate("frontend42/sitemap/edit");
+
+        return $viewModel;
     }
 
     public function approveAction()
