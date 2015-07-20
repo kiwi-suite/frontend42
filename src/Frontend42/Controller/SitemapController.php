@@ -51,7 +51,7 @@ class SitemapController extends AbstractAdminController
                 'droppable' => !$_item['sitemap']->getTerminal(),
                 'items'     => [],
             ];
-            if (!empty($_item['children'])) {
+            if (!empty($_item['children']) && !$_item['sitemap']->getTerminal()) {
                 $node['items'] = $this->prepareJsonTree($_item['children']);
             }
 
