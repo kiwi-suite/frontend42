@@ -51,7 +51,7 @@ $jsonDataId = uniqid("block/inheritance/") .'.json';
 $this->admin()->addJsonTemplate($jsonDataId, $blockInheritanceInfo);
 }else {
     $jsonDataId = uniqid("block/inheritance/") .'.json';
-    $this->admin()->addJsonTemplate($jsonDataId, []);
+    $this->admin()->addJsonTemplate($jsonDataId, null);
 }
 
 ?>
