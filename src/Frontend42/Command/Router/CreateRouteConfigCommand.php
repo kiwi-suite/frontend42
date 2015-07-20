@@ -125,6 +125,10 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
                 continue;
             }
 
+            $pageRoute['options']['defaults']['locale'] = $_sitemap['page']->getLocale();
+            $pageRoute['options']['defaults']['pageId'] = $_sitemap['page']->getId();
+            $pageRoute['options']['defaults']['sitemapId'] = $_sitemap['sitemap']->getId();
+
             $key = $locale . '-' . $_sitemap['sitemap']->getId();
 
             $this->pageMapping[$_sitemap['page']->getId()] = [
