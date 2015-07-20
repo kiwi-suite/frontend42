@@ -58,7 +58,7 @@ class PageHandler
      * @return array
      * @throws \Exception
      */
-    public function loadByPageId($pageId, $version = PageVersionSelector::VERSION_HEAD)
+    public function loadByPageId($pageId, $version = PageVersionSelector::VERSION_APPROVED)
     {
         $cacheKey = $pageId . '#' . $version;
 
@@ -87,7 +87,7 @@ class PageHandler
      * @param string $version
      * @return array
      */
-    public function getPageById($pageId, $version = PageVersionSelector::VERSION_HEAD)
+    public function getPageById($pageId, $version = PageVersionSelector::VERSION_APPROVED)
     {
         return $this->loadByPageId($pageId, $version);
     }

@@ -32,8 +32,8 @@ class Page extends AbstractHelper
     {
         if ($pageId === null) {
             $this->selectedPage = $this->pageHandler->getCurrentPageInfo();
-        } elseif (is_int($pageId)) {
-            $this->selectedPage = $this->pageHandler->getPageById($pageId);
+        } elseif (intval($pageId) > 0) {
+            $this->selectedPage = $this->pageHandler->getPageById((int)$pageId);
         } else {
 
         }
@@ -60,5 +60,16 @@ class Page extends AbstractHelper
             return $default;
         }
         return $this->selectedPage['content']->getParam($name, $default);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPage()
+    {
+        if (empty($this->selectedPage['page'])) {
+            return new \Frontend42\Model\Page();
+        }
+        return $this->selectedPage['page'];
     }
 }
