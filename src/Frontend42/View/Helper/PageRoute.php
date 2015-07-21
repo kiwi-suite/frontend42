@@ -72,6 +72,9 @@ class PageRoute extends AbstractHelper
     public function fromHandle($handle, $locale)
     {
         if (empty($this->handleMapping[$handle][$locale])) {
+            if ($this->defaultHandle !== $handle) {
+                return $this->fromHandle($this->defaultHandle, $locale);
+            }
             throw new \Exception("invalid handle/locale");
         }
 
