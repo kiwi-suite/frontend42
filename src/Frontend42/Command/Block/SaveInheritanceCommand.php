@@ -76,11 +76,17 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
             $this->targetPageId = $result->current()->getTargetPageId();
         }
 
+        $this->getTableGateway('Frontend42\BlockInheritance')->update([
+            'targetPageId' => $this->targetPageId
+        ], ['targetPageId' => $this->sourcePageId]);
+
         $blockInheritance= new BlockInheritance();
         $blockInheritance->setSourcePageId($this->sourcePageId)
             ->setTargetPageId($this->targetPageId)
             ->setSection($this->section);
 
         $this->getTableGateway('Frontend42\BlockInheritance')->insert($blockInheritance);
+
+
     }
 }
