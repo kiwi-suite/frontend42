@@ -39,6 +39,14 @@ return [
             'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',
             'Frontend42\Navigation\Provider' => 'Frontend42\Navigation\Provider\Service\ProviderFactory',
             'Frontend42\Navigation\PageHandler' => 'Frontend42\Navigation\Service\PageHandlerFactory',
+
+            'Frontend42\Link\SitemapLink' => 'Frontend42\Link\Adapter\Service\SitemapLinkFactory',
+        ],
+    ],
+
+    'link' => [
+        'adapter' => [
+            'sitemap' => 'Frontend42\Link\SitemapLink',
         ],
     ],
 ];

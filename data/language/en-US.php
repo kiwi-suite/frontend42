@@ -29,4 +29,5 @@ return array(
     'toaster.sitemap.delete.title.success'      => 'Page deleted',
     'toaster.sitemap.delete.message.success'    => 'Page with all subpages successfully deleted.',
 
+    'link-type.sitemap'               => 'Sitemap Link',
 );
