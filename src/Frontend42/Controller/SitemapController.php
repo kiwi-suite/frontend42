@@ -32,6 +32,7 @@ class SitemapController extends AbstractAdminController
 
         $result = $this->getSelector('Frontend42\Sitemap')
             ->setLocale($options['locale'])
+            ->setIncludeExclude(false)
             ->getResult();
 
         return new JsonModel($this->prepareJsonTree($result));

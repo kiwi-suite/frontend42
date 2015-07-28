@@ -34,7 +34,9 @@ class PageSelectorFactory implements FactoryInterface
             /** @var SitemapSelector $selector */
             $selector = $serviceLocator->getServiceLocator()->get('Selector')->get('Frontend42\Sitemap');
 
-            $sitemapArray[$_locale] = $this->prepareLocaleArray($selector->setLocale($_locale)->getResult());
+            $sitemapArray[$_locale] = $this->prepareLocaleArray(
+                $selector->setIncludeExclude(false)->setLocale($_locale)->getResult()
+            );
         }
 
         $element = new PageSelector();
