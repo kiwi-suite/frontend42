@@ -76,7 +76,14 @@ class Block extends AbstractHelper
         $blockData = (empty($blockData)) ? [] : $blockData;
 
         foreach ($blockData as $_block) {
-            $html[] = $partialHelper('block/'. $_block['dynamic_type'], $_block);
+            $partialFilename = 'block/'. $_block['dynamic_type'];
+
+            $resolved = $this->getView()->resolver($partialFilename);
+            if ($resolved === false) {
+                continue;
+            }
+
+            $html[] = $partialHelper($partialFilename, $_block);
         }
 
         return implode(PHP_EOL, $html);
