@@ -7,13 +7,18 @@ return array(
             'frontend42' => 'Frontend42\Navigation\Provider',
 
             'admin42' => array(
-                'sitemap' => array(
-                    'options' => array(
-                        'label' => 'label.sitemap',
-                        'route' => 'admin/sitemap',
-                        'icon' => 'fa fa-sitemap fa-fw',
-                    ),
-                ),
+                'content' => [
+                    'pages' => [
+                        'sitemap' => array(
+                            'options' => array(
+                                'label' => 'label.sitemap',
+                                'route' => 'admin/sitemap',
+                                'icon' => 'fa fa-sitemap fa-fw',
+                                'order' => 1000,
+                            ),
+                        ),
+                    ]
+                ]
             ),
         ),
     ),
