@@ -108,21 +108,30 @@
                             <li class="tl-item">
                                 <div class="tl-wrap <?= $version->getId()!== $this->currentVersion->getId() ? 'b-dark' : 'b-primary' ?>">
                                     <span class="tl-date text-xs">
-                                        <?= $version->getCreated()->format("Y-m-d H:i:s") ?>
-                                    </span>
-                                    <div class="tl-content b-a panel<?= $version->getId() !== $this->currentVersion->getId() ? '' : ' bg-primary' ?>" style="padding: 5px; 2px;">
-                                        <span class="arrow left pull-up<?= $version->getId() !== $this->currentVersion->getId() ? '': ' arrow-primary' ?>"></span>
-                                        <a class="text-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
-
-                                            <code>#<?= $version->getVersionId() ?></code>
-                                            <br>
-                                            <?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>
-                                        </a>
-                                        <?php if ($version->getApproved() === null): ?>
-                                        <div class="center-block">
-                                            <a class="btn btn-default btn-xs" href="<?= $this->url('admin/sitemap/approve', ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">Approve</a>
+                                        <div>
+                                            <span class="shortname-container-xs" popover-trigger="mouseenter" popover-placement="left" popover="<?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>">
+                                                <?= $this->admin()->getUserShortNameNameById($version->getCreatedBy()) ?>
+                                            </span>
                                         </div>
-                                        <?php endif; ?>
+                                        <div class="m-t-xs">
+                                            <?= $version->getCreated()->format("Y-m-d H:i:s") ?>
+                                        </div>
+                                    </span>
+                                    <div class="tl-content b-a panel<?= $version->getId() !== $this->currentVersion->getId() ? '' : ' bg-primary' ?>" style="padding: 5px; 2px; width: 5em;">
+                                        <span class="arrow left pull-up<?= $version->getId() !== $this->currentVersion->getId() ? '': ' arrow-primary' ?>"></span>
+                                        <div>
+                                            <code class="text-xs">#<?= $version->getVersionId() ?></code>
+                                        </div>
+                                        <div class="center-block m-t-xs text-dark">
+                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Load Version" class="btn btn-default btn-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
+                                                <span class="fa fa-mail-forward"></span>
+                                            </a>
+                                            <?php if ($version->getApproved() === null): ?>
+                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url('admin/sitemap/approve', ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
+                                                <span class="fa fa-check"></span>
+                                            </a>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
