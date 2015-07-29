@@ -3,6 +3,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     $scope.showOnline = true;
     $scope.showOffline = true;
     $scope.locale = $attrs.activeLocale;
+    $scope.query = "";
 
     var requestUrl = $attrs.requestUrl;
     var saveUrl = $attrs.saveUrl;
@@ -35,6 +36,30 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             error(function() {
                 loadTree();
             });
+    };
+
+    $scope.visible = function(item) {
+        if (!$scope.query || $scope.query.length == 0) {
+            return true;
+        }
+
+        if (item.title.toLowerCase().indexOf($scope.query.toLowerCase()) > -1) {
+            return true;
+        }
+
+        if (item.items.length > 0) {
+            for (var i = 0, len = item.items.length; i < len; i++) {
+                if ($scope.visible(item.items[i]) == true) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    $scope.findNodes = function(){
+
     };
 
     $scope.treeOptions = {

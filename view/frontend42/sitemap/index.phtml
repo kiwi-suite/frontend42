@@ -15,7 +15,10 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-md-3 col-md-offset-9">
+                <div class="col-md-9">
+                    <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
+                </div>
+                <div class="col-md-3">
                     <select ng-model="locale" class="form-control" ng-change="loadTree()">
                         <?php foreach($this->localization()->getAvailableLocalesDisplay() as $_locale => $_name): ?>
                             <option value="<?= $_locale?>"><?= $_name ?></option>
@@ -35,7 +38,7 @@ $nodesContent = <<<EOT
             <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
                 <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
             </a>
-            <code>#{{item.pageId}}</code> {{item.title}}
+            <code>#{{item.pageId}}</code> <span ng-bind-html="item.title | highlight: query"></span>
         </div>
         <div class="col-md-1 text-center">
             <span class="label" ng-class="{'label-success': item.status == 'online', 'label-danger': item.status == 'offline'}">{{ item.status }}</span>
@@ -67,7 +70,7 @@ $nodesContent = <<<EOT
     </div>
 </div>
 <ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
-    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="visible(item)"></li>
 </ol>
 EOT;
 
@@ -78,7 +81,7 @@ EOT;
             </div>
             <div ng-hide="isLoading" class="dd" ui-tree="treeOptions">
                 <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
-                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="visible(item)"></li>
                 </ol>
             </div>
         </div>
