@@ -90,11 +90,19 @@ class Module implements
         $routeMatch = $e->getRouteMatch();
 
         //check if frontend route
-        if (!($routeMatch->getParam("pageId", null) > 0)) {
+        if (substr($routeMatch->getMatchedRouteName(), 0, 6) == "admin/") {
             return;
         }
 
         $localization = $serviceManager->get('Localization');
+
+        //error page or not mapped page
+        if (!($routeMatch->getParam("pageId", null) > 0)) {
+            $locale = $localization->getDefaultLocale();
+            $localization->acceptLocale($locale);
+            $serviceManager->get('MvcTranslator')->setLocale($locale);
+            return;
+        }
 
         $locale = $routeMatch->getParam("locale", $localization->getLocaleFromHeader());
         $localization->acceptLocale($locale);
