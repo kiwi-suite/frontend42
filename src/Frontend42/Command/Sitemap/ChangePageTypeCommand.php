@@ -101,9 +101,9 @@ class ChangePageTypeCommand extends AbstractCommand
     protected function execute()
     {
         $this->sitemap->setPageType($this->pageType)
-            ->setExclude(null)
+            ->setExclude(false)
             ->setHandle(null)
-            ->setTerminal(null);
+            ->setTerminal(false);
 
         $pageTypeObject = $this->getServiceManager()->get('Frontend42\PageTypeProvider')->getPageType($this->pageType);
 
@@ -124,7 +124,7 @@ class ChangePageTypeCommand extends AbstractCommand
             $pageTypeContent = new PageTypeContent();
             $pageTypeContent->setContent($pageContent);
 
-            $pageTypeObject->savePage($pageTypeContent, $page);
+            $pageTypeObject->savePage($pageTypeContent, $page, true);
 
             $this->getTableGateway('Frontend42\Page')->update($page);
 
