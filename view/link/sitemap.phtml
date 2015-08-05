@@ -8,7 +8,10 @@ $langOptions = implode(PHP_EOL, $langOptions);
 $templateContent = <<<EOT
 <div ng-controller="LinkSitemapController" data-active-locale="{$this->localization()->getDefaultLocale()}" data-request-url="{$this->url('admin/sitemap/list')}">
 <div class="row">
-<div class="col-md-3 col-md-offset-9">
+<div class="col-sm-9">
+    <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
+</div>
+<div class="col-sm-3">
     <select ng-model="locale" class="form-control" ng-change="loadTree()">
         {$langOptions}
     </select>
@@ -19,7 +22,7 @@ $templateContent = <<<EOT
 </div>
 <div ng-hide="isLoading" class="dd" ui-tree="treeOptions" data-drag-enabled="false">
     <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
-        <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'linkSitemapNode.html'"></li>
+        <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'linkSitemapNode.html'" ng-show="visible(item)"></li>
     </ol>
 </div>
 </div>
@@ -38,7 +41,7 @@ $sitemapContent = <<<EOT
     </div>
 </div>
 <ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
-    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'linkSitemapNode.html'"></li>
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'linkSitemapNode.html'" ng-show="visible(item)"></li>
 </ol>
 EOT;
 $this->admin()->addHtmlTemplate("linkSitemapNode.html", $sitemapContent);

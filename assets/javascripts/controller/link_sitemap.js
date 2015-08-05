@@ -2,6 +2,7 @@ angular.module('frontend42')
     .controller('LinkSitemapController',['$scope', '$attrs', '$http', function($scope, $attrs, $http){
         $scope.selectedPage = 0;
         $scope.locale = $attrs.activeLocale;
+        $scope.query = "";
 
         var inititalValue = $scope.link.getValue();
         if (inititalValue != null) {
@@ -24,6 +25,30 @@ angular.module('frontend42')
         $scope.sitemap = [];
         $scope.loadTree = loadTree;
         loadTree();
+
+        $scope.visible = function(item) {
+            if (!$scope.query || $scope.query.length == 0) {
+                return true;
+            }
+
+            if (item.title.toLowerCase().indexOf($scope.query.toLowerCase()) > -1) {
+                return true;
+            }
+
+            if (item.items.length > 0) {
+                for (var i = 0, len = item.items.length; i < len; i++) {
+                    if ($scope.visible(item.items[i]) == true) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        };
+
+        $scope.findNodes = function(){
+
+        };
 
         $scope.selectableStyle = function(item) {
             if ($scope.selectedPage == item.pageId) {
