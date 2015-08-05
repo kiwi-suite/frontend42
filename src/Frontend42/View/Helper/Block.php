@@ -61,14 +61,7 @@ class Block extends AbstractHelper
             return $this;
         }
 
-        if ($section !== null) {
-            $page = $this->view->plugin('page');
-            $blockData = $this->getBlockData(
-                $blockData,
-                $page->getPage()->getId(),
-                $section
-            );
-        }
+        $blockData = $this->getCurrentBlockData($blockData, $section);
 
         $html = [];
         $partialHelper = $this->view->plugin('partial');
@@ -87,6 +80,20 @@ class Block extends AbstractHelper
         }
 
         return implode(PHP_EOL, $html);
+    }
+
+    public function getCurrentBlockData($blockData, $section =  null)
+    {
+        if ($section !== null) {
+            $page = $this->view->plugin('page');
+            $blockData = $this->getBlockData(
+                $blockData,
+                $page->getPage()->getId(),
+                $section
+            );
+        }
+
+        return $blockData;
     }
 
     /**
