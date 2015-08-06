@@ -12,6 +12,8 @@ use Core42\Model\AbstractModel;
  * @method string getLocale() getLocale()
  * @method Page setName() setName(string $name)
  * @method string getName() getName()
+ * @method Page setExcludeMenu() setExcludeMenu(boolean $excludeMenu)
+ * @method boolean getExcludeMenu() getExcludeMenu()
  * @method Page setPublishedFrom() setPublishedFrom(\DateTime $publishedFrom)
  * @method \DateTime getPublishedFrom() getPublishedFrom()
  * @method Page setPublishedUntil() setPublishedUntil(\DateTime $publishedUntil)
@@ -23,15 +25,15 @@ use Core42\Model\AbstractModel;
  * @method Page setRoute() setRoute(string $route)
  * @method string getRoute() getRoute()
  * @method Page setViewCount() setViewCount(int $viewCount)
- * @method string getViewCount() getViewCount()
- * @method Page setUpdated(\DateTime $updated)
- * @method string getUpdated()
- * @method Page setUpdatedBy(int $updatedBy)
- * @method int getUpdatedBy()
- * @method Page setCreated(\DateTime $created)
- * @method string getCreated()
- * @method Page setCreatedBy(int $createdBy)
- * @method int getCreatedBy()
+ * @method int getViewCount() getViewCount()
+ * @method Page setUpdated() setUpdated(\DateTime $updated)
+ * @method \DateTime getUpdated() getUpdated()
+ * @method Page setUpdatedBy() setUpdatedBy(int $updatedBy)
+ * @method int getUpdatedBy() getUpdatedBy()
+ * @method Page setCreated() setCreated(\DateTime $created)
+ * @method \DateTime getCreated() getCreated()
+ * @method Page setCreatedBy() setCreatedBy(int $createdBy)
+ * @method int getCreatedBy() getCreatedBy()
  */
 class Page extends AbstractModel
 {
@@ -46,6 +48,7 @@ class Page extends AbstractModel
         'sitemapId',
         'locale',
         'name',
+        'excludeMenu',
         'publishedFrom',
         'publishedUntil',
         'status',

@@ -22,6 +22,8 @@ class SitemapSelector extends AbstractDatabaseSelector
 
     protected $includeOffline = true;
 
+    protected $includeExcludedFromMenu = true;
+
     /**
      * @param string $locale
      * @return $this
@@ -56,6 +58,17 @@ class SitemapSelector extends AbstractDatabaseSelector
     }
 
     /**
+     * @param bool $includeExcludedFromMenu
+     * @return $this
+     */
+    public function setIncludeExcludeFromMenu($includeExcludedFromMenu)
+    {
+        $this->includeExcludedFromMenu = $includeExcludedFromMenu;
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getResult()
@@ -82,6 +95,10 @@ class SitemapSelector extends AbstractDatabaseSelector
         $sitemap = [];
         foreach ($flatSitemap as &$_item) {
             /** @var Sitemap $model */
+
+            if (!isset($_item['sitemap'])) {
+                continue;
+            }
             $model = $_item['sitemap'];
             if ($model->getParentId() > 0) {
                 $parent =& $flatSitemap[$model->getParentId()];
@@ -119,6 +136,10 @@ class SitemapSelector extends AbstractDatabaseSelector
 
         if ($this->includeOffline === false) {
             $select->where(['p.status' => 'online']);
+        }
+
+        if ($this->includeExcludedFromMenu === false) {
+            $select->where(['p.excludeMenu' => 'false']);
         }
 
         $select->order('s.orderNr ASC');

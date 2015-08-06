@@ -58,6 +58,7 @@ class Provider extends AbstractProvider
             ->setLocale($locale)
             ->setIncludeOffline(false)
             ->setIncludeExclude(false)
+            ->setIncludeExcludeFromMenu(false)
             ->getResult();
     }
 
