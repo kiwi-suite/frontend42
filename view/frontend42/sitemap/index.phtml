@@ -66,6 +66,9 @@ $nodesContent = <<<EOT
                 callback="deleteCallback"
                 >
             </delete>
+            <a class="btn btn-default btn-sm" ng-href="{$this->url('admin/sitemap/preview', ['id' => '{{ item.pageId }}'])}" target="_blank">
+                <span class="fa fa-mail-forward"></span>
+            </a>
         </div>
     </div>
 </div>

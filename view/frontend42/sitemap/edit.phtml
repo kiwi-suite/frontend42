@@ -8,6 +8,9 @@
                     <?php if (strlen($this->page->getName())): ?>
                         : "<?= $this->page->getName() ?>"
                     <?php endif; ?>
+                    <a class="btn btn-default" href="<?= $this->url('admin/sitemap/preview', ['id' => $this->page->getId()])?>" target="_blank">
+                        <i class="fa fa-mail-forward"></i>
+                    </a>
                 </h1>
             </div>
 
@@ -124,11 +127,11 @@
                                         </div>
                                         <div class="center-block m-t-xs text-dark">
                                             <a popover-trigger="mouseenter" popover-placement="top" popover="Load Version" class="btn btn-default btn-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
-                                                <span class="fa fa-mail-forward"></span>
+                                                <span class="fa fa-check-circle-o"></span>
                                             </a>
                                             <?php if ($version->getApproved() === null): ?>
                                             <a popover-trigger="mouseenter" popover-placement="top" popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url('admin/sitemap/approve', ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
-                                                <span class="fa fa-check"></span>
+                                                <span class="fa fa-thumbs-up"></span>
                                             </a>
                                             <?php endif; ?>
                                         </div>

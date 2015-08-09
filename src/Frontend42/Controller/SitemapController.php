@@ -204,6 +204,7 @@ class SitemapController extends AbstractAdminController
         $versions = $this->getTableGateway('Frontend42\PageVersion')->select(function(Select $select) use($page) {
             $select->where(['pageId' => $page->getId()]);
             $select->order('created DESC');
+            $select->limit(15);
         });
         $versions->buffer();
 
@@ -264,5 +265,12 @@ class SitemapController extends AbstractAdminController
         return new JsonModel([
             'redirect' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $this->params('pageId')])
         ]);
+    }
+
+    public function previewAction()
+    {
+        $pageHandler = $this->getServiceLocator()->get('Frontend42\Navigation\PageHandler');
+
+        return $this->redirect()->toRoute($pageHandler->getRouteByPage($this->params("id")));
     }
 }

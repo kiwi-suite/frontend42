@@ -63,6 +63,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'preview' => [
+                                'type' => 'Core42\Mvc\Router\Http\AngularSegment',
+                                'options' => [
+                                    'route' => 'preview/:id/[:version/]',
+                                    'defaults' => [
+                                        'action' => 'preview',
+                                    ],
+                                ],
+                            ],
                             'edit-approve' => [
                                 'type' => 'Core42\Mvc\Router\Http\AngularSegment',
                                 'options' => [
