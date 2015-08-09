@@ -2,37 +2,22 @@
 namespace Frontend42\View\Helper;
 
 use Frontend42\Model\Page as PageModel;
+use Frontend42\Navigation\PageHandler;
 use Zend\View\Helper\AbstractHelper;
 
 class PageRoute extends AbstractHelper
 {
     /**
-     * @var array
+     * @var PageHandler
      */
-    protected $pageMapping;
+    protected $pageHandler;
 
     /**
-     * @var array
+     * @param PageHandler $pageHandler
      */
-    protected $handleMapping;
-
-    /**
-     * @var string
-     */
-    protected $defaultHandle;
-
-    /**
-     * @param array $pageMapping
-     * @param array $handleMapping
-     * @param string $defaultHandle
-     */
-    public function __construct(array $pageMapping, array $handleMapping, $defaultHandle)
+    public function __construct(PageHandler $pageHandler)
     {
-        $this->pageMapping = $pageMapping;
-
-        $this->handleMapping = $handleMapping;
-
-        $this->defaultHandle = $defaultHandle;
+        $this->pageHandler = $pageHandler;
     }
 
     /**
@@ -50,24 +35,13 @@ class PageRoute extends AbstractHelper
      */
     public function fromPage($page)
     {
-        if ($page instanceof PageModel) {
-            $page = $page->getId();
-        }
-
-        $page = (int) $page;
-
-        if (!array_key_exists($page, $this->pageMapping)) {
-            throw new \Exception("invalid page");
-        }
-
-        return $this->pageMapping[$page]['route'];
+        return $this->pageHandler->getRouteByPage($page);
     }
 
     /**
      * @param string $handle
      * @param string $locale
      * @return string
-     * @throws \Exception
      */
     public function fromHandle($handle, $locale = null)
     {
@@ -75,14 +49,7 @@ class PageRoute extends AbstractHelper
             $locale = $this->getView()->localization()->getActiveLocale();
         }
 
-        if (empty($this->handleMapping[$handle][$locale])) {
-            if ($this->defaultHandle !== $handle) {
-                return $this->fromHandle($this->defaultHandle, $locale);
-            }
-            throw new \Exception("invalid handle/locale");
-        }
-
-        return $this->fromPage($this->handleMapping[$handle][$locale]);
+        return $this->pageHandler->getRouteByHandle($handle, $locale);
     }
 
     /**
@@ -93,28 +60,6 @@ class PageRoute extends AbstractHelper
      */
     public function switchLanguage($page, $locale)
     {
-        if ($page instanceof PageModel) {
-            $page = $page->getId();
-        }
-
-        $page = (int) $page;
-
-        if (!array_key_exists($page, $this->pageMapping)) {
-            if (!empty($this->defaultHandle)) {
-                return $this->fromHandle($this->defaultHandle, $locale);
-            }
-
-            throw new \Exception("invalid page and no default handle set");
-        }
-
-        if (!array_key_exists($locale, $this->pageMapping[$page]['locale'])){
-            if (!empty($this->defaultHandle)) {
-                return $this->fromHandle($this->defaultHandle, $locale);
-            }
-
-            throw new \Exception("invalid locale and no default handle set");
-        }
-
-        return $this->fromPage($this->pageMapping[$page]['locale'][$locale]);
+        return $this->pageHandler->getSwitchLanguageRoute($page, $locale);
     }
 }

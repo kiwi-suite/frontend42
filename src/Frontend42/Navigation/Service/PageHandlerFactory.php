@@ -16,9 +16,27 @@ class PageHandlerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new PageHandler(
+        $defaultHandle = $serviceLocator->get('config')['page_types']['default_handle'];
+
+        $cache = $serviceLocator->get('Cache\Sitemap');
+        $pageMapping = [];
+        $handleMapping = [];
+
+        if ($cache->hasItem('pageMapping')) {
+            $pageMapping = $cache->getItem("pageMapping");
+        }
+        if ($cache->hasItem('handleMapping')) {
+            $handleMapping = $cache->getItem("handleMapping");
+        }
+
+        $pageHandler = new PageHandler(
             $serviceLocator->get('TableGateway')->get('Frontend42\Page'),
             $serviceLocator->get('Selector')->get('Frontend42\PageVersion')
         );
+        $pageHandler->setDefaultHandle($defaultHandle);
+        $pageHandler->setHandleMapping($handleMapping);
+        $pageHandler->setPageMapping($pageMapping);
+
+        return $pageHandler;
     }
 }

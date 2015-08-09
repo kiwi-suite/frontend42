@@ -16,17 +16,10 @@ class SitemapLinkFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cache = $serviceLocator->get('Cache\Sitemap');
-        $pageMapping = [];
-
-        if ($cache->hasItem('pageMapping')) {
-            $pageMapping = $cache->getItem("pageMapping");
-        }
-
         return new SitemapLink(
             $serviceLocator->get('TableGateway')->get('Frontend42\Page'),
             $serviceLocator->get('Router'),
-            $pageMapping
+            $serviceLocator->get('Frontend42\Navigation\PageHandler')
         );
     }
 }

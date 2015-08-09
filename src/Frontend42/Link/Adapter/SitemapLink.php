@@ -2,6 +2,7 @@
 namespace Frontend42\Link\Adapter;
 
 use Admin42\Link\Adapter\AdapterInterface;
+use Frontend42\Navigation\PageHandler;
 use Frontend42\TableGateway\PageTableGateway;
 use Zend\Mvc\Router\RouteStackInterface;
 
@@ -18,20 +19,20 @@ class SitemapLink implements AdapterInterface
     protected $router;
 
     /**
-     * @var array
+     * @var PageHandler
      */
-    protected $pageMapping;
+    protected $pageHandler;
 
     public function __construct(
         PageTableGateway $pageTableGateway,
         RouteStackInterface $router,
-        $pageMapping
+        PageHandler $pageHandler
     ) {
         $this->pageTableGateway = $pageTableGateway;
 
         $this->router = $router;
 
-        $this->pageMapping = $pageMapping;
+        $this->pageHandler = $pageHandler;
     }
 
     /**
@@ -44,13 +45,13 @@ class SitemapLink implements AdapterInterface
             return "";
         }
 
-        if (!array_key_exists($value["id"], $this->pageMapping)) {
+        $routeName = $this->pageHandler->getRouteByPage($value['id']);
+
+        if (empty($routeName)) {
             return "";
         }
 
-        $name = $this->pageMapping[$value["id"]]['route'];
-
-        return $this->router->assemble([], ['name' => $name]);
+        return $this->router->assemble([], ['name' => $routeName]);
     }
 
     /**

@@ -16,19 +16,8 @@ class PageRouteFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $defaultHandle = $serviceLocator->getServiceLocator()->get('config')['page_types']['default_handle'];
-
-        $cache = $serviceLocator->getServiceLocator()->get('Cache\Sitemap');
-        $pageMapping = [];
-        $handleMapping = [];
-
-        if ($cache->hasItem('pageMapping')) {
-            $pageMapping = $cache->getItem("pageMapping");
-        }
-        if ($cache->hasItem('handleMapping')) {
-            $handleMapping = $cache->getItem("handleMapping");
-        }
-
-        return new PageRoute($pageMapping, $handleMapping, $defaultHandle);
+        return new PageRoute(
+            $serviceLocator->getServiceLocator()->get('Frontend42\Navigation\PageHandler')
+        );
     }
 }
