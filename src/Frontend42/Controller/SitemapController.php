@@ -42,15 +42,35 @@ class SitemapController extends AbstractAdminController
     {
         $tree = [];
         foreach ($items as $_item) {
+            $title = $_item['page']->getName();
+            $alternateNames = [];
+            if (empty($title)) {
+                $result = $this
+                    ->getTableGateway('Frontend42\Page')
+                    ->select([
+                        'sitemapId' => $_item['sitemap']->getId()
+                    ]);
+                foreach ($result as $_page) {
+                    if (strlen($_page->getName()) == 0) {
+                        continue;
+                    }
+                    $alternateNames[] = [
+                        'locale' => $_page->getLocale(),
+                        'region' => strtolower(\Locale::getRegion($_page->getLocale())),
+                        'title'  => $_page->getName()
+                    ];
+                }
+            }
             $node = [
                 'id'        => $_item['sitemap']->getId(),
                 'pageId'    => $_item['page']->getId(),
                 'locale'    => $_item['page']->getLocale(),
-                'title'     => $_item['page']->getName(),
+                'title'     => $title,
                 'status'    => $_item['page']->getStatus(),
                 'viewCount' => $_item['page']->getViewCount(),
                 'pageType'  => $_item['sitemap']->getPageType(),
                 'droppable' => !$_item['sitemap']->getTerminal(),
+                'alternateNames' => $alternateNames,
                 'items'     => [],
             ];
             if (!empty($_item['children']) && !$_item['sitemap']->getTerminal()) {

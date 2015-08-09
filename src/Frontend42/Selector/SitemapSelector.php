@@ -5,8 +5,10 @@ use Core42\Db\ResultSet\ResultSet;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
+use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Where;
 
 class SitemapSelector extends AbstractDatabaseSelector
 {
@@ -20,8 +22,14 @@ class SitemapSelector extends AbstractDatabaseSelector
      */
     protected $includeExclude = true;
 
+    /**
+     * @var bool
+     */
     protected $includeOffline = true;
 
+    /**
+     * @var bool
+     */
     protected $includeExcludedFromMenu = true;
 
     /**
