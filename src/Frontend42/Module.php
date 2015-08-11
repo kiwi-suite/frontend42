@@ -77,6 +77,21 @@ class Module implements
         );
 
         $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($this, 'localeSelection'));
+        $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'localeErrorSelection'));
+    }
+
+    public function localeErrorSelection(MvcEvent $e)
+    {
+        if (Console::isConsole()) {
+            return;
+        }
+
+        $serviceManager = $e->getApplication()->getServiceManager();
+
+        $localization = $serviceManager->get('Localization');
+        $locale = $localization->getDefaultLocale();
+        $localization->acceptLocale($locale);
+        $serviceManager->get('MvcTranslator')->setLocale($locale);
     }
 
     public function localeSelection(MvcEvent $e)
