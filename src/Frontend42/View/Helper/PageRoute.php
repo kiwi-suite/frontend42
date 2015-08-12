@@ -53,6 +53,20 @@ class PageRoute extends AbstractHelper
     }
 
     /**
+     * @param string $sitemapId
+     * @param string $locale
+     * @return string
+     */
+    public function fromSitemapId($sitemapId, $locale = null)
+    {
+        if ($locale === null) {
+            $locale = $this->getView()->localization()->getActiveLocale();
+        }
+
+        return $this->pageHandler->getRouteBySitemapId($sitemapId, $locale);
+    }
+
+    /**
      * @param int|PageModel $page
      * @param string $locale
      * @return string

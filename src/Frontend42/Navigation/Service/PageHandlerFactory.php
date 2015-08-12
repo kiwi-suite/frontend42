@@ -21,12 +21,16 @@ class PageHandlerFactory implements FactoryInterface
         $cache = $serviceLocator->get('Cache\Sitemap');
         $pageMapping = [];
         $handleMapping = [];
+        $sitemapMapping = [];
 
         if ($cache->hasItem('pageMapping')) {
             $pageMapping = $cache->getItem("pageMapping");
         }
         if ($cache->hasItem('handleMapping')) {
             $handleMapping = $cache->getItem("handleMapping");
+        }
+        if ($cache->hasItem('sitemapMapping')) {
+            $sitemapMapping = $cache->getItem("sitemapMapping");
         }
 
         $pageHandler = new PageHandler(
@@ -36,6 +40,7 @@ class PageHandlerFactory implements FactoryInterface
         $pageHandler->setDefaultHandle($defaultHandle);
         $pageHandler->setHandleMapping($handleMapping);
         $pageHandler->setPageMapping($pageMapping);
+        $pageHandler->setSitemapMapping($sitemapMapping);
 
         return $pageHandler;
     }

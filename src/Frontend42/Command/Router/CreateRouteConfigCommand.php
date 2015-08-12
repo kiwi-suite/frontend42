@@ -95,12 +95,14 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
             $cache->setItem("sitemap", $childRoutes);
             $cache->setItem("pageMapping", $this->pageMapping);
             $cache->setItem("handleMapping", $this->handleMapping);
+            $cache->setItem("sitemapMapping", $this->localeMapping);
         }
 
         return [
             'sitemap' => $childRoutes,
             'pageMapping' => $this->pageMapping,
             'handleMapping' => $this->handleMapping,
+            'sitemapMapping' => $this->localeMapping,
         ];
     }
 

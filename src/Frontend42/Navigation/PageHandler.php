@@ -35,6 +35,11 @@ class PageHandler
     protected $handleMapping;
 
     /**
+     * @var array
+     */
+    protected $sitemapMapping;
+
+    /**
      * @var string
      */
     protected $defaultHandle;
@@ -74,6 +79,14 @@ class PageHandler
     public function setPageMapping($pageMapping)
     {
         $this->pageMapping = $pageMapping;
+    }
+
+    /**
+     * @param array $sitemapMapping
+     */
+    public function setSitemapMapping($sitemapMapping)
+    {
+        $this->sitemapMapping = $sitemapMapping;
     }
 
     /**
@@ -169,6 +182,21 @@ class PageHandler
         }
 
         return $this->getRouteByPage($this->handleMapping[$handle][$locale]);
+    }
+
+    /**
+     * @param string $sitemapId
+     * @param string $locale
+     * @return string
+     * @throws \Exception
+     */
+    public function getRouteBySitemapId($sitemapId, $locale)
+    {
+        if (empty($this->sitemapMapping[$sitemapId][$locale])) {
+            return $this->getRouteByHandle($this->defaultHandle, $locale);
+        }
+
+        return $this->getRouteByPage($this->sitemapMapping[$sitemapId][$locale]);
     }
 
     /**
