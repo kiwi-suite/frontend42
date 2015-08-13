@@ -13,11 +13,6 @@ use Zend\View\Helper\AbstractHelper;
 class Block extends AbstractHelper
 {
     /**
-     * @var null|array
-     */
-    protected $relatedPageInfo = null;
-
-    /**
      * @var BlockInheritanceTableGateway
      */
     protected $blockInheritanceTableGateway;
@@ -104,14 +99,13 @@ class Block extends AbstractHelper
      */
     public function getRelatedPageInfo($pageId, $section)
     {
-        $this->loadRelatedPageInfo();
-
-        if (empty($this->relatedPageInfo[$pageId][$section])) {
+        $targetPageId = $this->getRelatedPageId($pageId, $section);
+        if ($targetPageId === false) {
             return false;
         }
 
         $page = $this->pageTableGateway->selectByPrimary(
-            $this->relatedPageInfo[$pageId][$section]
+            $targetPageId
         );
 
         return [
@@ -120,32 +114,32 @@ class Block extends AbstractHelper
         ];
     }
 
-    public function loadRelatedPageInfo()
+    public function getRelatedPageId($pageId, $section)
     {
-        if ($this->relatedPageInfo !== null) {
-            return;
+        $result = $this->blockInheritanceTableGateway->select([
+            'sourcePageId' => (int) $pageId,
+            'section'   => $section,
+        ]);
+
+        if ($result->count() == 0) {
+            return false;
         }
 
-        $this->relatedPageInfo = [];
+        $blockInheritance = $result->current();
 
-        $result = $this->blockInheritanceTableGateway->select();
-
-        /** @var BlockInheritance $_blockInheritance */
-        foreach ($result as $_blockInheritance) {
-            $this->relatedPageInfo[$_blockInheritance->getSourcePageId()][$_blockInheritance->getSection()] = $_blockInheritance->getTargetPageId();
-        }
+        return $blockInheritance->getTargetPageId();
     }
 
     public function getBlockData($blockData, $pageId, $section)
     {
-        $this->loadRelatedPageInfo();
-        if (empty($this->relatedPageInfo[$pageId][$section])) {
+        $targetPageId = $this->getRelatedPageId($pageId, $section);
+        if ($targetPageId === false) {
             return $blockData;
         }
 
         $version = $this->pageVersionSelector
             ->setVersionName(PageVersionSelector::VERSION_HEAD)
-            ->setPageId($this->relatedPageInfo[$pageId][$section])
+            ->setPageId($targetPageId)
             ->getResult();
 
         $pageContent = new PageTypeContent();

@@ -98,6 +98,8 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
             $cache->setItem("sitemapMapping", $this->localeMapping);
         }
 
+        $this->getCommand('Frontend42\Navigation\CreateFrontendNavigation')->run();
+
         return [
             'sitemap' => $childRoutes,
             'pageMapping' => $this->pageMapping,

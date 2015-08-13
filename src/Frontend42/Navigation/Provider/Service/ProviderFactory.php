@@ -16,9 +16,19 @@ class ProviderFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $sitemapSelector = $serviceLocator->get('Selector')->get('Frontend42\Sitemap');
         $defaultLocale = $serviceLocator->get('Localization')->getActiveLocale();
 
-        return new Provider($sitemapSelector, $defaultLocale);
+        $cache = $serviceLocator->get('Cache\Sitemap');
+
+        if (!$cache->hasItem('nav_' . $defaultLocale)){
+            $serviceLocator->get('Command')->get('Frontend42\Navigation\CreateFrontendNavigation')->run();
+        }
+
+        $pages = [];
+        if ($cache->hasItem('nav_' . $defaultLocale)){
+            $pages = $cache->getItem('nav_' . $defaultLocale);
+        }
+
+        return new Provider($pages, $defaultLocale);
     }
 }
