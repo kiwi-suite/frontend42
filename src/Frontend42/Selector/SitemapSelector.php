@@ -81,8 +81,6 @@ class SitemapSelector extends AbstractDatabaseSelector
      */
     public function getResult()
     {
-        print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-        die();
         $sql = new Sql($this->getServiceManager()->get('Db\Master'));
         $statement = $sql->prepareStatementForSqlObject($this->getSelect());
         $result = $statement->execute();
