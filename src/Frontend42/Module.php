@@ -15,10 +15,14 @@ use Core42\Console\Console;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
+use Zend\ModuleManager\ModuleEvent;
+use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Mvc\MvcEvent;
 
 class Module implements
     ConfigProviderInterface,
+    InitProviderInterface,
     BootstrapListenerInterface
 {
     /**
@@ -136,5 +140,32 @@ class Module implements
         }
 
         $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"));
+    }
+
+    /**
+     * Initialize workflow
+     *
+     * @param  ModuleManagerInterface $manager
+     * @return void
+     */
+    public function init(ModuleManagerInterface $manager)
+    {
+        $events = $manager->getEventManager();
+
+        $events->attach(ModuleEvent::EVENT_MERGE_CONFIG, array($this, 'onMergeConfig'));
+    }
+
+    public function onMergeConfig(ModuleEvent $e)
+    {
+        $configListener = $e->getConfigListener();
+        $config         = $configListener->getMergedConfig(false);
+
+        if ($config['caches']['Cache\Sitemap']['adapter']['name'] !== 'filesystem') {
+            unset($config['caches']['Cache\Sitemap']['adapter']['options']['cache_dir']);
+            unset($config['caches']['Cache\Sitemap']['adapter']['options']['dirPermission']);
+            unset($config['caches']['Cache\Sitemap']['adapter']['options']['filePermission']);
+        }
+
+        $configListener->setMergedConfig($config);
     }
 }
