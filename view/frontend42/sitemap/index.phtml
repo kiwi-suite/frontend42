@@ -1,0 +1,173 @@
+<div class="wrapper-md bg-white b-b box-shadow">
+    <h1 class="m-n font-thin h3">
+        <span class="fa fa-sitemap"></span>
+        <?= $this->translate('title.sitemap', 'admin') ?>
+    </h1>
+</div>
+
+<div class="wrapper-md"
+     data-request-url="<?= $this->url('admin/sitemap/list')?>"
+     data-save-url="<?= $this->url('admin/sitemap/save')?>"
+     data-add-url="<?= $this->url('admin/sitemap/add-sitemap')?>"
+     ng-controller="SitemapController"
+     data-active-locale="<?= $this->localization()->getDefaultLocale() ?>"
+    >
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-9">
+                    <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
+                </div>
+                <div class="col-md-3">
+                    <select ng-model="locale" class="form-control" ng-change="loadTree()">
+                        <?php foreach($this->localization()->getAvailableLocalesDisplay() as $_locale => $_name): ?>
+                            <option value="<?= $_locale?>"><?= $_name ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+
+            <?php
+$nodesContent = <<<EOT
+<div class="dd-handle dd3-handle" ui-tree-handle>&nbsp;</div>
+<div class="dd3-content">
+    <div class="row">
+        <div class="col-md-7">
+            <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
+                <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+            </a>
+            <code>#{{item.pageId}}</code>
+            <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
+            <span ng-if="item.alternateNames.length > 0">
+                <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">
+                    [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.title }}</del> ]
+                </small>
+            </span>
+        </div>
+        <div class="col-md-1 text-center">
+            <span class="label" ng-class="{'label-success': item.status == 'online', 'label-danger': item.status == 'offline'}">{{ item.status }}</span>
+        </div>
+        <div class="col-md-1 text-center">
+            <span class="label label-default">{{ item.viewCount }}</span>
+        </div>
+        <div class="col-md-1 text-center">
+            <span class="label label-default">{{ item.pageType }}</span>
+        </div>
+        <div class="col-md-2 text-right">
+            <a ng-if="item.droppable" class="btn btn-default btn-sm" ng-click="addSubPage(item.pageId)">
+                <span class="fa fa-plus"></span>
+            </a>
+            <a class="btn btn-info btn-sm" ng-href="{$this->url('admin/sitemap/edit', ['id' => '{{ item.pageId }}'])}">
+                <span class="fa fa-pencil"></span>
+            </a>
+            <delete
+                url="{$this->url('admin/sitemap/delete')}"
+                title="{$this->translate("sitemap.modal.delete.title", "admin")}"
+                size="xs"
+                content="{$this->translate("sitemap.modal.delete.content", "admin")}"
+                request-id="{{item.id}}"
+                method="delete"
+                callback="deleteCallback"
+                >
+            </delete>
+            <a class="btn btn-default btn-sm" ng-href="{$this->url('admin/sitemap/preview', ['id' => '{{ item.pageId }}'])}" target="_blank">
+                <span class="fa fa-mail-forward"></span>
+            </a>
+        </div>
+    </div>
+</div>
+<ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="visible(item)"></li>
+</ol>
+EOT;
+
+            $this->admin()->addHtmlTemplate("nodes_renderer.html", $nodesContent);
+            ?>
+            <div ng-show="isLoading" class="angular-ui-tree-loading text-center">
+                <i class="fa fa-spin fa-refresh"></i>
+            </div>
+            <div ng-hide="isLoading" class="dd" ui-tree="treeOptions">
+                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
+                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="visible(item)"></li>
+                </ol>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <a class="btn btn-default" ng-click="addPage()">
+                <span class="fa fa-plus-circle"></span>
+                <?= $this->translate('button.page-add', 'admin') ?>
+            </a>
+        </div>
+    </div>
+</div>
+
+<?php
+$checkContent = "";
+if (count($this->localization()->getAvailableLocales()) > 1) {
+    $checkContent = "<br><br><em>{$this->translate('modal.sitemap.sorting-lang-warning', 'admin')}</em>";
+}
+$templateContent = <<<EOT
+<div class="modal-header">
+    <h3 class="modal-title">{$this->translate('modal.sitemap.sorting-title', 'admin')}</h3>
+</div>
+<div class="modal-body">
+    {$this->translate('modal.sitemap.sorting-warning', 'admin')}
+    {$checkContent}
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok()">{$this->translate('button.save', 'admin')}</button>
+    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
+</div>
+EOT;
+
+$this->admin()->addHtmlTemplate("sortModalContent.html", $templateContent);
+
+$templateContent = <<<EOT
+<div class="modal-header">
+    <h3 class="modal-title">Add Page</h3>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <form class="form-horizontal" role="form">
+            {$this->form($this->createForm)}
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok()">
+        <span class="fa fa-plus-circle"></span>
+        {$this->translate('button.page-add', 'admin')}
+    </button>
+    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
+</div>
+EOT;
+$this->admin()->addHtmlTemplate("addPageModalContent.html", $templateContent);
+
+
+$subPageForm = clone $this->createForm;
+$subPageForm->remove("page_selector");
+$templateContent = <<<EOT
+<div class="modal-header">
+    <h3 class="modal-title">Add Page</h3>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <form class="form-horizontal" role="form">
+            {$this->form($subPageForm)}
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok()">
+        <span class="fa fa-plus-circle"></span>
+        {$this->translate('button.page-add', 'admin')}
+    </button>
+    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
+</div>
+EOT;
+$this->admin()->addHtmlTemplate("addSubPageModalContent.html", $templateContent);
+
+?>
