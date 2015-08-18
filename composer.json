@@ -1,0 +1,16 @@
+{
+    "name": "fruit42/frontend42",
+    "type": "zend-module",
+    "require": {
+        "php": ">=5.5",
+        "zendframework/zendframework": "=2.5.2",
+        "cocur/slugify": "v1.1",
+        "fruit42/core42": "dev-feature/core2.0",
+        "fruit42/admin42": "dev-develop"
+    },
+    "autoload": {
+        "psr-0": {
+            "Frontend42": "src/"
+        }
+    }
+}
