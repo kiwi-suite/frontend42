@@ -19,4 +19,10 @@ interface PageTypeInterface
      * @return mixed
      */
     public function savePage(PageTypeContent $content, PageModel $page, $approved);
+
+    /**
+     * @param PageModel $page
+     * @return mixed
+     */
+    public function deletePage(PageModel $page);
 }

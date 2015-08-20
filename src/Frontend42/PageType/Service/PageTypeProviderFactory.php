@@ -23,6 +23,17 @@ class PageTypeProviderFactory implements FactoryInterface
         $pageTypeProvider->loadPageTypes($config['paths']);
         $pageTypeProvider->setFormElementManager($serviceLocator->get("FormElementManager"));
 
+        $pageTypeProvider->addInitializer(function ($instance) use ($serviceLocator){
+            if (method_exists($instance, 'setKeywordCommand')) {
+                $instance
+                    ->setKeywordCommand(
+                        $serviceLocator
+                            ->get('Command')
+                            ->get('Frontend42\Keyword\RefreshPageKeywords')
+                    );
+            }
+        });
+
         return $pageTypeProvider;
     }
 }
