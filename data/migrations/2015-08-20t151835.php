@@ -12,7 +12,7 @@ class Migration20150820151835
   INDEX `fgk_page_keyword_idx` (`pageId` ASC)  COMMENT '',
   CONSTRAINT `fgk_page_keyword`
     FOREIGN KEY (`pageId`)
-    REFERENCES `skrapid`.`frontend42_page` (`id`)
+    REFERENCES `frontend42_page` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)";
 
