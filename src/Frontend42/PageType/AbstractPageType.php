@@ -64,10 +64,10 @@ abstract class AbstractPageType implements PageTypeInterface
         }
 
         $publishedFrom = $content->getParam('publishedFrom');
-        $publishedFrom = empty($publishedFrom) ? null : \DateTime::createFromFormat('Y-m-d H:i', $publishedFrom);
+        $publishedFrom = empty($publishedFrom) ? null : new \DateTime($publishedFrom);
         $publishedUntil = $content->getParam('publishedUntil');
-        $publishedUntil = empty($publishedUntil) ? null : \DateTime::createFromFormat('Y-m-d H:i', $publishedUntil);
-
+        $publishedUntil = empty($publishedUntil) ? null : new \DateTime($publishedUntil);
+        
         $excludeMenu = ($content->getParam("excludeMenu", "false") == "true") ? true : false;
 
         $routing = $this->getRouting($content, $page);
