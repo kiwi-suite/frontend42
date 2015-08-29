@@ -88,6 +88,25 @@ class Block extends AbstractHelper
             );
         }
 
+        return $this->cleanUpBlockData($blockData);
+    }
+
+    /**
+     * @param $blockData
+     * @return array
+     */
+    protected function cleanUpBlockData($blockData)
+    {
+        if (!is_array($blockData)) {
+            return [];
+        }
+
+        foreach ($blockData as $_key => $_block) {
+            if (!array_key_exists('dynamic_deleted', $_block) || $_block['dynamic_deleted'] == 'true') {
+                unset($blockData[$_key]);
+            }
+        }
+
         return $blockData;
     }
 
@@ -134,7 +153,7 @@ class Block extends AbstractHelper
     {
         $targetPageId = $this->getRelatedPageId($pageId, $section);
         if ($targetPageId === false) {
-            return $blockData;
+            return $this->cleanUpBlockData($blockData);
         }
 
         $version = $this->pageVersionSelector
@@ -145,7 +164,7 @@ class Block extends AbstractHelper
         $pageContent = new PageTypeContent();
         $pageContent->setContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
 
-        return $pageContent->getParam($section, $blockData);
+        return $this->cleanUpBlockData($pageContent->getParam($section, $blockData));
     }
 
 }
