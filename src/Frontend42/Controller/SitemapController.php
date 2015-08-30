@@ -9,6 +9,7 @@ use Frontend42\Command\Sitemap\EditPageCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeContent;
+use Frontend42\PageType\PageTypeInterface;
 use Frontend42\PageType\PageTypeProvider;
 use Frontend42\Selector\PageVersionSelector;
 use Zend\Db\Sql\Select;
@@ -289,8 +290,45 @@ class SitemapController extends AbstractAdminController
 
     public function previewAction()
     {
+        /** @var Page $page */
+        $page = $this->getTableGateway('Frontend42\Page')->selectByPrimary($this->params("id"));
+        $sitemap = $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary($page->getSitemapId());
+
+
+
+        /** @var PageTypeInterface $pageType */
+        $pageType = $this->getServiceLocator()
+            ->get('Frontend42\PageTypeProvider')
+            ->getPageType($sitemap->getPageType());
+
         $pageHandler = $this->getServiceLocator()->get('Frontend42\Navigation\PageHandler');
 
-        return $this->redirect()->toRoute($pageHandler->getRouteByPage($this->params("id")));
+        $pageVersion = $this
+            ->getSelector('Frontend42\PageVersion')
+            ->setPageId($page->getId())
+            ->setVersionName(PageVersionSelector::VERSION_APPROVED)
+            ->getResult();
+
+        $pageTypeContent = $this->getServiceLocator()->get('Frontend42\PageTypeContent');
+        $pageTypeContent->setContent(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
+
+        $routingParams = $pageType->getRoutingParams($page, $pageTypeContent);
+
+        if ($routingParams === false) {
+            return $this
+                ->redirect()
+                ->toRoute(
+                    $pageHandler->getRouteByPage(
+                        $this->params("id")
+                    )
+                );
+        }
+
+        return $this
+            ->redirect()
+            ->toRoute(
+                $routingParams['route'],
+                $routingParams['params']
+            );
     }
 }

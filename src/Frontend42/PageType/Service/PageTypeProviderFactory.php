@@ -32,6 +32,14 @@ class PageTypeProviderFactory implements FactoryInterface
                             ->get('Frontend42\Keyword\RefreshPageKeywords')
                     );
             }
+
+            if (method_exists($instance, 'setPageHandler')) {
+                $instance
+                    ->setPageHandler(
+                        $serviceLocator
+                            ->get('Frontend42\Navigation\PageHandler')
+                    );
+            }
         });
 
         return $pageTypeProvider;
