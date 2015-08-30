@@ -41,6 +41,9 @@ return [
             'Frontend42\Navigation\PageHandler' => 'Frontend42\Navigation\Service\PageHandlerFactory',
 
             'Frontend42\Link\SitemapLink' => 'Frontend42\Link\Adapter\Service\SitemapLinkFactory',
+
+            'Frontend42\Sitemap\EventManager' => 'Frontend42\Event\Service\SitemapEventManagerFactory',
+            'Frontend42\Block\EventManager' => 'Frontend42\Event\Service\BlockEventManagerFactory',
         ],
     ],
 

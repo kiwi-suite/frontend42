@@ -7,6 +7,7 @@ use Frontend42\PageType\PageTypeContent;
 use Frontend42\Selector\PageVersionSelector;
 use Frontend42\TableGateway\BlockInheritanceTableGateway;
 use Frontend42\TableGateway\PageTableGateway;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Json\Json;
 use Zend\View\Helper\AbstractHelper;
 
@@ -28,20 +29,29 @@ class Block extends AbstractHelper
     protected $pageTableGateway;
 
     /**
+     * @var StorageInterface
+     */
+    protected $cache;
+
+    /**
      * @param BlockInheritanceTableGateway $blockInheritanceTableGateway
      * @param PageVersionSelector $pageVersionSelector
      * @param PageTableGateway $pageTableGateway
+     * @param StorageInterface $cache
      */
     public function __construct(
         BlockInheritanceTableGateway $blockInheritanceTableGateway,
         PageVersionSelector $pageVersionSelector,
-        PageTableGateway $pageTableGateway
+        PageTableGateway $pageTableGateway,
+        StorageInterface $cache
     ) {
         $this->blockInheritanceTableGateway = $blockInheritanceTableGateway;
 
         $this->pageVersionSelector = $pageVersionSelector;
 
         $this->pageTableGateway = $pageTableGateway;
+
+        $this->cache = $cache;
     }
 
     /**
@@ -88,6 +98,25 @@ class Block extends AbstractHelper
             );
         }
 
+        return $this->cleanUpBlockData($blockData);
+    }
+
+    /**
+     * @param $blockData
+     * @return array
+     */
+    protected function cleanUpBlockData($blockData)
+    {
+        if (!is_array($blockData)) {
+            return [];
+        }
+
+        foreach ($blockData as $_key => $_block) {
+            if (!array_key_exists('dynamic_deleted', $_block) || $_block['dynamic_deleted'] == 'true') {
+                unset($blockData[$_key]);
+            }
+        }
+
         return $blockData;
     }
 
@@ -114,6 +143,32 @@ class Block extends AbstractHelper
         ];
     }
 
+    public function loadRelatedPageInfo($pageId, $section)
+    {
+        $cacheKey = "block_inheritance_" . $pageId . '_' . $section;
+        if (!$this->cache->hasItem($cacheKey)) {
+            $inheritance = false;
+
+            $targetPageId = $this->getRelatedPageId($pageId, $section);
+
+            if ($targetPageId !== false) {
+                $version = $this->pageVersionSelector
+                    ->setVersionName(PageVersionSelector::VERSION_APPROVED)
+                    ->setPageId($targetPageId)
+                    ->getResult();
+
+                $pageContent = new PageTypeContent();
+                $pageContent->setContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
+
+                $inheritance = $pageContent->getParam($section, []);
+            }
+
+            $this->cache->setItem($cacheKey, $inheritance);
+        }
+
+        return $this->cache->getItem($cacheKey);
+    }
+
     public function getRelatedPageId($pageId, $section)
     {
         $result = $this->blockInheritanceTableGateway->select([
@@ -132,20 +187,11 @@ class Block extends AbstractHelper
 
     public function getBlockData($blockData, $pageId, $section)
     {
-        $targetPageId = $this->getRelatedPageId($pageId, $section);
-        if ($targetPageId === false) {
-            return $blockData;
+        $result = $this->loadRelatedPageInfo($pageId, $section);
+        if ($result === false) {
+            return $this->cleanUpBlockData($blockData);
         }
 
-        $version = $this->pageVersionSelector
-            ->setVersionName(PageVersionSelector::VERSION_HEAD)
-            ->setPageId($targetPageId)
-            ->getResult();
-
-        $pageContent = new PageTypeContent();
-        $pageContent->setContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
-
-        return $pageContent->getParam($section, $blockData);
+        return $this->cleanUpBlockData($result);
     }
-
 }

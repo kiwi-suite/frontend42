@@ -10,6 +10,7 @@
 namespace Frontend42\Command\Block;
 
 
+use Frontend42\Event\BlockEvent;
 use Frontend42\Model\BlockInheritance;
 
 class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
@@ -87,6 +88,10 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
 
         $this->getTableGateway('Frontend42\BlockInheritance')->insert($blockInheritance);
 
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Block\EventManager')
+            ->trigger(BlockEvent::EVENT_ADD_INHERITANCE, $blockInheritance);
 
     }
 }

@@ -5,14 +5,15 @@ use Frontend42\Model\Page;
 use Frontend42\PageType\PageTypeContent;
 use Frontend42\Selector\PageVersionSelector;
 use Frontend42\TableGateway\PageTableGateway;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Json\Json;
 
 class PageHandler
 {
     /**
-     * @var array
+     * @var StorageInterface
      */
-    protected $cache = [];
+    protected $cache;
 
     /**
      * @var array
@@ -23,21 +24,6 @@ class PageHandler
      * @var PageTableGateway
      */
     protected $pageTableGateway;
-
-    /**
-     * @var array
-     */
-    protected $pageMapping;
-
-    /**
-     * @var array
-     */
-    protected $handleMapping;
-
-    /**
-     * @var array
-     */
-    protected $sitemapMapping;
 
     /**
      * @var string
@@ -51,18 +37,12 @@ class PageHandler
 
     public function __construct(
         PageTableGateway $pageTableGateway,
-        PageVersionSelector $pageVersionSelector
+        PageVersionSelector $pageVersionSelector,
+        StorageInterface $cache
     ) {
         $this->pageTableGateway = $pageTableGateway;
         $this->pageVersionSelector = $pageVersionSelector;
-    }
-
-    /**
-     * @param array $handleMapping
-     */
-    public function setHandleMapping($handleMapping)
-    {
-        $this->handleMapping = $handleMapping;
+        $this->cache = $cache;
     }
 
     /**
@@ -73,21 +53,6 @@ class PageHandler
         $this->defaultHandle = $defaultHandle;
     }
 
-    /**
-     * @param array $pageMapping
-     */
-    public function setPageMapping($pageMapping)
-    {
-        $this->pageMapping = $pageMapping;
-    }
-
-    /**
-     * @param array $sitemapMapping
-     */
-    public function setSitemapMapping($sitemapMapping)
-    {
-        $this->sitemapMapping = $sitemapMapping;
-    }
 
     /**
      * @param int $pageId
@@ -114,9 +79,9 @@ class PageHandler
      */
     public function loadByPageId($pageId, $version = PageVersionSelector::VERSION_APPROVED)
     {
-        $cacheKey = $pageId . '#' . $version;
+        $cacheKey = 'page_' . $pageId . '_' . $version;
 
-        if (!array_key_exists($cacheKey, $this->cache)) {
+        if (!$this->cache->hasItem($cacheKey)) {
             $page = $this->pageTableGateway->selectByPrimary((int) $pageId);
 
             $version = $this->pageVersionSelector
@@ -127,13 +92,13 @@ class PageHandler
             $pageContent = new PageTypeContent();
             $pageContent->setContent(Json::decode($version->getContent(), Json::TYPE_ARRAY));
 
-            $this->cache[$cacheKey] = [
+            $this->cache->setItem($cacheKey, [
                 'page'      => $page,
                 'content'   => $pageContent,
-            ];
+            ]);
         }
 
-        return $this->cache[$cacheKey];
+        return $this->cache->getItem($cacheKey);
     }
 
     /**
@@ -159,11 +124,16 @@ class PageHandler
 
         $page = (int) $page;
 
-        if (!array_key_exists($page, $this->pageMapping)) {
+        $pageMapping = [];
+        if ($this->cache->hasItem('pageMapping')) {
+            $pageMapping = $this->cache->getItem("pageMapping");
+        }
+
+        if (!array_key_exists($page, $pageMapping)) {
             return "";
         }
 
-        return $this->pageMapping[$page]['route'];
+        return $pageMapping[$page]['route'];
     }
 
     /**
@@ -174,14 +144,19 @@ class PageHandler
      */
     public function getRouteByHandle($handle, $locale)
     {
-        if (empty($this->handleMapping[$handle][$locale])) {
+        $handleMapping = [];
+        if ($this->cache->hasItem('handleMapping')) {
+            $handleMapping = $this->cache->getItem("handleMapping");
+        }
+
+        if (empty($handleMapping[$handle][$locale])) {
             if ($this->defaultHandle !== $handle) {
                 return $this->getRouteByHandle($this->defaultHandle, $locale);
             }
             return "";
         }
 
-        return $this->getRouteByPage($this->handleMapping[$handle][$locale]);
+        return $this->getRouteByPage($handleMapping[$handle][$locale]);
     }
 
     /**
@@ -192,11 +167,16 @@ class PageHandler
      */
     public function getRouteBySitemapId($sitemapId, $locale)
     {
-        if (empty($this->sitemapMapping[$sitemapId][$locale])) {
+        $sitemapMapping = [];
+        if ($this->cache->hasItem('sitemapMapping')) {
+            $sitemapMapping = $this->cache->getItem("sitemapMapping");
+        }
+
+        if (empty($sitemapMapping[$sitemapId][$locale])) {
             return $this->getRouteByHandle($this->defaultHandle, $locale);
         }
 
-        return $this->getRouteByPage($this->sitemapMapping[$sitemapId][$locale]);
+        return $this->getRouteByPage($sitemapMapping[$sitemapId][$locale]);
     }
 
     /**
@@ -213,7 +193,12 @@ class PageHandler
 
         $page = (int) $page;
 
-        if (!array_key_exists($page, $this->pageMapping)) {
+        $pageMapping = [];
+        if ($this->cache->hasItem('pageMapping')) {
+            $pageMapping = $this->cache->getItem("pageMapping");
+        }
+
+        if (!array_key_exists($page, $pageMapping)) {
             if (!empty($this->defaultHandle)) {
                 return $this->getRouteByHandle($this->defaultHandle, $locale);
             }
@@ -221,7 +206,7 @@ class PageHandler
             throw new \Exception("invalid page and no default handle set");
         }
 
-        if (!array_key_exists($locale, $this->pageMapping[$page]['locale'])){
+        if (!array_key_exists($locale, $pageMapping[$page]['locale'])){
             if (!empty($this->defaultHandle)) {
                 return $this->getRouteByHandle($this->defaultHandle, $locale);
             }
@@ -229,6 +214,6 @@ class PageHandler
             return "";
         }
 
-        return $this->getRouteByPage($this->pageMapping[$page]['locale'][$locale]);
+        return $this->getRouteByPage($pageMapping[$page]['locale'][$locale]);
     }
 }

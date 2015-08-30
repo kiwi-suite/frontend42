@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
@@ -198,9 +199,16 @@ class AddSitemapCommand extends AbstractCommand
             $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
         }
 
-        return $this->getTableGateway('Frontend42\Page')->select([
+        $model = $this->getTableGateway('Frontend42\Page')->select([
             'sitemapId' => $sitemap->getId(),
             'locale'    => $defaultLocale
         ])->current();
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_ADD, $model, ['pageType' => $pageTypeObject, 'sitemap' => $sitemap]);
+
+        return $model;
     }
 }

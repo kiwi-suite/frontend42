@@ -5,6 +5,7 @@ use Cocur\Slugify\Slugify;
 use Frontend42\Command\Keyword\RefreshPageKeywordsCommand;
 use Frontend42\Model\Page as PageModel;
 use Frontend42\Model\Sitemap;
+use Frontend42\Navigation\PageHandler;
 use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeInterface;
 use Frontend42\TableGateway\PageKeywordTableGateway;
@@ -17,11 +18,21 @@ abstract class AbstractPageType implements PageTypeInterface
     protected $refreshPageKeywordsCommand;
 
     /**
+     * @var PageHandler
+     */
+    protected $pageHandler;
+
+    /**
      * @param RefreshPageKeywordsCommand $refreshPageKeywordsCommand
      */
     public function setKeywordCommand(RefreshPageKeywordsCommand $refreshPageKeywordsCommand)
     {
         $this->refreshPageKeywordsCommand = $refreshPageKeywordsCommand;
+    }
+
+    public function setPageHandler(PageHandler $pageHandler)
+    {
+        $this->pageHandler = $pageHandler;
     }
 
     /**
@@ -86,4 +97,14 @@ abstract class AbstractPageType implements PageTypeInterface
     }
 
     abstract protected function getRouting(PageTypeContent $content, PageModel $page);
+
+    /**
+     * @param PageModel $page
+     * @param \Frontend42\PageType\PageTypeContent $content
+     * @return array|false
+     */
+    public function getRoutingParams(PageModel $page, PageTypeContent $content)
+    {
+        return false;
+    }
 }

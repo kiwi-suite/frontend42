@@ -3,14 +3,20 @@ return [
     'caches' => [
         'Cache\Sitemap' => [
             'adapter' => [
-                'name' => 'filesystem',
+                'name' => 'memory',
                 'options' => [
-                    'cache_dir'      => 'data/cache/sitemap/',
-                    'namespace'      => 'cache_sitemap',
-                    'dirPermission'  => 0770,
-                    'filePermission' => 0660,
-                    'readable'       => true,
-                    'writable'       => true,
+                    'namespace' => 'sitemap',
+                ],
+            ],
+            'plugins' => [
+                'Serializer'
+            ],
+        ],
+        'Cache\Block' => [
+            'adapter' => [
+                'name' => 'memory',
+                'options' => [
+                    'namespace' => 'block',
                 ],
             ],
             'plugins' => [

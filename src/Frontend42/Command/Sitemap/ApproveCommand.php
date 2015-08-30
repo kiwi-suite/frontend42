@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeContent;
@@ -142,6 +143,14 @@ class ApproveCommand extends AbstractCommand
         $this->getTableGateway('Frontend42\Page')->update($this->page);
 
         $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_APPROVED, $this->page, [
+                'pageType' => $pageTypeObject,
+                'sitemap' => $this->sitemap]
+            );
 
         return $pageVersion;
     }

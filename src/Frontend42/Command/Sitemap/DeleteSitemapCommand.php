@@ -2,6 +2,7 @@
 namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Sitemap;
 
 class DeleteSitemapCommand extends AbstractCommand
@@ -58,6 +59,10 @@ class DeleteSitemapCommand extends AbstractCommand
     {
         $this->getTableGateway('Frontend42\Sitemap')->delete($this->sitemap);
 
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_DELETE, $this->sitemap);
 
         $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
     }

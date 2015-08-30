@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
 use Core42\Db\ResultSet\ResultSet;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
@@ -136,6 +137,14 @@ class ChangePageTypeCommand extends AbstractCommand
                 ->setCreatedBy($this->createdBy);
 
             $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
+
+            $this
+                ->getServiceManager()
+                ->get('Frontend42\Sitemap\EventManager')
+                ->trigger(SitemapEvent::EVENT_CHANGE_PAGETYPE, $page, [
+                        'pageType' => $pageTypeObject,
+                        'sitemap' => $this->sitemap]
+                );
 
         }
     }

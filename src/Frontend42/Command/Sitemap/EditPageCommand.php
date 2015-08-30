@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
@@ -161,6 +162,14 @@ class EditPageCommand extends AbstractCommand
             return $this->pageVersion;
         }
 
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_EDIT_PRE, $this->page, [
+                    'pageType' => $this->pageType,
+                    'sitemap' => $this->sitemap]
+            );
+
         $pageVersionTableGateway = $this->getTableGateway('Frontend42\PageVersion');
 
         $pageVersion = new PageVersion();
@@ -173,6 +182,14 @@ class EditPageCommand extends AbstractCommand
         if ($this->approve) {
             $pageVersionTableGateway->update(['approved' => null], ['pageId' => $this->page->getId()]);
             $pageVersion->setApproved(new \DateTime());
+
+            $this
+                ->getServiceManager()
+                ->get('Frontend42\Sitemap\EventManager')
+                ->trigger(SitemapEvent::EVENT_APPROVED, $this->page, [
+                        'pageType' => $this->pageType,
+                        'sitemap' => $this->sitemap]
+                );
         }
 
         $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
@@ -185,6 +202,14 @@ class EditPageCommand extends AbstractCommand
         $this->getTableGateway('Frontend42\Page')->update($this->page);
 
         $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_EDIT_POST, $this->page, [
+                    'pageType' => $this->pageType,
+                    'sitemap' => $this->sitemap]
+            );
 
         return $pageVersion;
     }

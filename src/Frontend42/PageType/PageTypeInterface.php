@@ -25,4 +25,11 @@ interface PageTypeInterface
      * @return mixed
      */
     public function deletePage(PageModel $page);
+
+    /**
+     * @param PageModel $page
+     * @param PageTypeContent $content
+     * @return array
+     */
+    public function getRoutingParams(PageModel $page, PageTypeContent $content);
 }
