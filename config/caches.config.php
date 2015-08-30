@@ -4,6 +4,9 @@ return [
         'Cache\Sitemap' => [
             'adapter' => [
                 'name' => 'memory',
+                'options' => [
+                    'namespace' => 'sitemap',
+                ],
             ],
             'plugins' => [
                 'Serializer'
@@ -12,6 +15,9 @@ return [
         'Cache\Block' => [
             'adapter' => [
                 'name' => 'memory',
+                'options' => [
+                    'namespace' => 'block',
+                ],
             ],
             'plugins' => [
                 'Serializer'

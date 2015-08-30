@@ -2,6 +2,7 @@
 namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Sitemap;
 use Zend\Json\Json;
 use Zend\Stdlib\ArrayUtils;
@@ -50,6 +51,11 @@ class SavePageSortingCommand extends AbstractCommand
             ->getResult();
 
         $this->recursiveSave($result);
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_SORTING_CHANGE);
 
         $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
     }
