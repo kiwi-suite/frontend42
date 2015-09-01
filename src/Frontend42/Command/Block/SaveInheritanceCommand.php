@@ -93,5 +93,15 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
             ->get('Frontend42\Block\EventManager')
             ->trigger(BlockEvent::EVENT_ADD_INHERITANCE, $blockInheritance);
 
+        $this
+            ->getServiceManager()
+            ->get('Cache\Block')
+            ->removeItem('block_inheritance_' . $this->sourcePageId . '_' . $this->section);
+
+        $this
+            ->getServiceManager()
+            ->get('Cache\Block')
+            ->removeItem('block_inheritance_' . $this->targetPageId . '_' . $this->section);
+
     }
 }

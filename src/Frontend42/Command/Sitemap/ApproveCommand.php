@@ -7,6 +7,7 @@ use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageTypeContent;
+use Frontend42\Selector\PageVersionSelector;
 use Zend\Json\Json;
 
 class ApproveCommand extends AbstractCommand
@@ -151,6 +152,9 @@ class ApproveCommand extends AbstractCommand
                 'pageType' => $pageTypeObject,
                 'sitemap' => $this->sitemap]
             );
+
+        $cacheKey = 'page_' . $this->page->getId() . '_' . PageVersionSelector::VERSION_APPROVED;
+        $this->getServiceManager()->get('Cache\Sitemap')->removeItem($cacheKey);
 
         return $pageVersion;
     }
