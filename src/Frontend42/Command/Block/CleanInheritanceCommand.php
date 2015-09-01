@@ -70,5 +70,10 @@ class CleanInheritanceCommand extends \Core42\Command\AbstractCommand
             ->getServiceManager()
             ->get('Frontend42\Block\EventManager')
             ->trigger(BlockEvent::EVENT_DELETE_INHERITANCE, $model);
+
+        $this
+            ->getServiceManager()
+            ->get('Cache\Block')
+            ->removeItem('block_inheritance_' . $this->sourcePageId . '_' . $this->section);
     }
 }

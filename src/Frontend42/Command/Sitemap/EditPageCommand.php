@@ -211,6 +211,19 @@ class EditPageCommand extends AbstractCommand
                     'sitemap' => $this->sitemap]
             );
 
+        $cacheKey = 'page_' . $this->page->getId() . '_' . PageVersionSelector::VERSION_APPROVED;
+        $this->getServiceManager()->get('Cache\Sitemap')->removeItem($cacheKey);
+
+        $result = $this->getTableGateway('Frontend42\BlockInheritance')->select([
+            'targetPageId' => $this->page->getId()
+        ]);
+        foreach ($result as $_res) {
+            $this
+                ->getServiceManager()
+                ->get('Cache\Block')
+                ->removeItem('block_inheritance_' . $_res->getSourcePageId() . '_' . $_res->getSection());
+        }
+
         return $pageVersion;
     }
 }
