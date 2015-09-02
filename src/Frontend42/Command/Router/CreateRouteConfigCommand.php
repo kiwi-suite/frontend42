@@ -10,6 +10,7 @@
 namespace Frontend42\Command\Router;
 
 use Core42\I18n\Localization\Localization;
+use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
 
 class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
@@ -99,6 +100,11 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         }
 
         $this->getCommand('Frontend42\Navigation\CreateFrontendNavigation')->run();
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Sitemap\EventManager')
+            ->trigger(SitemapEvent::EVENT_GENERATE_SITEMAP);
 
         return [
             'sitemap' => $childRoutes,
