@@ -14,6 +14,7 @@ class SitemapEvent extends Event
     const EVENT_DELETE = 'event_delete';
     const EVENT_CHANGE_PAGETYPE = 'event_change_pagetype';
     const EVENT_SORTING_CHANGE = 'event_sorting_change';
+    const EVENT_GENERATE_SITEMAP = 'event_generate_sitemap';
 
     /**
      * @return PageTypeInterface
