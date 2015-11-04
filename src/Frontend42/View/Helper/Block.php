@@ -112,12 +112,14 @@ class Block extends AbstractHelper
         }
 
         foreach ($blockData as $_key => $_block) {
-            if (!array_key_exists('dynamic_deleted', $_block) || $_block['dynamic_deleted'] == 'true') {
-                unset($blockData[$_key]);
-            } else {
-                foreach($_block as $_subKey => $_subBlock) {
-                    if(is_array($_subBlock)) {
-                        $blockData[$_key][$_subKey] = $this->cleanUpBlockData($_subBlock);
+            if (is_array($_block)) {
+                if (!array_key_exists('dynamic_deleted', $_block) || $_block['dynamic_deleted'] == 'true') {
+                    unset($blockData[$_key]);
+                } else {
+                    foreach($_block as $_subKey => $_subBlock) {
+                        if(is_array($_subBlock)) {
+                            $blockData[$_key][$_subKey] = $this->cleanUpBlockData($_subBlock);
+                        }
                     }
                 }
             }

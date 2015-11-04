@@ -256,7 +256,7 @@ class SitemapController extends AbstractAdminController
             ->setUpdatedUser($authenticationService->getIdentity())
             ->run();
 
-        return $this->redirect()->toRoute('admin/sitemap/edit', array('id' => $pageId));
+        return $this->redirect()->toRoute('admin/sitemap/edit', ['id' => $pageId, 'version' => $pageVersionId]);
     }
 
     public function changeLanguageAction()
