@@ -15,6 +15,7 @@ return array(
                                 'route' => 'admin/sitemap',
                                 'icon' => 'fa fa-sitemap fa-fw',
                                 'order' => 1000,
+                                'permission' => 'route/admin/sitemap'
                             ),
                         ),
                     ]
