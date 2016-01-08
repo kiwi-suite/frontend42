@@ -22,21 +22,37 @@
             <?php $this->versions->rewind() ?>
 
             <div class="row-row">
+
                 <div class="wrapper-md">
+
+                    <?php if (count($this->pageForm->getMessages())): ?>
+                        <?php foreach ($this->pageForm->getMessages() as $fieldsetName => $fields): ?>
+                            <?php $fieldset = $this->pageForm->get($fieldsetName) ?>
+                            <?php foreach ($fields as $fieldName => $messages): ?>
+                                <?php $field = $fieldset->get($fieldName) ?>
+                                <?php foreach ($messages as $message): ?>
+                                    <div class="alert alert-danger">
+                                        <?= $field->getLabel() ?> in <?= $this->translate($fieldset->getLabel(), 'admin') ?> Tab: <?= $message ?>
+                                    </div>
+                                <?php endforeach ?>
+                            <?php endforeach ?>
+                        <?php endforeach ?>
+                    <?php endif ?>
+
                     <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
-                        <tabset class="tab-container">
+                        <uib-tabset uib-tabset-persist class="tab-container">
                             <?php
                             $this->pageForm->prepare();
                             ?>
                             <?php foreach ($this->pageForm as $fieldset): ?>
-                                <tab>
-                                    <tab-heading>
+                                <uib-tab class="<?= count($fieldset->getMessages()) ? 'has-errors' : '' ?>">
+                                    <uib-tab-heading>
                                         <?= $this->translate($fieldset->getLabel(), 'admin') ?>
-                                    </tab-heading>
+                                    </uib-tab-heading>
                                     <?= $this->formCollection($fieldset) ?>
-                                </tab>
+                                </uib-tab>
                             <?php endforeach; ?>
-                        </tabset>
+                        </uib-tabset>
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <button class="btn btn-success" type="submit" name="save" value="save">
