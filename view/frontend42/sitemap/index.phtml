@@ -34,7 +34,7 @@ $nodesContent = <<<EOT
 <div class="dd-handle dd3-handle" ui-tree-handle>&nbsp;</div>
 <div class="dd3-content">
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-8">
             <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
                 <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
             </a>
@@ -48,9 +48,6 @@ $nodesContent = <<<EOT
         </div>
         <div class="col-md-1 text-center">
             <span class="label" ng-class="{'label-success': item.status == 'online', 'label-danger': item.status == 'offline'}">{{ item.status }}</span>
-        </div>
-        <div class="col-md-1 text-center">
-            <span class="label label-default">{{ item.viewCount }}</span>
         </div>
         <div class="col-md-1 text-center">
             <span class="label label-default">{{ item.pageType }}</span>
