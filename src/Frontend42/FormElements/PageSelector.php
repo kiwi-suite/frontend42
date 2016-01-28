@@ -13,7 +13,9 @@ use Zend\Form\Element;
 
 class PageSelector extends Element
 {
-
+    /**
+     * @var array
+     */
     protected $sitemapData = [];
 
     /**

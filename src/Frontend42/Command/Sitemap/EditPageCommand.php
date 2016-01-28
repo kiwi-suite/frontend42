@@ -216,7 +216,8 @@ class EditPageCommand extends AbstractCommand
             ->get('Frontend42\Sitemap\EventManager')
             ->trigger(
                 SitemapEvent::EVENT_EDIT_POST,
-                $this->page, [
+                $this->page,
+                [
                     'pageType' => $this->pageType,
                     'sitemap' => $this->sitemap
                 ]
