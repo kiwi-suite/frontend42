@@ -9,6 +9,10 @@ use Zend\Json\Json;
 
 class BlockController extends AbstractAdminController
 {
+    /**
+     * @return array|JsonModel
+     * @throws \Exception
+     */
     public function saveInheritanceAction()
     {
         $this->getCommand('Frontend42\Block\SaveInheritance')
@@ -36,6 +40,9 @@ class BlockController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * @return JsonModel
+     */
     public function cleanInheritanceAction()
     {
         $this->getCommand('Frontend42\Block\CleanInheritance')
@@ -46,6 +53,10 @@ class BlockController extends AbstractAdminController
         return new JsonModel();
     }
 
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
     public function listInheritancePageAction()
     {
         $jsonString = $this->getRequest()->getContent();
@@ -65,6 +76,13 @@ class BlockController extends AbstractAdminController
         return new JsonModel($this->prepareJsonTree($result, $sitemap, $currentPage, $options['section']));
     }
 
+    /**
+     * @param $items
+     * @param Sitemap $sitemap
+     * @param Page $page
+     * @param $section
+     * @return array
+     */
     protected function prepareJsonTree($items, Sitemap $sitemap, Page $page, $section)
     {
         $tree = [];

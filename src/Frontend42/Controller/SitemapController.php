@@ -19,6 +19,9 @@ use Zend\View\Model\ViewModel;
 
 class SitemapController extends AbstractAdminController
 {
+    /**
+     * @return array
+     */
     public function indexAction()
     {
         return [
@@ -26,6 +29,9 @@ class SitemapController extends AbstractAdminController
         ];
     }
 
+    /**
+     * @return JsonModel
+     */
     public function listAction()
     {
         $jsonString = $this->getRequest()->getContent();
@@ -39,6 +45,10 @@ class SitemapController extends AbstractAdminController
         return new JsonModel($this->prepareJsonTree($result));
     }
 
+    /**
+     * @param $items
+     * @return array
+     */
     protected function prepareJsonTree($items)
     {
         $tree = [];
@@ -84,6 +94,9 @@ class SitemapController extends AbstractAdminController
         return $tree;
     }
 
+    /**
+     * @return JsonModel
+     */
     public function deleteAction()
     {
         if ($this->getRequest()->isDelete()) {
@@ -119,6 +132,9 @@ class SitemapController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * @return JsonModel
+     */
     public function saveAction()
     {
         $this->getCommand('Frontend42\Sitemap\SavePageSorting')
@@ -128,6 +144,10 @@ class SitemapController extends AbstractAdminController
         return new JsonModel(['success' => true]);
     }
 
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
     public function addSitemapAction()
     {
         $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
@@ -222,7 +242,7 @@ class SitemapController extends AbstractAdminController
             $pageForm->setData($formData);
         }
 
-        $versions = $this->getTableGateway('Frontend42\PageVersion')->select(function(Select $select) use($page) {
+        $versions = $this->getTableGateway('Frontend42\PageVersion')->select(function (Select $select) use ($page) {
             $select->where(['pageId' => $page->getId()]);
             $select->order('created DESC');
             $select->limit(15);
@@ -242,6 +262,10 @@ class SitemapController extends AbstractAdminController
         return $viewModel;
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Exception
+     */
     public function approveAction()
     {
         $pageId = $this->params('id');
@@ -259,6 +283,9 @@ class SitemapController extends AbstractAdminController
         return $this->redirect()->toRoute('admin/sitemap/edit', ['id' => $pageId, 'version' => $pageVersionId]);
     }
 
+    /**
+     * @return \Zend\Http\Response
+     */
     public function changeLanguageAction()
     {
         $result = $this->getTableGateway('Frontend42\Page')->select([
@@ -273,6 +300,9 @@ class SitemapController extends AbstractAdminController
         return $this->redirect()->toRoute('admin/sitemap');
     }
 
+    /**
+     * @return JsonModel
+     */
     public function changePageTypeAction()
     {
         $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
@@ -288,6 +318,10 @@ class SitemapController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Exception
+     */
     public function previewAction()
     {
         /** @var Page $page */

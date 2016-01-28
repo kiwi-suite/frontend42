@@ -39,6 +39,9 @@ class DeleteSitemapCommand extends AbstractCommand
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function preExecute()
     {
         if ($this->sitemapId > 0) {

@@ -23,6 +23,12 @@ class SitemapLink implements AdapterInterface
      */
     protected $pageHandler;
 
+    /**
+     * SitemapLink constructor.
+     * @param PageTableGateway $pageTableGateway
+     * @param RouteStackInterface $router
+     * @param PageHandler $pageHandler
+     */
     public function __construct(
         PageTableGateway $pageTableGateway,
         RouteStackInterface $router,

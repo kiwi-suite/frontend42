@@ -8,6 +8,10 @@ use Zend\Stdlib\ArrayUtils;
 class FrontendRouter extends TreeRouteStack
 {
 
+    /**
+     * @param array $options
+     * @return \Zend\Mvc\Router\SimpleRouteStack
+     */
     public static function factory($options = [])
     {
         if ($options instanceof \Traversable) {

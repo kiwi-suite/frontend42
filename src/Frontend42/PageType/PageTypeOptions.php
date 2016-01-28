@@ -130,6 +130,4 @@ class PageTypeOptions extends AbstractOptions
     {
         $this->form = $form;
     }
-
-
 }

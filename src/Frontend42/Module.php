@@ -81,9 +81,15 @@ class Module implements
         );
 
         $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($this, 'localeSelection'));
-        $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'localeErrorSelection'));
+        $e->getApplication()->getEventManager()->attach(
+            MvcEvent::EVENT_DISPATCH_ERROR,
+            array($this, 'localeErrorSelection')
+        );
     }
 
+    /**
+     * @param MvcEvent $e
+     */
     public function localeErrorSelection(MvcEvent $e)
     {
         if (Console::isConsole()) {
@@ -98,6 +104,9 @@ class Module implements
         $serviceManager->get('MvcTranslator')->setLocale($locale);
     }
 
+    /**
+     * @param MvcEvent $e
+     */
     public function localeSelection(MvcEvent $e)
     {
         if (Console::isConsole()) {
@@ -155,6 +164,9 @@ class Module implements
         $events->attach(ModuleEvent::EVENT_MERGE_CONFIG, array($this, 'onMergeConfig'));
     }
 
+    /**
+     * @param ModuleEvent $e
+     */
     public function onMergeConfig(ModuleEvent $e)
     {
         $configListener = $e->getConfigListener();

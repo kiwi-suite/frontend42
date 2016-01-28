@@ -31,5 +31,4 @@ class PageSelector extends Element
     {
         return $this->sitemapData;
     }
-
 }

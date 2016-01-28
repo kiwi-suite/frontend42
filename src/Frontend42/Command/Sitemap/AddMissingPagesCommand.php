@@ -13,6 +13,9 @@ class AddMissingPagesCommand extends AbstractCommand
      */
     protected $missing = [];
 
+    /**
+     *
+     */
     protected function preExecute()
     {
         /** @var Localization $localization */
@@ -26,7 +29,7 @@ class AddMissingPagesCommand extends AbstractCommand
 
             $select = $sql->select();
             $select->columns(array('id'));
-            $select->where(function (Where $where) use ($locale, $pageTableGateway){
+            $select->where(function (Where $where) use ($locale, $pageTableGateway) {
                 $select = $pageTableGateway->getSql()->select();
                 $select->columns(['sitemapId']);
                 $select->where(['locale' => $locale]);

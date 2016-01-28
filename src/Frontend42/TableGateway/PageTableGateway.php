@@ -20,6 +20,4 @@ class PageTableGateway extends AbstractTableGateway
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\Page';
-
-
 }

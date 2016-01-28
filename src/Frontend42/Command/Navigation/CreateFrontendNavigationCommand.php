@@ -26,11 +26,14 @@ class CreateFrontendNavigationCommand extends \Core42\Command\AbstractCommand
         $sitemapSelector = $this->getServiceManager()->get('Selector')->get('Frontend42\Sitemap');
 
         foreach ($locales as $locale) {
-            $pages = $this->buildNavigation($sitemapSelector->setLocale($locale)
-                ->setIncludeOffline(false)
-                ->setIncludeExclude(false)
-                ->setIncludeExcludeFromMenu(false)
-                ->getResult(), 'frontend');
+            $pages = $this->buildNavigation(
+                $sitemapSelector->setLocale($locale)
+                    ->setIncludeOffline(false)
+                    ->setIncludeExclude(false)
+                    ->setIncludeExcludeFromMenu(false)
+                    ->getResult(),
+                'frontend'
+            );
 
             $cache = $this->getServiceManager()->get('Cache\Sitemap');
             $cache->setItem("nav_" . $locale, $pages);

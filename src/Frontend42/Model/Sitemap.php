@@ -52,6 +52,4 @@ class Sitemap extends AbstractModel
         'created',
         'createdBy',
     );
-
-
 }

@@ -34,6 +34,4 @@ class PageVersion extends AbstractModel
         'createdBy',
         'approved',
     );
-
-
 }
