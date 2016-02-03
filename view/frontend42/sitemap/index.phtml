@@ -53,10 +53,10 @@ $nodesContent = <<<EOT
             <span class="label label-default">{{ item.pageType }}</span>
         </div>
         <div class="col-md-2 text-right">
-            <a ng-if="item.droppable" class="btn btn-default btn-sm" ng-click="addSubPage(item.pageId)">
+            <a ng-if="item.droppable" class="btn btn-default btn-xs" ng-click="addSubPage(item.pageId)">
                 <span class="fa fa-plus"></span>
             </a>
-            <a class="btn btn-info btn-sm" ng-href="{$this->url('admin/sitemap/edit', ['id' => '{{ item.pageId }}'])}">
+            <a class="btn btn-info btn-xs" ng-href="{$this->url('admin/sitemap/edit', ['id' => '{{ item.pageId }}'])}">
                 <span class="fa fa-pencil"></span>
             </a>
             <delete
@@ -69,7 +69,7 @@ $nodesContent = <<<EOT
                 callback="deleteCallback"
                 >
             </delete>
-            <a class="btn btn-default btn-sm" ng-href="{$this->url('admin/sitemap/preview', ['id' => '{{ item.pageId }}'])}" target="_blank">
+            <a class="btn btn-default btn-xs" ng-href="{$this->url('admin/sitemap/preview', ['id' => '{{ item.pageId }}'])}" target="_blank">
                 <span class="fa fa-mail-forward"></span>
             </a>
         </div>
