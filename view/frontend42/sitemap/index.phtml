@@ -15,10 +15,10 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-sm-9">
                     <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
                 </div>
-                <div class="col-md-3">
+                <div class="col-sm-3">
                     <select ng-model="locale" class="form-control" ng-change="loadTree()">
                         <?php foreach($this->localization()->getAvailableLocalesDisplay() as $_locale => $_name): ?>
                             <option value="<?= $_locale?>"><?= $_name ?></option>
@@ -34,11 +34,11 @@ $nodesContent = <<<EOT
 <div class="dd-handle dd3-handle" ui-tree-handle>&nbsp;</div>
 <div class="dd3-content">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-sm-6">
             <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
-                <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+                <span class="glyphicon text-muted" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
             </a>
-            <code>#{{item.pageId}}</code>
+            <!--code>#{{item.pageId}}</code-->
             <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
             <span ng-if="item.alternateNames.length > 0">
                 <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">
@@ -46,13 +46,11 @@ $nodesContent = <<<EOT
                 </small>
             </span>
         </div>
-        <div class="col-md-1 text-center">
+        <div class="col-sm-3 text-right">
+            <span class="label label-default">{{ item.pageType }}</span>
             <span class="label" ng-class="{'label-success': item.status == 'online', 'label-danger': item.status == 'offline'}">{{ item.status }}</span>
         </div>
-        <div class="col-md-1 text-center">
-            <span class="label label-default">{{ item.pageType }}</span>
-        </div>
-        <div class="col-md-2 text-right">
+        <div class="col-sm-3 text-right">
             <a ng-if="item.droppable" class="btn btn-default btn-xs" ng-click="addSubPage(item.pageId)">
                 <span class="fa fa-plus"></span>
             </a>
