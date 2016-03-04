@@ -40,7 +40,7 @@
                     <?php endif ?>
 
                     <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
-                        <uib-tabset uib-tabset-persist class="tab-container">
+                        <uib-tabset uib-tabset-persist="<?= md5($this->url(null, [], [], true)) ?>" class="tab-container">
                             <?php
                             $this->pageForm->prepare();
                             ?>
