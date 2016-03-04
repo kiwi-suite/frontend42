@@ -166,6 +166,9 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         return $pageRoutes;
     }
 
+    /**
+     *
+     */
     protected function finalize()
     {
         foreach ($this->pageMapping as $key => $_mapping) {

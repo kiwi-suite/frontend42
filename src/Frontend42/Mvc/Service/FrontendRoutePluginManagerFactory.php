@@ -33,5 +33,4 @@ class FrontendRoutePluginManagerFactory extends RoutePluginManagerFactory
 
         return $plugin;
     }
-
 }

@@ -20,7 +20,7 @@ class PageHandlerFactory implements FactoryInterface
 
         $cache = $serviceLocator->get('Cache\Sitemap');
 
-        if (!$cache->hasItem('sitemapMapping')){
+        if (!$cache->hasItem('sitemapMapping')) {
             $serviceLocator->get('Command')->get('Frontend42\Navigation\CreateFrontendNavigation')->run();
         }
 

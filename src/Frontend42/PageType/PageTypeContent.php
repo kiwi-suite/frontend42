@@ -36,7 +36,7 @@ class PageTypeContent
 
         $this->content = [];
 
-        foreach($elementArr as $array) {
+        foreach ($elementArr as $array) {
             foreach ($array as $name => $value) {
                 $this->content[$name] = $value;
             }

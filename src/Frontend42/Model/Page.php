@@ -60,6 +60,4 @@ class Page extends AbstractModel
         'created',
         'createdBy',
     );
-
-
 }

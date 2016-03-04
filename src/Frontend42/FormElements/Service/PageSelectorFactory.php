@@ -45,6 +45,11 @@ class PageSelectorFactory implements FactoryInterface
         return $element;
     }
 
+    /**
+     * @param array $sitemap
+     * @param int $level
+     * @return array
+     */
     protected function prepareLocaleArray(array $sitemap, $level = 0)
     {
         $preparedArray = [];

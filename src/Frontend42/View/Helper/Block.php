@@ -59,7 +59,7 @@ class Block extends AbstractHelper
      * @param null $section
      * @return $this|string
      */
-    public function __invoke($blockData = false, $section =  null)
+    public function __invoke($blockData = false, $section = null)
     {
         if ($blockData === false) {
 
@@ -87,7 +87,12 @@ class Block extends AbstractHelper
         return implode(PHP_EOL, $html);
     }
 
-    public function getCurrentBlockData($blockData, $section =  null)
+    /**
+     * @param $blockData
+     * @param null $section
+     * @return array
+     */
+    public function getCurrentBlockData($blockData, $section = null)
     {
         if ($section !== null) {
             $page = $this->view->plugin('page');
@@ -116,8 +121,8 @@ class Block extends AbstractHelper
                 if (!array_key_exists('dynamic_deleted', $_block) || $_block['dynamic_deleted'] == 'true') {
                     unset($blockData[$_key]);
                 } else {
-                    foreach($_block as $_subKey => $_subBlock) {
-                        if(is_array($_subBlock)) {
+                    foreach ($_block as $_subKey => $_subBlock) {
+                        if (is_array($_subBlock)) {
                             $blockData[$_key][$_subKey] = $this->cleanUpBlockData($_subBlock);
                         }
                     }
@@ -151,6 +156,11 @@ class Block extends AbstractHelper
         ];
     }
 
+    /**
+     * @param $pageId
+     * @param $section
+     * @return mixed
+     */
     public function loadRelatedPageInfo($pageId, $section)
     {
         $cacheKey = "block_inheritance_" . $pageId . '_' . $section;
@@ -177,6 +187,11 @@ class Block extends AbstractHelper
         return $this->cache->getItem($cacheKey);
     }
 
+    /**
+     * @param $pageId
+     * @param $section
+     * @return bool
+     */
     public function getRelatedPageId($pageId, $section)
     {
         $result = $this->blockInheritanceTableGateway->select([
@@ -193,6 +208,12 @@ class Block extends AbstractHelper
         return $blockInheritance->getTargetPageId();
     }
 
+    /**
+     * @param $blockData
+     * @param $pageId
+     * @param $section
+     * @return array
+     */
     public function getBlockData($blockData, $pageId, $section)
     {
         $result = $this->loadRelatedPageInfo($pageId, $section);

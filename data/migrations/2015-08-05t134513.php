@@ -11,7 +11,7 @@ class Migration20150805134513
 
     public function down(Zend\ServiceManager\ServiceManager $serviceManager)
     {
-        $sql = "ALTER TABLE `skrapid`.`frontend42_page` DROP COLUMN `excludeMenu`";
+        $sql = "ALTER TABLE `frontend42_page` DROP COLUMN `excludeMenu`";
 
         $serviceManager->get('Db\Master')->query($sql, \Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
     }

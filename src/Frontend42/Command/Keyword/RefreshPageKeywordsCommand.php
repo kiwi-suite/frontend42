@@ -52,7 +52,7 @@ class RefreshPageKeywordsCommand extends AbstractCommand
      */
     protected function preExecute()
     {
-        $this->keywords = array_map(function($value){
+        $this->keywords = array_map(function ($value) {
             return trim($value);
         }, $this->keywords);
     }

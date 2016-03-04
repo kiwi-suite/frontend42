@@ -18,7 +18,10 @@ class Provider extends AbstractProvider
      */
     protected $pages;
 
-
+    /**
+     * Provider constructor.
+     * @param $pages
+     */
     public function __construct($pages)
     {
         $this->pages = $pages;

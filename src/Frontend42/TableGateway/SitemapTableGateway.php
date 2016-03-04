@@ -20,6 +20,4 @@ class SitemapTableGateway extends AbstractTableGateway
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\Sitemap';
-
-
 }

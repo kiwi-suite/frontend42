@@ -13,6 +13,9 @@ use Zend\Form\Form;
 
 class ChangePageTypeForm extends Form
 {
+    /**
+     *
+     */
     public function init()
     {
         $pageTypeSelector = $this->getFormFactory()->getFormElementManager()->get('page_type_selector');
