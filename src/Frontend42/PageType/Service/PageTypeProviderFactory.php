@@ -20,6 +20,7 @@ class PageTypeProviderFactory implements FactoryInterface
         $config = $serviceLocator->get('config')['page_types'];
 
         $pageTypeProvider = new PageTypeProvider(new Config($config['service_manager']));
+        $pageTypeProvider->setServiceLocator($serviceLocator);
         $pageTypeProvider->loadPageTypes($config['paths']);
         $pageTypeProvider->setFormElementManager($serviceLocator->get("FormElementManager"));
 
