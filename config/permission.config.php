@@ -9,7 +9,8 @@ return [
                     'options' => [
                         'admin' => [
                             'permissions' => [
-                                'sitemap/manage*'
+                                'sitemap/manage*',
+                                'sitemap/locale*',
                             ],
                         ],
                     ],

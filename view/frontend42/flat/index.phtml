@@ -1,9 +1,24 @@
+<?php
+$defaultLocale = $this->localization()->getDefaultLocale();
+$availableLocales = [];
+foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay) {
+    if(!$this->permission('admin42')->isGranted('sitemap/locale/' . $locale)) continue;
+
+    $availableLocales[$locale] = $localeDisplay;
+}
+
+if (!in_array($defaultLocale, array_keys($availableLocales))) {
+    $defaultLocale = key($availableLocales);
+    reset($availableLocales);
+}
+?>
+
 <div class="wrapper-md bg-white b-b box-shadow">
     <h1 class="m-n font-thin h3">
         <span class="<?= $this->icon?>"></span> <?= $this->label ?>
     </h1>
 </div>
-<div class="wrapper-md" ng-controller="FlatController" ng-init="flat.locale = '<?= $this->localization()->getDefaultLocale() ?>'" add-url="<?= $this->url($this->routes['add-sitemap'])?>">
+<div class="wrapper-md" ng-controller="FlatController" ng-init="flat.locale = '<?= $defaultLocale ?>'" add-url="<?= $this->url($this->routes['add-sitemap'])?>">
     <div class="panel panel-default">
         <div class="table-responsive" ng-controller="DataGridController" data-url="<?= $this->url()?>" persist="<?= md5($this->routes['index']) ?>">
             <table st-table="collection"  st-pipe="callServer" st-refresh class="table table-striped top-border-radius">
@@ -32,7 +47,7 @@
                     <th colspan="2"></th>
                     <th>
                         <select class="form-control" st-input-event="change" st-search42="locale" ng-model="flat.locale">
-                            <?php foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay): ?>
+                            <?php foreach ($availableLocales as $locale => $localeDisplay): ?>
                                 <option value="<?= $locale ?>"><?= $localeDisplay ?></option>
                             <?php endforeach ?>
                         </select>

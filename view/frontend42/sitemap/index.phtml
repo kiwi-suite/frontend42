@@ -1,3 +1,18 @@
+<?php
+$defaultLocale = $this->localization()->getDefaultLocale();
+$availableLocales = [];
+foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay) {
+    if(!$this->permission('admin42')->isGranted('sitemap/locale/' . $locale)) continue;
+
+    $availableLocales[$locale] = $localeDisplay;
+}
+
+if (!in_array($defaultLocale, array_keys($availableLocales))) {
+    $defaultLocale = key($availableLocales);
+    reset($availableLocales);
+}
+?>
+
 <div class="wrapper-md bg-white b-b box-shadow">
     <h1 class="m-n font-thin h3">
         <span class="fa fa-sitemap"></span>
@@ -10,7 +25,7 @@
      data-save-url="<?= $this->url($this->routes['save'])?>"
      data-add-url="<?= $this->url($this->routes['add-sitemap'])?>"
      ng-controller="SitemapController"
-     data-active-locale="<?= $this->localization()->getDefaultLocale() ?>"
+     data-active-locale="<?= $defaultLocale ?>"
     >
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -20,7 +35,7 @@
                 </div>
                 <div class="col-sm-3">
                     <select ng-model="locale" class="form-control" ng-change="loadTree()">
-                        <?php foreach($this->localization()->getAvailableLocalesDisplay() as $_locale => $_name): ?>
+                        <?php foreach($availableLocales as $_locale => $_name): ?>
                             <option value="<?= $_locale?>"><?= $_name ?></option>
                         <?php endforeach; ?>
                     </select>
