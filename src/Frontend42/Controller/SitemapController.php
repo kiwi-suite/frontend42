@@ -386,7 +386,7 @@ class SitemapController extends AbstractAdminController
             ->getRouteMatch();
 
         $baseRouteName = $routeMatch->getMatchedRouteName();
-        if ($routeMatch->getParam("action") != "index"){
+        if ($routeMatch->getParam("action") != "index") {
             $baseRouteName = substr($baseRouteName, 0, strrpos($baseRouteName, '/'));
         }
 

@@ -60,7 +60,7 @@ abstract class FlatController extends SitemapController
      */
     public function listAction()
     {
-        return $this->redirect()->toRoute($this->routeIndex);
+        return $this->redirect()->toRoute($this->getRoute("index"));
     }
 
     /**
@@ -68,7 +68,7 @@ abstract class FlatController extends SitemapController
      */
     public function saveAction()
     {
-        return $this->redirect()->toRoute($this->routeIndex);
+        return $this->redirect()->toRoute($this->getRoute("index"));
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class FlatController extends SitemapController
 
         return new JsonModel([
             'success' => true,
-            'url' => $this->url()->fromRoute($this->routeEdit, ['id' => $page->getId()])
+            'url' => $this->url()->fromRoute($this->getRoute("edit"), ['id' => $page->getId()])
         ]);
     }
 }
