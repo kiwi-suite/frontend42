@@ -1,6 +1,6 @@
 
 <?php
-if ($this->element->getEnableInheritance() === true) {
+if ($this->element->getEnableInheritance() === true && $this->permission('admin42')->isGranted('route/admin/block/inheritance-save')) {
     $templateContent = <<<EOT
 <div class="modal-header">
     <h3 class="modal-title">Anchor</h3>
@@ -64,7 +64,7 @@ $this->admin()->addJsonTemplate($jsonDataId, $blockInheritanceInfo);
             'element' => $this->element,
         ])?>
     </div>
-    <?php if ($this->element->getEnableInheritance() === true):?>
+    <?php if ($this->element->getEnableInheritance() === true && $this->permission('admin42')->isGranted('route/admin/block/inheritance-save')):?>
     <div ng-if="inheritanceInfo" class="bg-light b b-light wrapper-md">
         <h4 class="text-center">
             <?= $this->translate('Section inherited from: ', 'admin')?> <a href="<?= $this->url('admin/sitemap/edit', ['id' => '{{ inheritanceInfo.id }}'])?>">{{ inheritanceInfo.name }}</a>
