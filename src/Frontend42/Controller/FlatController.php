@@ -2,7 +2,6 @@
 namespace Frontend42\Controller;
 
 use Core42\Navigation\Filter\IsActiveFilter;
-use Core42\Navigation\Filter\IsAllowedFilter;
 use Core42\Navigation\Navigation;
 use Core42\View\Model\JsonModel;
 use Frontend42\Command\Sitemap\AddSitemapCommand;

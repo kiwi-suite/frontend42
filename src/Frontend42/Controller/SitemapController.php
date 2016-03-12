@@ -12,6 +12,7 @@ use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeInterface;
 use Frontend42\PageType\PageTypeProvider;
 use Frontend42\Selector\PageVersionSelector;
+use Frontend42\Selector\SitemapSelector;
 use Zend\Db\Sql\Select;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
@@ -42,8 +43,9 @@ class SitemapController extends AbstractAdminController
         $jsonString = $this->getRequest()->getContent();
         $options = Json::decode($jsonString, Json::TYPE_ARRAY);
 
-        $result = $this->getSelector('Frontend42\Sitemap')
+        $result = $this->getSelector(SitemapSelector::class)
             ->setLocale($options['locale'])
+            ->setAuthorizationCheck(true)
             ->setIncludeExclude(false)
             ->getResult();
 
