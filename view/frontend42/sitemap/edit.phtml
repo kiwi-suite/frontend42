@@ -72,15 +72,9 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                         </uib-tabset>
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <button class="btn btn-success" type="submit" name="save" value="save">
-                                    <span class="fa fa-save"></span>
-                                    <?= $this->translate('button.save', 'admin') ?>
-                                </button>
+                                <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="save" value="save"></submit>
                                 <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['approve'])): ?>
-                                <button class="btn btn-success" type="submit" name="save" value="approve">
-                                    <span class="fa fa-save"></span>
-                                    <?= $this->translate('button.save-approve', 'admin') ?>
-                                </button>
+                                <submit submit-text="<?= $this->translate('button.save-approve', 'admin') ?>" name="save" value="approve"></submit>
                                 <?php endif; ?>
                                 <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['delete'])): ?>
                                 <delete
