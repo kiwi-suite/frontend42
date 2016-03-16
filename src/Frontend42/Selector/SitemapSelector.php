@@ -2,13 +2,12 @@
 namespace Frontend42\Selector;
 
 use Core42\Db\ResultSet\ResultSet;
+use Core42\Permission\Rbac\AuthorizationService;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
-use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Where;
 
 class SitemapSelector extends AbstractDatabaseSelector
 {
@@ -31,6 +30,11 @@ class SitemapSelector extends AbstractDatabaseSelector
      * @var bool
      */
     protected $includeExcludedFromMenu = true;
+
+    /**
+     * @var bool
+     */
+    protected $authorizationCheck = false;
 
     /**
      * @param string $locale
@@ -77,6 +81,17 @@ class SitemapSelector extends AbstractDatabaseSelector
     }
 
     /**
+     * @param bool $authorizationCheck
+     * @return $this
+     */
+    public function setAuthorizationCheck($authorizationCheck)
+    {
+        $this->authorizationCheck = (boolean) $authorizationCheck;
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getResult()
@@ -118,7 +133,36 @@ class SitemapSelector extends AbstractDatabaseSelector
             $sitemap[] =& $_item;
         }
 
+        if ($this->authorizationCheck === true) {
+            return $this->getTreePart($sitemap);
+        }
+
         return $sitemap;
+    }
+
+    /**
+     * @param array $sitemap
+     * @return array
+     */
+    protected function getTreePart(array $sitemap)
+    {
+        /** @var AuthorizationService $permission */
+        $permission = $this->getServiceManager()->get('Permission')->getService('admin42');
+
+        $return = [];
+        foreach ($sitemap as $item) {
+            if ($permission->isGranted('sitemap/manage/' . $item['sitemap']->getId())) {
+                $return[] = $item;
+
+                continue;
+            }
+
+            if (!empty($item['children'])) {
+                $return = array_merge($this->getTreePart($item['children']), $return);
+            }
+        }
+
+        return $return;
     }
 
     /**

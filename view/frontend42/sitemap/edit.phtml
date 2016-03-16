@@ -1,3 +1,18 @@
+<?php
+$defaultLocale = $this->localization()->getDefaultLocale();
+$availableLocales = [];
+foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay) {
+    if(!$this->permission('admin42')->isGranted('sitemap/locale/' . $locale)) continue;
+
+    $availableLocales[$locale] = $localeDisplay;
+}
+
+if (!in_array($defaultLocale, array_keys($availableLocales))) {
+    $defaultLocale = key($availableLocales);
+    reset($availableLocales);
+}
+?>
+
 <div class="hbox hbox-auto-xs" ng-init="app.appContentFull = true">
     <div class="col">
         <div class="vbox">
@@ -8,9 +23,11 @@
                     <?php if (strlen($this->page->getName())): ?>
                         : "<?= $this->page->getName() ?>"
                     <?php endif; ?>
-                    <a class="btn btn-default" href="<?= $this->url('admin/sitemap/preview', ['id' => $this->page->getId()])?>" target="_blank">
+                    <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['preview'])): ?>
+                    <a class="btn btn-default" href="<?= $this->url($this->routes['preview'], ['id' => $this->page->getId()])?>" target="_blank">
                         <i class="fa fa-mail-forward"></i>
                     </a>
+                    <?php endif; ?>
                 </h1>
             </div>
 
@@ -55,21 +72,19 @@
                         </uib-tabset>
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <button class="btn btn-success" type="submit" name="save" value="save">
-                                    <span class="fa fa-save"></span>
-                                    <?= $this->translate('button.save', 'admin') ?>
-                                </button>
-                                <button class="btn btn-success" type="submit" name="save" value="approve">
-                                    <span class="fa fa-save"></span>
-                                    <?= $this->translate('button.save-approve', 'admin') ?>
-                                </button>
+                                <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="save" value="save"></submit>
+                                <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['approve'])): ?>
+                                <submit submit-text="<?= $this->translate('button.save-approve', 'admin') ?>" name="save" value="approve"></submit>
+                                <?php endif; ?>
+                                <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['delete'])): ?>
                                 <delete
-                                    url="<?= $this->url('admin/sitemap/delete') ?>"
+                                    url="<?= $this->url($this->routes['delete']) ?>"
                                     title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
                                     content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
                                     request-id="<?= $this->page->getSitemapId() ?>"
                                     >
                                 </delete>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -85,29 +100,34 @@
             </div>
             <div class="row-row">
                 <div class="wrapper-md">
+                    <?php if((count($availableLocales) > 1 && $this->permission('admin42')->isGranted('route/' . $this->routes['change-language'])) || $this->permission('admin42')->isGranted('route/' . $this->routes['change-page-type'])): ?>
                     <div class="tl-header">
                         <div class="b-a b-l bg-white text-left m-b-md">
                             <div class="wrapper-xs">
+                                <?php if(count($availableLocales) > 1 && $this->permission('admin42')->isGranted('route/' . $this->routes['change-language'])): ?>
                                 <div class="text-center">
-                                    <?php foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $displayName): ?>
+                                    <?php foreach ($availableLocales as $locale => $displayName): ?>
                                         <?php if ($this->page->getLocale() == $locale) continue; ?>
-                                        <a href="<?= $this->url('admin/sitemap/change-language', ['locale' => $locale, 'sitemapId' => $this->page->getSitemapId()]) ?>" title="<?= $displayName ?>">
+                                        <a href="<?= $this->url($this->routes['change-language'], ['locale' => $locale, 'sitemapId' => $this->page->getSitemapId()]) ?>" title="<?= $displayName ?>">
                                             <i class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($locale))?> m-r-xs"></i>
                                         </a>
                                     <?php endforeach; ?>
                                     <div class="line line-dashed b-b line-lg"></div>
                                 </div>
+                                <?php endif; ?>
+                                <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['change-page-type'])): ?>
                                 <div class="text-center"
                                      ng-controller="ChangePageTypeController"
-                                     change-url="<?= $this->url('admin/sitemap/change-page-type', ['pageId' => $this->page->getId(), 'sitemapId' => $this->page->getSitemapId()]) ?>">
+                                     change-url="<?= $this->url($this->routes['change-page-type'], ['pageId' => $this->page->getId(), 'sitemapId' => $this->page->getSitemapId()]) ?>">
                                     <button class="btn btn-default btn-sm" type="button" ng-click="change()">
                                         <?= $this->translate('button.change-pageType', 'admin') ?>
                                     </button>
                                 </div>
-
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                     <ul class="timeline timeline-sidebar">
                         <li class="tl-header">
@@ -145,8 +165,8 @@
                                             <a popover-trigger="mouseenter" popover-placement="top" popover="Load Version" class="btn btn-default btn-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
                                                 <span class="fa fa-check-circle-o"></span>
                                             </a>
-                                            <?php if ($version->getApproved() === null): ?>
-                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url('admin/sitemap/approve', ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
+                                            <?php if ($version->getApproved() === null && $this->permission('admin42')->isGranted('route/' . $this->routes['approve'])): ?>
+                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url($this->routes['approve'], ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
                                                 <span class="fa fa-thumbs-up"></span>
                                             </a>
                                             <?php endif; ?>

@@ -12,21 +12,27 @@ use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeInterface;
 use Frontend42\PageType\PageTypeProvider;
 use Frontend42\Selector\PageVersionSelector;
+use Frontend42\Selector\SitemapSelector;
 use Zend\Db\Sql\Select;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
+use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class SitemapController extends AbstractAdminController
 {
     /**
-     * @return array
+     * @return ViewModel
      */
     public function indexAction()
     {
-        return [
+        $viewModel = new ViewModel([
             'createForm' => $this->getForm('Frontend42\Sitemap\Create'),
-        ];
+            'routes' => $this->getAllRoutes(),
+        ]);
+        $viewModel->setTemplate('frontend42/sitemap/index');
+
+        return $viewModel;
     }
 
     /**
@@ -37,8 +43,9 @@ class SitemapController extends AbstractAdminController
         $jsonString = $this->getRequest()->getContent();
         $options = Json::decode($jsonString, Json::TYPE_ARRAY);
 
-        $result = $this->getSelector('Frontend42\Sitemap')
+        $result = $this->getSelector(SitemapSelector::class)
             ->setLocale($options['locale'])
+            ->setAuthorizationCheck(true)
             ->setIncludeExclude(false)
             ->getResult();
 
@@ -123,12 +130,12 @@ class SitemapController extends AbstractAdminController
             ]);
 
             return new JsonModel([
-                'redirect' => $this->url()->fromRoute('admin/sitemap')
+                'redirect' => $this->url()->fromRoute($this->getRoute("index"))
             ]);
         }
 
         return new JsonModel([
-            'redirect' => $this->url()->fromRoute('admin/sitemap')
+            'redirect' => $this->url()->fromRoute($this->getRoute("index"))
         ]);
     }
 
@@ -163,7 +170,7 @@ class SitemapController extends AbstractAdminController
 
         return new JsonModel([
             'success' => true,
-            'url' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $page->getId()])
+            'url' => $this->url()->fromRoute($this->getRoute("edit"), ['id' => $page->getId()])
         ]);
     }
 
@@ -216,7 +223,7 @@ class SitemapController extends AbstractAdminController
                     'message' => 'Page successfully saved',
                 ]);
 
-                return $this->redirect()->toRoute('admin/sitemap/edit', array('id' => $pageVersion->getPageId()));
+                return $this->redirect()->toRoute($this->getRoute("edit"), array('id' => $pageVersion->getPageId()));
             } else {
                 /** @var PageVersionSelector $selector */
                 $selector = $this->getSelector('Frontend42\PageVersion')->setPageId($page->getId());
@@ -255,7 +262,8 @@ class SitemapController extends AbstractAdminController
             'versions' => $versions,
             'currentVersion' => $pageVersion,
             'page'     => $page,
-            'changePageTypeForm' => $this->getForm('Frontend42\Sitemap\ChangePageType')
+            'changePageTypeForm' => $this->getForm('Frontend42\Sitemap\ChangePageType'),
+            'routes' => $this->getAllRoutes(),
         ]);
         $viewModel->setTemplate("frontend42/sitemap/edit");
 
@@ -280,7 +288,7 @@ class SitemapController extends AbstractAdminController
             ->setUpdatedUser($authenticationService->getIdentity())
             ->run();
 
-        return $this->redirect()->toRoute('admin/sitemap/edit', ['id' => $pageId, 'version' => $pageVersionId]);
+        return $this->redirect()->toRoute($this->getRoute("edit"), ['id' => $pageId, 'version' => $pageVersionId]);
     }
 
     /**
@@ -294,10 +302,10 @@ class SitemapController extends AbstractAdminController
         ]);
 
         if ($result->count() > 0) {
-            return $this->redirect()->toRoute('admin/sitemap/edit', ['id' => $result->current()->getId()]);
+            return $this->redirect()->toRoute($this->getRoute("edit"), ['id' => $result->current()->getId()]);
         }
 
-        return $this->redirect()->toRoute('admin/sitemap');
+        return $this->redirect()->toRoute($this->getRoute("index"));
     }
 
     /**
@@ -314,7 +322,7 @@ class SitemapController extends AbstractAdminController
             ->run();
 
         return new JsonModel([
-            'redirect' => $this->url()->fromRoute('admin/sitemap/edit', ['id' => $this->params('pageId')])
+            'redirect' => $this->url()->fromRoute($this->getRoute("edit"), ['id' => $this->params('pageId')])
         ]);
     }
 
@@ -364,5 +372,50 @@ class SitemapController extends AbstractAdminController
                 $routingParams['route'],
                 $routingParams['params']
             );
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function getRoute($name)
+    {
+        /** @var RouteMatch $routeMatch */
+        $routeMatch = $this
+            ->getServiceLocator()
+            ->get('Application')
+            ->getMvcEvent()
+            ->getRouteMatch();
+
+        $baseRouteName = $routeMatch->getMatchedRouteName();
+        if ($routeMatch->getParam("action") != "index") {
+            $baseRouteName = substr($baseRouteName, 0, strrpos($baseRouteName, '/'));
+        }
+
+        if ($name == "index") {
+            return $baseRouteName;
+        }
+
+        return $baseRouteName . "/" . $name;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAllRoutes()
+    {
+        return [
+            'index' => $this->getRoute("index"),
+            'list' => $this->getRoute("list"),
+            'save' => $this->getRoute("save"),
+            'add-sitemap' => $this->getRoute("add-sitemap"),
+            'edit' => $this->getRoute("edit"),
+            'preview' => $this->getRoute("preview"),
+            'edit-approve' => $this->getRoute("edit-approve"),
+            'approve' => $this->getRoute("approve"),
+            'delete' => $this->getRoute("delete"),
+            'change-language' => $this->getRoute("change-language"),
+            'change-page-type' => $this->getRoute("change-page-type"),
+        ];
     }
 }
