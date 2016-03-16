@@ -113,7 +113,10 @@
     -webkit-border-radius: 3px;
     border-radius: 3px;
     box-shadow: 1px 1px 2px @brand-light;
-    .transition(background 0.25s ease-out)
+    .transition(background 0.25s ease-out);
+    &:hover {
+        background: @list-hover-color !important;
+    }
 }
 
 .dd3-item > button {
@@ -170,42 +173,42 @@
         background: lighten(@list-base-color, 0%);
     }
     .dd3-item:hover > .dd3-content {
-        background: lighten(@list-hover-color, 0%) !important;
+        //background: lighten(@list-hover-color, 0%);
     }
     .dd-list {
         .dd3-content {
             background: lighten(@list-base-color, 6%);
         }
         .dd3-item:hover > .dd3-content {
-            background: lighten(@list-hover-color, 3%) !important;
+            //background: lighten(@list-hover-color, 3%);
         }
         .dd-list {
             .dd3-content {
                 background: lighten(@list-base-color, 12%);
             }
             .dd3-item:hover > .dd3-content {
-                background: lighten(@list-hover-color, 6%) !important;
+                //background: lighten(@list-hover-color, 6%);
             }
             .dd-list {
                 .dd3-content {
                     background: lighten(@list-base-color, 15%);
                 }
                 .dd3-item:hover > .dd3-content {
-                    background: lighten(@list-hover-color, 9%) !important;
+                    //background: lighten(@list-hover-color, 9%);
                 }
                 .dd-list {
                     .dd3-content {
                         background: lighten(@list-base-color, 22%);
                     }
                     .dd3-item:hover > .dd3-content {
-                        background: lighten(@list-hover-color, 12%) !important;
+                        //background: lighten(@list-hover-color, 12%);
                     }
                     .dd-list {
                         .dd3-content {
                             background: lighten(@list-base-color, 26%);
                         }
                         .dd3-item:hover > .dd3-content {
-                            background: lighten(@list-hover-color, 15%) !important;
+                            //background: lighten(@list-hover-color, 15%);
                         }
                     }
                 }
