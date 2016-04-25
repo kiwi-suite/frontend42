@@ -20,12 +20,12 @@ class ProviderFactory implements FactoryInterface
 
         $cache = $serviceLocator->get('Cache\Sitemap');
 
-        if (!$cache->hasItem('nav_' . $defaultLocale)){
+        if (!$cache->hasItem('nav_' . $defaultLocale)) {
             $serviceLocator->get('Command')->get('Frontend42\Navigation\CreateFrontendNavigation')->run();
         }
 
         $pages = [];
-        if ($cache->hasItem('nav_' . $defaultLocale)){
+        if ($cache->hasItem('nav_' . $defaultLocale)) {
             $pages = $cache->getItem('nav_' . $defaultLocale);
         }
 

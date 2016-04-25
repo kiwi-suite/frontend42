@@ -30,6 +30,9 @@ class SavePageSortingCommand extends AbstractCommand
         return $this;
     }
 
+    /**
+     *
+     */
     protected function preExecute()
     {
         if ($this->jsonTreeString !== null) {

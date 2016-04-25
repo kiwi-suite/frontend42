@@ -35,6 +35,12 @@ class PageHandler
      */
     protected $pageVersionSelector;
 
+    /**
+     * PageHandler constructor.
+     * @param PageTableGateway $pageTableGateway
+     * @param PageVersionSelector $pageVersionSelector
+     * @param StorageInterface $cache
+     */
     public function __construct(
         PageTableGateway $pageTableGateway,
         PageVersionSelector $pageVersionSelector,
@@ -206,7 +212,7 @@ class PageHandler
             throw new \Exception("invalid page and no default handle set");
         }
 
-        if (!array_key_exists($locale, $pageMapping[$page]['locale'])){
+        if (!array_key_exists($locale, $pageMapping[$page]['locale'])) {
             if (!empty($this->defaultHandle)) {
                 return $this->getRouteByHandle($this->defaultHandle, $locale);
             }

@@ -165,9 +165,13 @@ class EditPageCommand extends AbstractCommand
         $this
             ->getServiceManager()
             ->get('Frontend42\Sitemap\EventManager')
-            ->trigger(SitemapEvent::EVENT_EDIT_PRE, $this->page, [
+            ->trigger(
+                SitemapEvent::EVENT_EDIT_PRE,
+                $this->page,
+                [
                     'pageType' => $this->pageType,
-                    'sitemap' => $this->sitemap]
+                    'sitemap' => $this->sitemap
+                ]
             );
 
         $pageVersionTableGateway = $this->getTableGateway('Frontend42\PageVersion');
@@ -186,9 +190,13 @@ class EditPageCommand extends AbstractCommand
             $this
                 ->getServiceManager()
                 ->get('Frontend42\Sitemap\EventManager')
-                ->trigger(SitemapEvent::EVENT_APPROVED, $this->page, [
+                ->trigger(
+                    SitemapEvent::EVENT_APPROVED,
+                    $this->page,
+                    [
                         'pageType' => $this->pageType,
-                        'sitemap' => $this->sitemap]
+                        'sitemap' => $this->sitemap
+                    ]
                 );
         }
 
@@ -206,9 +214,13 @@ class EditPageCommand extends AbstractCommand
         $this
             ->getServiceManager()
             ->get('Frontend42\Sitemap\EventManager')
-            ->trigger(SitemapEvent::EVENT_EDIT_POST, $this->page, [
+            ->trigger(
+                SitemapEvent::EVENT_EDIT_POST,
+                $this->page,
+                [
                     'pageType' => $this->pageType,
-                    'sitemap' => $this->sitemap]
+                    'sitemap' => $this->sitemap
+                ]
             );
 
         $cacheKey = 'page_' . $this->page->getId() . '_' . PageVersionSelector::VERSION_APPROVED;

@@ -36,6 +36,9 @@ class PageTypeProvider extends AbstractPluginManager
         }
     }
 
+    /**
+     * @param FormElementManager $formElementManager
+     */
     public function setFormElementManager(FormElementManager $formElementManager)
     {
         $this->formElementManager = $formElementManager;

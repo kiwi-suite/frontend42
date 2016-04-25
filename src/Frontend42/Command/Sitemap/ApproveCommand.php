@@ -148,9 +148,13 @@ class ApproveCommand extends AbstractCommand
         $this
             ->getServiceManager()
             ->get('Frontend42\Sitemap\EventManager')
-            ->trigger(SitemapEvent::EVENT_APPROVED, $this->page, [
-                'pageType' => $pageTypeObject,
-                'sitemap' => $this->sitemap]
+            ->trigger(
+                SitemapEvent::EVENT_APPROVED,
+                $this->page,
+                [
+                    'pageType' => $pageTypeObject,
+                    'sitemap' => $this->sitemap
+                ]
             );
 
         $cacheKey = 'page_' . $this->page->getId() . '_' . PageVersionSelector::VERSION_APPROVED;

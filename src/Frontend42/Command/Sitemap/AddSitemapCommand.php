@@ -106,6 +106,9 @@ class AddSitemapCommand extends AbstractCommand
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function preExecute()
     {
         if (!empty($this->parentPageId)) {

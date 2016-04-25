@@ -64,6 +64,9 @@ class FrontendRouterFactory implements FactoryInterface
         return TreeRouteStack::factory($routerConfig);
     }
 
+    /**
+     * @param $sitemap
+     */
     protected function buildRoutes($sitemap)
     {
         /* @var Page $page*/

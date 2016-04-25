@@ -30,6 +30,9 @@ abstract class AbstractPageType implements PageTypeInterface
         $this->refreshPageKeywordsCommand = $refreshPageKeywordsCommand;
     }
 
+    /**
+     * @param PageHandler $pageHandler
+     */
     public function setPageHandler(PageHandler $pageHandler)
     {
         $this->pageHandler = $pageHandler;
@@ -96,6 +99,11 @@ abstract class AbstractPageType implements PageTypeInterface
         $this->refreshPageKeywordsCommand->setPageId($page->getId())->setKeywords($keywords)->run();
     }
 
+    /**
+     * @param \Frontend42\PageType\PageTypeContent $content
+     * @param PageModel $page
+     * @return mixed
+     */
     abstract protected function getRouting(PageTypeContent $content, PageModel $page);
 
     /**

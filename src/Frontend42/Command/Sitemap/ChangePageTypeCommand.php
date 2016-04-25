@@ -81,6 +81,9 @@ class ChangePageTypeCommand extends AbstractCommand
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function preExecute()
     {
         if ($this->sitemapId > 0) {
@@ -141,9 +144,13 @@ class ChangePageTypeCommand extends AbstractCommand
             $this
                 ->getServiceManager()
                 ->get('Frontend42\Sitemap\EventManager')
-                ->trigger(SitemapEvent::EVENT_CHANGE_PAGETYPE, $page, [
+                ->trigger(
+                    SitemapEvent::EVENT_CHANGE_PAGETYPE,
+                    $page,
+                    [
                         'pageType' => $pageTypeObject,
-                        'sitemap' => $this->sitemap]
+                        'sitemap' => $this->sitemap
+                    ]
                 );
 
         }
