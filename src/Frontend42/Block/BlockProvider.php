@@ -62,4 +62,22 @@ class BlockProvider
 
         return $fieldset;
     }
+
+    /**
+     * @param string $name
+     * @param array $spec
+     * @return Fieldset
+     */
+    public function getVirtualBlockForm($name, $label, array $spec)
+    {
+        $fieldset = new Fieldset($name);
+        $fieldset->setFormFactory(new Factory($this->formElementManager));
+        $fieldset->setLabel($label);
+
+        foreach ($spec as $formSpec) {
+            $fieldset->add($formSpec);
+        }
+
+        return $fieldset;
+    }
 }

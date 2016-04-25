@@ -24,8 +24,19 @@ class Block extends Dynamic
      */
     protected $availableBlocks = [];
 
+    /**
+     * @var array
+     */
+    protected $virtualBlocks = [];
+
+    /**
+     * @var bool
+     */
     protected $enableInheritance = false;
 
+    /**
+     * @var string
+     */
     protected $interName;
 
     /**
@@ -61,6 +72,20 @@ class Block extends Dynamic
             $this->availableBlocks = $options['available_blocks'];
             foreach ($this->availableBlocks as $blockType) {
                 $this->addTargetElement($blockType, $this->blockProvider->getBlockForm($blockType));
+            }
+        }
+
+        if (isset($options['virtual_blocks'])) {
+            $this->virtualBlocks = $options['virtual_blocks'];
+            foreach ($this->virtualBlocks as $virtualBlock) {
+                $this->addTargetElement(
+                    $virtualBlock['name'],
+                    $this->blockProvider->getVirtualBlockForm(
+                        $virtualBlock['name'],
+                        $virtualBlock['label'],
+                        $virtualBlock['elements']
+                    )
+                );
             }
         }
 
