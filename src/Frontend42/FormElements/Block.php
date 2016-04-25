@@ -79,11 +79,11 @@ class Block extends Dynamic
             $this->virtualBlocks = $options['virtual_blocks'];
             foreach ($this->virtualBlocks as $virtualBlock) {
                 $this->addTargetElement(
-                    $virtualBlock['name'],
+                    $virtualBlock['handle'],
                     $this->blockProvider->getVirtualBlockForm(
-                        $virtualBlock['name'],
+                        $virtualBlock['handle'],
                         $virtualBlock['label'],
-                        $virtualBlock['elements']
+                        $virtualBlock['form']
                     )
                 );
             }
