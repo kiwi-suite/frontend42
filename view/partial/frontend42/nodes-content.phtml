@@ -7,13 +7,13 @@
             <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
                 <span class="glyphicon text-muted" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
             </a>
-            <code>#{{item.pageId}}</code>
             <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
             <span ng-if="item.alternateNames.length > 0">
                 <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">
                     [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.title }}</del> ]
                 </small>
             </span>
+            <code>#{{item.pageId}}</code>
         </div>
         <div class="col-sm-3 text-right">
             <span class="label label-default">{{ item.pageType }}</span>

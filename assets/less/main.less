@@ -63,7 +63,7 @@
 }
 
 .dd-list .dd-list {
-    padding-left: 30px;
+    padding-left: 20px;
 }
 
 .dd-collapsed .dd-list {
@@ -109,10 +109,14 @@
     padding: 5px 10px 5px 50px;
     text-decoration: none;
     border: 1px solid #ebebeb;
-    background: #fff;
+    background: #ffffff;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     box-shadow: 1px 1px 2px @brand-light;
+   // .transition(background 0.25s ease-out);
+    &:hover {
+        background: @list-hover-color !important;
+    }
 }
 
 .dd3-item > button {
@@ -124,7 +128,7 @@
     margin: 0;
     left: 0;
     top: 0;
-    cursor: pointer;
+    //cursor: pointer;
     width: 40px;
     text-indent: 100%;
     white-space: nowrap;
@@ -152,3 +156,64 @@
 .dd3-handle:hover {
     background: #f7f7f7;
 }
+
+@list-base-color: #BBD051; // raum42
+@list-base-color: #fff7bc;
+@list-base-color: #fee391;
+@list-base-color: #c7e9c0;
+@list-base-color: #a1d99b;
+
+@list-hover-color: #C6DBEF;
+@list-hover-color: #c7e9c0;
+@list-hover-color: #fff7bc;
+@list-hover-color: #fee391;
+
+/*.dd-list {
+    .dd3-content {
+        background: lighten(@list-base-color, 0%);
+    }
+    .dd3-item:hover > .dd3-content {
+        //background: lighten(@list-hover-color, 0%);
+    }
+    .dd-list {
+        .dd3-content {
+            background: lighten(@list-base-color, 6%);
+        }
+        .dd3-item:hover > .dd3-content {
+            //background: lighten(@list-hover-color, 3%);
+        }
+        .dd-list {
+            .dd3-content {
+                background: lighten(@list-base-color, 12%);
+            }
+            .dd3-item:hover > .dd3-content {
+                //background: lighten(@list-hover-color, 6%);
+            }
+            .dd-list {
+                .dd3-content {
+                    background: lighten(@list-base-color, 15%);
+                }
+                .dd3-item:hover > .dd3-content {
+                    //background: lighten(@list-hover-color, 9%);
+                }
+                .dd-list {
+                    .dd3-content {
+                        background: lighten(@list-base-color, 22%);
+                    }
+                    .dd3-item:hover > .dd3-content {
+                        //background: lighten(@list-hover-color, 12%);
+                    }
+                    .dd-list {
+                        .dd3-content {
+                            background: lighten(@list-base-color, 26%);
+                        }
+                        .dd3-item:hover > .dd3-content {
+                            //background: lighten(@list-hover-color, 15%);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}*/
+
