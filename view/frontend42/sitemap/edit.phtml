@@ -57,7 +57,7 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                     <?php endif ?>
 
                     <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
-                        <uib-tabset uib-tabset-persist="<?= md5($this->url(null, [], [], true)) ?>" class="tab-container">
+                        <uib-tabset <?php if (false): ?>uib-tabset-persist="<?= md5($this->url(null, [], [], true)) ?>"  <?php endif; ?> class="tab-container">
                             <?php
                             $this->pageForm->prepare();
                             ?>
@@ -148,7 +148,7 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                                 <div class="tl-wrap <?= $version->getId()!== $this->currentVersion->getId() ? 'b-dark' : 'b-primary' ?>">
                                     <span class="tl-date text-xs">
                                         <div>
-                                            <span class="shortname-container-xs" popover-trigger="mouseenter" popover-placement="left" popover="<?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>">
+                                            <span class="shortname-container-xs" popover-trigger="mouseenter" popover-placement="left" uib-popover="<?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>">
                                                 <?= $this->admin()->getUserShortNameNameById($version->getCreatedBy()) ?>
                                             </span>
                                         </div>
@@ -162,11 +162,11 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                                             <code class="text-xs">#<?= $version->getVersionId() ?></code>
                                         </div>
                                         <div class="center-block m-t-xs text-dark">
-                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Load Version" class="btn btn-default btn-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
+                                            <a popover-trigger="mouseenter" popover-placement="top" uib-popover="Load Version" class="btn btn-default btn-xs" href="<?= $this->url(null, ['version' => $version->getVersionId()], [], true)?>">
                                                 <span class="fa fa-check-circle-o"></span>
                                             </a>
                                             <?php if ($version->getApproved() === null && $this->permission('admin42')->isGranted('route/' . $this->routes['approve'])): ?>
-                                            <a popover-trigger="mouseenter" popover-placement="top" popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url($this->routes['approve'], ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
+                                            <a popover-trigger="mouseenter" popover-placement="top" uib-popover="Approve" class="btn btn-default btn-xs" href="<?= $this->url($this->routes['approve'], ['id' => $this->page->getId(), 'version' => $version->getVersionId()]) ?>">
                                                 <span class="fa fa-thumbs-up"></span>
                                             </a>
                                             <?php endif; ?>

@@ -1,8 +1,8 @@
 angular.module('frontend42')
-    .controller('ChangePageTypeController',['$scope', '$attrs', '$modal', '$window', function($scope, $attrs, $modal, $window){
+    .controller('ChangePageTypeController',['$scope', '$attrs', '$uibModal', '$window', function($scope, $attrs, $uibModal, $window){
 
         $scope.change = function() {
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'changePageTypeModal.html',
                 controller: 'ChangePageTypeModalController',
@@ -30,7 +30,7 @@ angular.module('frontend42')
         '$modalInstance',
         '$http',
         'changeUrl',
-        function ($scope, $modalInstance, $http, changeUrl) {
+        function ($scope, $uibModalInstance, $http, changeUrl) {
             $scope.ok = function () {
                 $http({
                     method: 'POST',
@@ -47,7 +47,7 @@ angular.module('frontend42')
                     }
                 })
                     .success(function (data){
-                        $modalInstance.close(data);
+                        $uibModalInstance.close(data);
                     })
                     .error(function (){
 
@@ -56,7 +56,7 @@ angular.module('frontend42')
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]

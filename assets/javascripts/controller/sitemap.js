@@ -1,4 +1,4 @@
-angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', '$modal', '$window', function($scope, $http, $attrs, $modal, $window){
+angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', '$uibModal', '$window', function($scope, $http, $attrs, $uibModal, $window){
     $scope.isLoading = true;
     $scope.showOnline = true;
     $scope.showOffline = true;
@@ -79,7 +79,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
                 return;
             }
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'sortModalContent.html',
                 controller: 'ModalController',
@@ -97,7 +97,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     loadTree();
 
     $scope.addSubPage = function(parentId) {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'addSubPageModalContent.html',
             controller: 'AddPageModalController',
@@ -123,7 +123,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     };
 
     $scope.addPage = function(parentId) {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'addPageModalContent.html',
             controller: 'AddPageModalController',
@@ -154,7 +154,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
 }]);
 
-angular.module('frontend42').controller('AddPageModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', 'parentId', function ($scope, $modalInstance, $http, addSitemapUrl, parentId) {
+angular.module('frontend42').controller('AddPageModalController', ['$scope', '$uibModalInstance', '$http', 'addSitemapUrl', 'parentId', function ($scope, $uibModalInstance, $http, addSitemapUrl, parentId) {
     $scope.ok = function () {
         if (parentId !== null) {
         } else {
@@ -177,7 +177,7 @@ angular.module('frontend42').controller('AddPageModalController', ['$scope', '$m
                 }
             })
             .success(function (data){
-                $modalInstance.close(data);
+                $uibModalInstance.close(data);
             })
             .error(function (){
 
@@ -186,7 +186,7 @@ angular.module('frontend42').controller('AddPageModalController', ['$scope', '$m
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }]);
 
