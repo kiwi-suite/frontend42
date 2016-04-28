@@ -14,10 +14,26 @@ class PageKeywordTableGateway extends AbstractTableGateway
     /**
      * @var array
      */
-    protected $databaseTypeMap = array();
+    protected $primaryKey = ['id'];
+
+    /**
+     * @var array
+     */
+    protected $databaseTypeMap = [
+        'id' => 'Integer',
+        'pageId' => 'Integer',
+        'keyword' => 'String',
+    ];
+
+    /**
+     * @var boolean
+     */
+    protected $useMetaDataFeature = false;
 
     /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\PageKeyword';
+
+
 }

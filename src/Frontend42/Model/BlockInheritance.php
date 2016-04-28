@@ -17,9 +17,11 @@ class BlockInheritance extends AbstractModel
     /**
      * @var array
      */
-    protected $properties = array(
+    public $properties = [
         'sourcePageId',
         'targetPageId',
         'section',
-    );
+    ];
+
+
 }

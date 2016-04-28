@@ -14,10 +14,30 @@ class PageVersionTableGateway extends AbstractTableGateway
     /**
      * @var array
      */
-    protected $databaseTypeMap = array();
+    protected $primaryKey = ['id'];
+
+    /**
+     * @var array
+     */
+    protected $databaseTypeMap = [
+        'id' => 'Integer',
+        'versionId' => 'Integer',
+        'pageId' => 'Integer',
+        'content' => 'String',
+        'created' => 'DateTime',
+        'createdBy' => 'Integer',
+        'approved' => 'DateTime',
+    ];
+
+    /**
+     * @var boolean
+     */
+    protected $useMetaDataFeature = false;
 
     /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\PageVersion';
+
+
 }

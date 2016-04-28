@@ -43,7 +43,7 @@ class Page extends AbstractModel
     /**
      * @var array
      */
-    protected $properties = array(
+    public $properties = [
         'id',
         'sitemapId',
         'locale',
@@ -59,5 +59,7 @@ class Page extends AbstractModel
         'updatedBy',
         'created',
         'createdBy',
-    );
+    ];
+
+
 }

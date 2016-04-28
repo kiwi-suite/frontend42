@@ -14,10 +14,26 @@ class BlockInheritanceTableGateway extends AbstractTableGateway
     /**
      * @var array
      */
-    protected $databaseTypeMap = array();
+    protected $primaryKey = ['sourcePageId', 'section', 'targetPageId'];
+
+    /**
+     * @var array
+     */
+    protected $databaseTypeMap = [
+        'sourcePageId' => 'Integer',
+        'targetPageId' => 'Integer',
+        'section' => 'String',
+    ];
+
+    /**
+     * @var boolean
+     */
+    protected $useMetaDataFeature = false;
 
     /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\BlockInheritance';
+
+
 }
