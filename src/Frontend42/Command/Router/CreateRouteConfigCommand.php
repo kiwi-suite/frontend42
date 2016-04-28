@@ -122,37 +122,37 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
     {
         $pageRoutes = [];
 
-        foreach ($sitemap as $_sitemap) {
+        foreach ($sitemap as $currentSitemap) {
             /* @var Page $page*/
-            $page = $_sitemap['page'];
+            $page = $currentSitemap['page'];
             $pageRoute = json_decode($page->getRoute(), true);
 
             if (empty($pageRoute)) {
                 continue;
             }
 
-            if ($_sitemap['sitemap']->getExclude() === true) {
+            if ($currentSitemap['sitemap']->getExclude() === true) {
                 continue;
             }
 
-            $pageRoute['options']['defaults']['locale'] = $_sitemap['page']->getLocale();
-            $pageRoute['options']['defaults']['pageId'] = $_sitemap['page']->getId();
-            $pageRoute['options']['defaults']['sitemapId'] = $_sitemap['sitemap']->getId();
+            $pageRoute['options']['defaults']['locale'] = $currentSitemap['page']->getLocale();
+            $pageRoute['options']['defaults']['pageId'] = $currentSitemap['page']->getId();
+            $pageRoute['options']['defaults']['sitemapId'] = $currentSitemap['sitemap']->getId();
 
-            $key = $locale . '-' . $_sitemap['sitemap']->getId();
+            $key = $locale . '-' . $currentSitemap['sitemap']->getId();
 
-            $this->pageMapping[$_sitemap['page']->getId()] = [
+            $this->pageMapping[$currentSitemap['page']->getId()] = [
                 'route'     => $routePrefix . '/' . $key,
-                'sitemapId' => $_sitemap['sitemap']->getId(),
+                'sitemapId' => $currentSitemap['sitemap']->getId(),
             ];
-            $this->localeMapping[$_sitemap['sitemap']->getId()][$locale] = $_sitemap['page']->getId();
+            $this->localeMapping[$currentSitemap['sitemap']->getId()][$locale] = $currentSitemap['page']->getId();
 
-            if ($_sitemap['sitemap']->getHandle()) {
-                $this->handleMapping[$_sitemap['sitemap']->getHandle()][$locale] = $_sitemap['page']->getId();
+            if ($currentSitemap['sitemap']->getHandle()) {
+                $this->handleMapping[$currentSitemap['sitemap']->getHandle()][$locale] = $currentSitemap['page']->getId();
             }
 
-            if (count($_sitemap['children']) > 0) {
-                $tmpRoutes = $this->buildRoutes($_sitemap['children'], $locale, $routePrefix . '/' . $key);
+            if (count($currentSitemap['children']) > 0) {
+                $tmpRoutes = $this->buildRoutes($currentSitemap['children'], $locale, $routePrefix . '/' . $key);
 
                 if (!empty($tmpRoutes)) {
                     $pageRoute['may_terminate'] = true;
@@ -171,9 +171,9 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
      */
     protected function finalize()
     {
-        foreach ($this->pageMapping as $key => $_mapping) {
+        foreach ($this->pageMapping as $key => $mapping) {
             unset($this->pageMapping[$key]['sitemapId']);
-            $this->pageMapping[$key]['locale'] = $this->localeMapping[$_mapping['sitemapId']];
+            $this->pageMapping[$key]['locale'] = $this->localeMapping[$mapping['sitemapId']];
         }
     }
 

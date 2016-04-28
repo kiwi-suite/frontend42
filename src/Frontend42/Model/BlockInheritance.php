@@ -22,6 +22,4 @@ class BlockInheritance extends AbstractModel
         'targetPageId',
         'section',
     ];
-
-
 }

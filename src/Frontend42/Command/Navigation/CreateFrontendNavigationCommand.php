@@ -49,21 +49,21 @@ class CreateFrontendNavigationCommand extends \Core42\Command\AbstractCommand
     {
         $pages = [];
 
-        foreach ($sitemap as $_sitemap) {
+        foreach ($sitemap as $currentSitemap) {
             $page = [
                 'options' => [
-                    'label'     => $_sitemap['page']->getName(),
-                    'pageId'    => $_sitemap['page']->getId(),
-                    'sitemapId' => $_sitemap['sitemap']->getId(),
-                    'order'     => $_sitemap['sitemap']->getOrderNr(),
-                    'route'     => $prefix . '/' . $_sitemap['page']->getLocale() . '-' . $_sitemap['sitemap']->getId()
+                    'label'     => $currentSitemap['page']->getName(),
+                    'pageId'    => $currentSitemap['page']->getId(),
+                    'sitemapId' => $currentSitemap['sitemap']->getId(),
+                    'order'     => $currentSitemap['sitemap']->getOrderNr(),
+                    'route'     => $prefix . '/' . $currentSitemap['page']->getLocale() . '-' . $currentSitemap['sitemap']->getId()
                 ]
             ];
 
-            if (!empty($_sitemap['children'])) {
+            if (!empty($currentSitemap['children'])) {
                 $page['pages'] = $this->buildNavigation(
-                    $_sitemap['children'],
-                    $prefix . '/' . $_sitemap['page']->getLocale() . '-' . $_sitemap['sitemap']->getId()
+                    $currentSitemap['children'],
+                    $prefix . '/' . $currentSitemap['page']->getLocale() . '-' . $currentSitemap['sitemap']->getId()
                 );
             }
 

@@ -34,6 +34,4 @@ class BlockInheritanceTableGateway extends AbstractTableGateway
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\BlockInheritance';
-
-
 }

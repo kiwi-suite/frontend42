@@ -22,6 +22,4 @@ class PageKeyword extends AbstractModel
         'pageId',
         'keyword',
     ];
-
-
 }
