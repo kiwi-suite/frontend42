@@ -43,9 +43,10 @@ class SitemapLink implements AdapterInterface
 
     /**
      * @param mixed $value
+     * @param array $options
      * @return string
      */
-    public function assemble($value)
+    public function assemble($value, $options = array())
     {
         if (empty($value["id"])) {
             return "";
