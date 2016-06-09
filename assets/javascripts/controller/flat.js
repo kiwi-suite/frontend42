@@ -1,6 +1,6 @@
-angular.module('frontend42').controller('FlatController',['$scope', '$http', '$attrs', '$modal', '$window', function($scope, $http, $attrs, $modal, $window){
+angular.module('frontend42').controller('FlatController',['$scope', '$http', '$attrs', '$uibModal', '$window', function($scope, $http, $attrs, $uibModal, $window){
     $scope.addPage = function() {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'addFlatModalContent.html',
             controller: 'AddFlatModalController',
@@ -26,7 +26,7 @@ angular.module('frontend42').controller('FlatController',['$scope', '$http', '$a
     };
 }]);
 
-angular.module('frontend42').controller('AddFlatModalController', ['$scope', '$modalInstance', '$http', 'addSitemapUrl', 'locale', function ($scope, $modalInstance, $http, addSitemapUrl, locale) {
+angular.module('frontend42').controller('AddFlatModalController', ['$scope', '$uibModalInstance', '$http', 'addSitemapUrl', 'locale', function ($scope, $uibModalInstance, $http, addSitemapUrl, locale) {
     $scope.ok = function () {
         $http({
             method: 'POST',
@@ -44,7 +44,7 @@ angular.module('frontend42').controller('AddFlatModalController', ['$scope', '$m
             }
         })
             .success(function (data){
-                $modalInstance.close(data);
+                $uibModalInstance.close(data);
             })
             .error(function (){
 
@@ -53,6 +53,6 @@ angular.module('frontend42').controller('AddFlatModalController', ['$scope', '$m
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }]);

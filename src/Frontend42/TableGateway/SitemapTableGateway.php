@@ -14,7 +14,31 @@ class SitemapTableGateway extends AbstractTableGateway
     /**
      * @var array
      */
-    protected $databaseTypeMap = array();
+    protected $primaryKey = ['id'];
+
+    /**
+     * @var array
+     */
+    protected $databaseTypeMap = [
+        'id' => 'Integer',
+        'parentId' => 'Integer',
+        'orderNr' => 'Integer',
+        'pageType' => 'String',
+        'terminal' => 'Boolean',
+        'exclude' => 'Boolean',
+        'lockedFrom' => 'DateTime',
+        'lockedBy' => 'Integer',
+        'handle' => 'String',
+        'updated' => 'DateTime',
+        'updatedBy' => 'Integer',
+        'created' => 'DateTime',
+        'createdBy' => 'Integer',
+    ];
+
+    /**
+     * @var boolean
+     */
+    protected $useMetaDataFeature = false;
 
     /**
      * @var string

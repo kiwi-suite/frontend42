@@ -229,11 +229,11 @@ class EditPageCommand extends AbstractCommand
         $result = $this->getTableGateway('Frontend42\BlockInheritance')->select([
             'targetPageId' => $this->page->getId()
         ]);
-        foreach ($result as $_res) {
+        foreach ($result as $res) {
             $this
                 ->getServiceManager()
                 ->get('Cache\Block')
-                ->removeItem('block_inheritance_' . $_res->getSourcePageId() . '_' . $_res->getSection());
+                ->removeItem('block_inheritance_' . $res->getSourcePageId() . '_' . $res->getSection());
         }
 
         return $pageVersion;

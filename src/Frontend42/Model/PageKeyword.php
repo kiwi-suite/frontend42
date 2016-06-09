@@ -17,9 +17,9 @@ class PageKeyword extends AbstractModel
     /**
      * @var array
      */
-    protected $properties = array(
+    public $properties = [
         'id',
         'pageId',
         'keyword',
-    );
+    ];
 }

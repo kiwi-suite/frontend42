@@ -39,12 +39,12 @@ class AddMissingPagesCommand extends AbstractCommand
 
             $result = $statement->execute();
 
-            foreach ($result as $_res) {
+            foreach ($result as $res) {
                 if (!array_key_exists($locale, $this->missing)) {
                     $this->missing[$locale] = [];
                 }
 
-                $this->missing[$locale][] = $_res['id'];
+                $this->missing[$locale][] = $res['id'];
             }
         }
     }

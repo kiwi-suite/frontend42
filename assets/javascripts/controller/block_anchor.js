@@ -1,8 +1,8 @@
-angular.module('frontend42').controller('BlockAnchorController',['$scope', '$attrs','$modal', 'jsonCache', '$http', function($scope, $attrs, $modal, jsonCache, $http){
+angular.module('frontend42').controller('BlockAnchorController',['$scope', '$attrs','$uibModal', 'jsonCache', '$http', function($scope, $attrs, $uibModal, jsonCache, $http){
     $scope.inheritanceInfo = jsonCache.get($attrs.jsonDataId);
 
     $scope.saveAnchor = function(sitemapUrl, saveAnchorUrl, section, pageId) {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'saveBlockAnchorModal.html',
             controller: 'SaveBlockAnchorModalController',
@@ -55,7 +55,7 @@ angular.module('frontend42').controller('BlockAnchorController',['$scope', '$att
     };
 }]);
 
-angular.module('frontend42').controller('SaveBlockAnchorModalController', ['$scope', '$modalInstance', '$http', 'saveAnchorUrl', 'sitemapUrl', 'pageId', 'section', function ($scope, $modalInstance, $http, saveAnchorUrl, sitemapUrl, pageId, section) {
+angular.module('frontend42').controller('SaveBlockAnchorModalController', ['$scope', '$uibModalInstance', '$http', 'saveAnchorUrl', 'sitemapUrl', 'pageId', 'section', function ($scope, $uibModalInstance, $http, saveAnchorUrl, sitemapUrl, pageId, section) {
     $scope.targetPageId = 0;
 
     var loadTree = function() {
@@ -123,7 +123,7 @@ angular.module('frontend42').controller('SaveBlockAnchorModalController', ['$sco
             }
         })
             .success(function (data){
-                $modalInstance.close(data);
+                $uibModalInstance.close(data);
             })
             .error(function (){
 
@@ -132,6 +132,6 @@ angular.module('frontend42').controller('SaveBlockAnchorModalController', ['$sco
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }]);

@@ -25,7 +25,7 @@ class PageVersion extends AbstractModel
     /**
      * @var array
      */
-    protected $properties = array(
+    public $properties = [
         'id',
         'versionId',
         'pageId',
@@ -33,5 +33,5 @@ class PageVersion extends AbstractModel
         'created',
         'createdBy',
         'approved',
-    );
+    ];
 }

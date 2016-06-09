@@ -9,5 +9,14 @@ return [
             'options_descriptions'      => [
             ]
         ],
+
+        'create-sitemap' => [
+            'route'                     => 'create-sitemap',
+            'command-name'              => 'Frontend42\XmlSitemap\Generate',
+            'description'               => '',
+            'short_description'         => '',
+            'options_descriptions'      => [
+            ]
+        ],
     ],
 ];

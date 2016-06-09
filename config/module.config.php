@@ -1,6 +1,8 @@
 <?php
 namespace Frontend42;
 
+use Frontend42\Command\XmlSitemap\FrontendCommand;
+
 return [
     'view_manager' => array(
         'template_path_stack'       => array(
@@ -51,5 +53,14 @@ return [
         'adapter' => [
             'sitemap' => 'Frontend42\Link\SitemapLink',
         ],
+    ],
+
+    'xml_sitemap' => [
+        'save_path' => 'public/sitemap',
+        'page_type_mode' => 'whitelist', // whitelist, blackist 
+        'page_types' => [],
+        'commands' => [
+            FrontendCommand::class
+        ]
     ],
 ];

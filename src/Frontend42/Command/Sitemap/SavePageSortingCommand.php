@@ -68,9 +68,9 @@ class SavePageSortingCommand extends AbstractCommand
      */
     protected function recursiveSave(array $items)
     {
-        foreach ($items as $_item) {
+        foreach ($items as $item) {
             /** @var Sitemap $sitemap */
-            $sitemap = $_item['sitemap'];
+            $sitemap = $item['sitemap'];
 
             if (!array_key_exists($sitemap->getId(), $this->flatTree)) {
                 continue;
@@ -83,8 +83,8 @@ class SavePageSortingCommand extends AbstractCommand
 
             $this->getTableGateway('Frontend42\Sitemap')->update($sitemap);
 
-            if (!empty($_item['children'])) {
-                $this->recursiveSave($_item['children']);
+            if (!empty($item['children'])) {
+                $this->recursiveSave($item['children']);
             }
         }
     }
