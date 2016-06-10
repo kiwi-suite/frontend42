@@ -20,6 +20,11 @@ class CreateForm extends Form
      */
     public function init()
     {
+        $name = new Text("name");
+        $name->setLabel("label.name");
+        $name->setAttribute("required", "required");
+        $this->add($name);
+        
         /** @var PageTypeSelector $role */
         $pageTypeSelector = $this->getFormFactory()->getFormElementManager()->get('page_type_selector');
         $pageTypeSelector->setName("page_type_selector");
@@ -32,10 +37,5 @@ class CreateForm extends Form
         $pageSelector->setLabel("label.pageSelector");
         $pageSelector->setAttribute("required", "required");
         $this->add($pageSelector);
-
-        $name = new Text("name");
-        $name->setLabel("label.name");
-        $name->setAttribute("required", "required");
-        $this->add($name);
     }
 }
