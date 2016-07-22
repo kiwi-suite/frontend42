@@ -2,24 +2,33 @@
 namespace Frontend42\Link\Adapter\Service;
 
 use Frontend42\Link\Adapter\SitemapLink;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Frontend42\TableGateway\PageTableGateway;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class SitemapLinkFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new SitemapLink(
-            $serviceLocator->get('TableGateway')->get('Frontend42\Page'),
-            $serviceLocator->get('Router'),
-            $serviceLocator->get('Frontend42\Navigation\PageHandler')
+            $container->get('TableGateway')->get(PageTableGateway::class),
+            $container->get('Router'),
+            $container->get('Frontend42\Navigation\PageHandler')
         );
     }
 }

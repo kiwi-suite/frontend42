@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\Controller;
 
+use Admin42\Authentication\AuthenticationService;
 use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\View\Model\JsonModel;
 use Frontend42\Command\Sitemap\AddSitemapCommand;
@@ -157,7 +158,7 @@ class SitemapController extends AbstractAdminController
      */
     public function addSitemapAction()
     {
-        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+        $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
 
         /* @var AddSitemapCommand $cmd */
         $cmd = $this->getCommand('Frontend42\Sitemap\AddSitemap')
@@ -186,7 +187,7 @@ class SitemapController extends AbstractAdminController
         }
 
         /** @var PageTypeProvider $pageTypeProvider */
-        $pageTypeProvider = $this->getServiceLocator()->get('Frontend42\PageTypeProvider');
+        $pageTypeProvider = $this->getServiceManager()->get('Frontend42\PageTypeProvider');
 
         /** @var Page page */
         $page = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->params('id'));
@@ -200,7 +201,7 @@ class SitemapController extends AbstractAdminController
             $pageForm->setData($prg);
 
             if ($pageForm->isValid()) {
-                $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+                $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
 
                 $approve = false;
                 if (array_key_exists('save', $prg)) {
@@ -279,7 +280,7 @@ class SitemapController extends AbstractAdminController
         $pageId = $this->params('id');
         $pageVersionId = $this->params('version');
 
-        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+        $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
 
         /* @var ApproveCommand $cmd*/
         $cmd = $this->getCommand('Frontend42\Sitemap\Approve');
@@ -313,7 +314,7 @@ class SitemapController extends AbstractAdminController
      */
     public function changePageTypeAction()
     {
-        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+        $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
         
         $this->getCommand('Frontend42\Sitemap\ChangePageType')
             ->setPageType($this->params()->fromPost("page_type"))
@@ -339,11 +340,11 @@ class SitemapController extends AbstractAdminController
 
 
         /** @var PageTypeInterface $pageType */
-        $pageType = $this->getServiceLocator()
+        $pageType = $this->getServiceManager()
             ->get('Frontend42\PageTypeProvider')
             ->getPageType($sitemap->getPageType());
 
-        $pageHandler = $this->getServiceLocator()->get('Frontend42\Navigation\PageHandler');
+        $pageHandler = $this->getServiceManager()->get('Frontend42\Navigation\PageHandler');
 
         $pageVersion = $this
             ->getSelector('Frontend42\PageVersion')
@@ -351,7 +352,7 @@ class SitemapController extends AbstractAdminController
             ->setVersionName(PageVersionSelector::VERSION_APPROVED)
             ->getResult();
 
-        $pageTypeContent = $this->getServiceLocator()->get('Frontend42\PageTypeContent');
+        $pageTypeContent = $this->getServiceManager()->get('Frontend42\PageTypeContent');
         $pageTypeContent->setContent(Json::decode($pageVersion->getContent(), Json::TYPE_ARRAY));
 
         $routingParams = $pageType->getRoutingParams($page, $pageTypeContent);
@@ -382,7 +383,7 @@ class SitemapController extends AbstractAdminController
     {
         /** @var RouteMatch $routeMatch */
         $routeMatch = $this
-            ->getServiceLocator()
+            ->getServiceManager()
             ->get('Application')
             ->getMvcEvent()
             ->getRouteMatch();

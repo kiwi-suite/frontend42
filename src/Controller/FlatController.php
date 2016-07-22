@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\Controller;
 
+use Admin42\Authentication\AuthenticationService;
 use Core42\Navigation\Filter\IsActiveFilter;
 use Core42\Navigation\Navigation;
 use Core42\View\Model\JsonModel;
@@ -34,7 +35,7 @@ abstract class FlatController extends SitemapController
         }
 
         /** @var Navigation $navigation */
-        $navigation = $this->getServiceLocator()->get(Navigation::class);
+        $navigation = $this->getServiceManager()->get(Navigation::class);
         $filter = new IsActiveFilter($navigation->getContainer('admin42'), $navigation);
         $iterator = new \RecursiveIteratorIterator($filter, \RecursiveIteratorIterator::SELF_FIRST);
         $iterator->setMaxDepth(-1);
@@ -76,7 +77,7 @@ abstract class FlatController extends SitemapController
      */
     public function addSitemapAction()
     {
-        $authenticationService = $this->getServiceLocator()->get('Admin42\Authentication');
+        $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
 
         $parentPage = $this->getTableGateway('Frontend42\Page')->select([
             'sitemapId' => $this->sitemapId,

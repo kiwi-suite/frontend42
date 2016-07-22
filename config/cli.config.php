@@ -1,11 +1,14 @@
 <?php
 namespace Fronten42;
 
+use Frontend42\Command\Router\CreateRouteConfigCommand;
+use Frontend42\Command\XmlSitemap\GenerateCommand;
+
 return [
     'cli' => [
         'create-frontend-routes' => [
             'route'                     => 'create-frontend-routes',
-            'command-name'              => 'Frontend42\Router\CreateRouteConfig',
+            'command-name'              => CreateRouteConfigCommand::class,
             'description'               => '',
             'short_description'         => '',
             'options_descriptions'      => [
@@ -14,7 +17,7 @@ return [
 
         'create-sitemap' => [
             'route'                     => 'create-sitemap',
-            'command-name'              => 'Frontend42\XmlSitemap\Generate',
+            'command-name'              => GenerateCommand::class,
             'description'               => '',
             'short_description'         => '',
             'options_descriptions'      => [

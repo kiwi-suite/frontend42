@@ -1,43 +1,51 @@
 <?php
 namespace Frontend42\PageType\Service;
 
+use Frontend42\Command\Keyword\RefreshPageKeywordsCommand;
 use Frontend42\PageType\PageTypeProvider;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Config;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PageTypeProviderFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('config')['page_types'];
+        $config = $container->get('config')['page_types'];
 
-        $pageTypeProvider = new PageTypeProvider(new Config($config['service_manager']));
-        $pageTypeProvider->setServiceLocator($serviceLocator);
+        $pageTypeProvider = new PageTypeProvider($container);
         $pageTypeProvider->loadPageTypes($config['paths']);
-        $pageTypeProvider->setFormElementManager($serviceLocator->get("FormElementManager"));
+        $pageTypeProvider->setFormElementManager($container->get("FormElementManager"));
 
-        $pageTypeProvider->addInitializer(function ($instance) use ($serviceLocator) {
+        $pageTypeProvider->addInitializer(function ($instance) use ($container) {
             if (method_exists($instance, 'setKeywordCommand')) {
                 $instance
                     ->setKeywordCommand(
-                        $serviceLocator
+                        $container
                             ->get('Command')
-                            ->get('Frontend42\Keyword\RefreshPageKeywords')
+                            ->get(RefreshPageKeywordsCommand::class)
                     );
             }
 
             if (method_exists($instance, 'setPageHandler')) {
                 $instance
                     ->setPageHandler(
-                        $serviceLocator
+                        $container
                             ->get('Frontend42\Navigation\PageHandler')
                     );
             }

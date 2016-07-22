@@ -4,7 +4,7 @@ namespace Frontend42\PageType;
 use Zend\Form\Factory;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
-use Zend\Form\FormElementManager;
+use Zend\Form\FormElementManager\FormElementManagerV3Polyfill as FormElementManager;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\Exception;
 use Zend\Stdlib\Glob;
@@ -136,7 +136,7 @@ class PageTypeProvider extends AbstractPluginManager
      * @return void
      * @throws Exception\RuntimeException if invalid
      */
-    public function validatePlugin($plugin)
+    public function validate($plugin)
     {
         if ($plugin instanceof PageTypeInterface) {
             return;

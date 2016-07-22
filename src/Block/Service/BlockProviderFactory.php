@@ -2,25 +2,33 @@
 namespace Frontend42\Block\Service;
 
 use Frontend42\Block\BlockProvider;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class BlockProviderFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('config')['blocks'];
+        $config = $container->get('config')['blocks'];
 
         $blockProvider = new BlockProvider();
         $blockProvider->loadBlockTypes($config['paths']);
-        $blockProvider->setFormElementManager($serviceLocator->get("FormElementManager"));
+        $blockProvider->setFormElementManager($container->get("FormElementManager"));
 
         return $blockProvider;
     }

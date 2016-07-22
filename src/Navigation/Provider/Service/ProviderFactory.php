@@ -1,27 +1,37 @@
 <?php
 namespace Frontend42\Navigation\Provider\Service;
 
+use Core42\I18n\Localization\Localization;
+use Frontend42\Command\Navigation\CreateFrontendNavigationCommand;
 use Frontend42\Navigation\Provider\Provider;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class ProviderFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $defaultLocale = $serviceLocator->get('Localization')->getActiveLocale();
+        $defaultLocale = $container->get(Localization::class)->getActiveLocale();
 
-        $cache = $serviceLocator->get('Cache\Sitemap');
+        $cache = $container->get('Cache\Sitemap');
 
         if (!$cache->hasItem('nav_' . $defaultLocale)) {
-            $serviceLocator->get('Command')->get('Frontend42\Navigation\CreateFrontendNavigation')->run();
+            $container->get('Command')->get(CreateFrontendNavigationCommand::class)->run();
         }
 
         $pages = [];

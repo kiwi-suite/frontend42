@@ -1,12 +1,18 @@
 <?php
 namespace Frontend42;
 
+use Core42\Mvc\Router\Http\AngularSegment;
+use Frontend42\Controller\BlockController;
+use Frontend42\Controller\SitemapController;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Method;
+use Zend\Router\Http\Segment;
+
 return [
     'router' => [
-        'router_class' => 'Frontend42\Mvc\Router\FrontendRouter',
         'routes' => [
             'frontend' => [
-                'type' => 'method',
+                'type' => Method::class,
                 'options' => [
                     'verb' => 'post,get,put,delete',
                 ],
@@ -16,18 +22,18 @@ return [
             'admin' => [
                 'child_routes' => [
                     'sitemap' => [
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route' => 'sitemap/',
                             'defaults' => [
-                                'controller' => __NAMESPACE__ . '\Sitemap',
+                                'controller' => SitemapController::class,
                                 'action' => 'index',
                             ],
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
                             'list' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'type' => Segment::class,
                                 'options' => [
                                     'route' => 'list/',
                                     'defaults' => [
@@ -36,7 +42,7 @@ return [
                                 ],
                             ],
                             'save' => [
-                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => 'save/',
                                     'defaults' => [
@@ -45,7 +51,7 @@ return [
                                 ],
                             ],
                             'add-sitemap' => [
-                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => 'add-sitemap/',
                                     'defaults' => [
@@ -54,7 +60,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type' => 'Core42\Mvc\Router\Http\AngularSegment',
+                                'type' => AngularSegment::class,
                                 'options' => [
                                     'route' => 'edit/:id/[:version/]',
                                     'defaults' => [
@@ -64,7 +70,7 @@ return [
                                 ],
                             ],
                             'preview' => [
-                                'type' => 'Core42\Mvc\Router\Http\AngularSegment',
+                                'type' => AngularSegment::class,
                                 'options' => [
                                     'route' => 'preview/:id/[:version/]',
                                     'defaults' => [
@@ -73,7 +79,7 @@ return [
                                 ],
                             ],
                             'edit-approve' => [
-                                'type' => 'Core42\Mvc\Router\Http\AngularSegment',
+                                'type' => AngularSegment::class,
                                 'options' => [
                                     'route' => 'edit/:id/[:version/]',
                                     'defaults' => [
@@ -83,7 +89,7 @@ return [
                                 ],
                             ],
                             'approve' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'type' => Segment::class,
                                 'options' => [
                                     'route' => 'approve/:id/:version',
                                     'defaults' => [
@@ -92,7 +98,7 @@ return [
                                 ],
                             ],
                             'delete' => [
-                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => 'delete/',
                                     'defaults' => [
@@ -101,7 +107,7 @@ return [
                                 ],
                             ],
                             'change-language' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'type' => Segment::class,
                                 'options' => [
                                     'route' => 'change-language/:locale/:sitemapId/',
                                     'defaults' => [
@@ -110,7 +116,7 @@ return [
                                 ],
                             ],
                             'change-page-type' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'type' => Segment::class,
                                 'options' => [
                                     'route' => 'change-page-type/:pageId/:sitemapId/',
                                     'defaults' => [
@@ -121,17 +127,17 @@ return [
                         ],
                     ],
                     'block' => [
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route' => 'block/',
                             'defaults' => [
-                                'controller' => __NAMESPACE__ . '\Block',
+                                'controller' => BlockController::class,
                             ],
                         ],
                         'may_terminate' => false,
                         'child_routes' => [
                             'inheritance-save' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'type' => Segment::class,
                                 'options' => [
                                     'route' => 'inheritance-save/',
                                     'defaults' => [
@@ -140,7 +146,7 @@ return [
                                 ],
                             ],
                             'inheritance-clean' => [
-                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => 'inheritance-clean/',
                                     'defaults' => [
@@ -149,7 +155,7 @@ return [
                                 ],
                             ],
                             'inheritance-list' => [
-                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => 'inheritance-list/',
                                     'defaults' => [

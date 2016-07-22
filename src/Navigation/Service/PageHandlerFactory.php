@@ -1,32 +1,43 @@
 <?php
 namespace Frontend42\Navigation\Service;
 
+use Frontend42\Command\Navigation\CreateFrontendNavigationCommand;
 use Frontend42\Navigation\PageHandler;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\PageVersionTableGateway;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PageHandlerFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $defaultHandle = $serviceLocator->get('config')['page_types']['default_handle'];
+        $defaultHandle = $container->get('config')['page_types']['default_handle'];
 
-        $cache = $serviceLocator->get('Cache\Sitemap');
+        $cache = $container->get('Cache\Sitemap');
 
         if (!$cache->hasItem('sitemapMapping')) {
-            $serviceLocator->get('Command')->get('Frontend42\Navigation\CreateFrontendNavigation')->run();
+            $container->get('Command')->get(CreateFrontendNavigationCommand::class)->run();
         }
 
         $pageHandler = new PageHandler(
-            $serviceLocator->get('TableGateway')->get('Frontend42\Page'),
-            $serviceLocator->get('Selector')->get('Frontend42\PageVersion'),
+            $container->get('TableGateway')->get(PageTableGateway::class),
+            $container->get('Selector')->get(PageVersionTableGateway::class),
             $cache
         );
         $pageHandler->setDefaultHandle($defaultHandle);

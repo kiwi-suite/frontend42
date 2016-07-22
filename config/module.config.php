@@ -4,12 +4,14 @@ namespace Frontend42;
 use Frontend42\Command\XmlSitemap\FrontendCommand;
 use Frontend42\Link\Adapter\Service\SitemapLinkFactory;
 use Frontend42\Link\Adapter\SitemapLink;
+use Frontend42\Mvc\Router\Service\HttpRouterFactory;
 use Frontend42\View\Helper\Block;
 use Frontend42\View\Helper\Page;
 use Frontend42\View\Helper\PageRoute;
 use Frontend42\View\Helper\Service\BlockFactory;
 use Frontend42\View\Helper\Service\PageFactory;
 use Frontend42\View\Helper\Service\PageRouteFactory;
+use Zend\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
@@ -40,6 +42,7 @@ return [
 
     'service_manager' => [
         'factories' => [
+            TreeRouteStack::class       => HttpRouterFactory::class,
             'Frontend42\PageTypeContent' => InvokableFactory::class,
             'Frontend42\PageTypeProvider'    => 'Frontend42\PageType\Service\PageTypeProviderFactory',
             'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',

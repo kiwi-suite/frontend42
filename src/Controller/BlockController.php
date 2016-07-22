@@ -94,7 +94,7 @@ class BlockController extends AbstractAdminController
             } elseif ($sitemap->getId() === $_item['sitemap']->getId()) {
 
             } else {
-                $pageTypeOptions = $this->getServiceLocator()
+                $pageTypeOptions = $this->getServiceManager()
                     ->get('Frontend42\PageTypeProvider')
                     ->getPageTypeOptions($_item['sitemap']->getPageType());
 

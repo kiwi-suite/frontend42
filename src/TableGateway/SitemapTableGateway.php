@@ -36,11 +36,6 @@ class SitemapTableGateway extends AbstractTableGateway
     ];
 
     /**
-     * @var boolean
-     */
-    protected $useMetaDataFeature = false;
-
-    /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\Sitemap';

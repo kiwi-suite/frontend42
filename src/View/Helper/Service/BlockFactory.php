@@ -1,26 +1,37 @@
 <?php
 namespace Frontend42\View\Helper\Service;
 
+use Frontend42\Selector\PageVersionSelector;
+use Frontend42\TableGateway\BlockInheritanceTableGateway;
+use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\View\Helper\Block;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class BlockFactory implements FactoryInterface
 {
-
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new Block(
-            $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\BlockInheritance'),
-            $serviceLocator->getServiceLocator()->get('Selector')->get('Frontend42\PageVersion'),
-            $serviceLocator->getServiceLocator()->get('TableGateway')->get('Frontend42\Page'),
-            $serviceLocator->getServiceLocator()->get('Cache\Block')
+            $container->get('TableGateway')->get(BlockInheritanceTableGateway::class),
+            $container->get('Selector')->get(PageVersionSelector::class),
+            $container->get('TableGateway')->get(PageTableGateway::class),
+            $container->get('Cache\Block')
         );
     }
 }

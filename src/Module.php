@@ -9,8 +9,8 @@
 
 namespace Frontend42;
 
+use Admin42\Authentication\AuthenticationService;
 use Admin42\ModuleManager\Feature\AdminAwareModuleInterface;
-use Core42\Authentication\AuthenticationService;
 use Core42\Console\Console;
 use Core42\Mvc\Environment\Environment;
 use Frontend42\FormElements\Block;
@@ -123,7 +123,7 @@ class Module implements
         $pageHandler = $serviceManager->get('Frontend42\Navigation\PageHandler');
         if ($versionId !== null) {
             /* @var AuthenticationService $authenticationService */
-            $authenticationService = $serviceManager->get('Admin42\Authentication');
+            $authenticationService = $serviceManager->get(AuthenticationService::class);
             if ($authenticationService->hasIdentity()) {
                 $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"), $versionId);
                 return;

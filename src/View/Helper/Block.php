@@ -1,8 +1,6 @@
 <?php
 namespace Frontend42\View\Helper;
 
-use Admin42\Authentication\AuthenticationService;
-use Frontend42\Model\BlockInheritance;
 use Frontend42\PageType\PageTypeContent;
 use Frontend42\Selector\PageVersionSelector;
 use Frontend42\TableGateway\BlockInheritanceTableGateway;

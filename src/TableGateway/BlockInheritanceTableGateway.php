@@ -26,11 +26,6 @@ class BlockInheritanceTableGateway extends AbstractTableGateway
     ];
 
     /**
-     * @var boolean
-     */
-    protected $useMetaDataFeature = false;
-
-    /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\BlockInheritance';
