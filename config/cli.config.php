@@ -1,4 +1,6 @@
 <?php
+namespace Fronten42;
+
 return [
     'cli' => [
         'create-frontend-routes' => [

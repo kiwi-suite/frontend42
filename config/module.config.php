@@ -2,6 +2,15 @@
 namespace Frontend42;
 
 use Frontend42\Command\XmlSitemap\FrontendCommand;
+use Frontend42\Link\Adapter\Service\SitemapLinkFactory;
+use Frontend42\Link\Adapter\SitemapLink;
+use Frontend42\View\Helper\Block;
+use Frontend42\View\Helper\Page;
+use Frontend42\View\Helper\PageRoute;
+use Frontend42\View\Helper\Service\BlockFactory;
+use Frontend42\View\Helper\Service\PageFactory;
+use Frontend42\View\Helper\Service\PageRouteFactory;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'view_manager' => array(
@@ -18,31 +27,26 @@ return [
 
     'view_helpers' => [
         'factories' => [
-            'page'            => 'Frontend42\View\Helper\Service\PageFactory',
-            'pageRoute'       => 'Frontend42\View\Helper\Service\PageRouteFactory',
-            'block'           => 'Frontend42\View\Helper\Service\BlockFactory',
+            Page::class            => PageFactory::class,
+            PageRoute::class       => PageRouteFactory::class,
+            Block::class           => BlockFactory::class,
         ],
-    ],
-
-    'form_elements' => [
-        'factories' => [
-            'page_type_selector'        => 'Frontend42\FormElements\Service\PageTypeSelectorFactory',
-            'page_selector'             => 'Frontend42\FormElements\Service\PageSelectorFactory',
-            'block'                     => 'Frontend42\FormElements\Service\BlockFactory',
-        ],
+        'aliases' => [
+            'page'            => Page::class,
+            'pageRoute'       => PageRoute::class,
+            'block'           => Block::class,
+        ]
     ],
 
     'service_manager' => [
-        'invokables' => [
-            'Frontend42\PageTypeContent' => 'Frontend42\PageType\PageTypeContent',
-        ],
         'factories' => [
+            'Frontend42\PageTypeContent' => InvokableFactory::class,
             'Frontend42\PageTypeProvider'    => 'Frontend42\PageType\Service\PageTypeProviderFactory',
             'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',
             'Frontend42\Navigation\Provider' => 'Frontend42\Navigation\Provider\Service\ProviderFactory',
             'Frontend42\Navigation\PageHandler' => 'Frontend42\Navigation\Service\PageHandlerFactory',
 
-            'Frontend42\Link\SitemapLink' => 'Frontend42\Link\Adapter\Service\SitemapLinkFactory',
+            SitemapLink::class => SitemapLinkFactory::class,
 
             'Frontend42\Sitemap\EventManager' => 'Frontend42\Event\Service\SitemapEventManagerFactory',
             'Frontend42\Block\EventManager' => 'Frontend42\Event\Service\BlockEventManagerFactory',
@@ -51,7 +55,7 @@ return [
 
     'link' => [
         'adapter' => [
-            'sitemap' => 'Frontend42\Link\SitemapLink',
+            'sitemap' => SitemapLink::class,
         ],
     ],
 

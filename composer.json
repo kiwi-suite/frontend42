@@ -5,8 +5,8 @@
         "cocur/slugify": "v1.1"
     },
     "autoload": {
-        "psr-0": {
-            "Frontend42": "src/"
+        "psr-4": {
+            "Frontend42\\": "src/"
         }
     }
 }

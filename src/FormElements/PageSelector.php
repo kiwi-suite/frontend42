@@ -14,6 +14,15 @@ use Zend\Form\Element;
 class PageSelector extends Element
 {
     /**
+     * Seed attributes
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'type' => 'pageselector',
+    ];
+
+    /**
      * @var array
      */
     protected $sitemapData = [];
