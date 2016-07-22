@@ -1,11 +1,8 @@
 {
     "name": "fruit42/frontend42",
-    "type": "zend-module",
     "require": {
-        "php": ">=5.5",
-        "cocur/slugify": "v1.1",
-        "fruit42/core42": "3.*",
-        "fruit42/admin42": "3.*"
+        "php": "^5.5 || ^7.0",
+        "cocur/slugify": "v1.1"
     },
     "autoload": {
         "psr-0": {
