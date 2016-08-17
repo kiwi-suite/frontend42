@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\Command\XmlSitemap;
 
+use Frontend42\Command\Router\CreateRouteConfigCommand;
 use Frontend42\Model\Page;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
@@ -19,7 +20,7 @@ class FrontendCommand extends AbstractCommand
         $cache = $this->getServiceManager()->get('Cache\Sitemap');
         $now = new \DateTime();
 
-        $cmd = $this->getCommand('Frontend42\Router\CreateRouteConfig');
+        $cmd = $this->getCommand(CreateRouteConfigCommand::class);
         $cmd->run();
 
         $tableGateway = $this->getTableGateway(PageTableGateway::class);

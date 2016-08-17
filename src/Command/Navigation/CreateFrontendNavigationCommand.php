@@ -9,6 +9,8 @@
 
 namespace Frontend42\Command\Navigation;
 
+use Frontend42\Selector\SitemapSelector;
+
 class CreateFrontendNavigationCommand extends \Core42\Command\AbstractCommand
 {
     use \Core42\Command\ConsoleAwareTrait;
@@ -23,14 +25,13 @@ class CreateFrontendNavigationCommand extends \Core42\Command\AbstractCommand
         $locales = $localisation->getAvailableLocales();
 
         /* @var \Frontend42\Selector\SitemapSelector $sitemapSelector */
-        $sitemapSelector = $this->getServiceManager()->get('Selector')->get('Frontend42\Sitemap');
+        $sitemapSelector = $this->getServiceManager()->get('Selector')->get(SitemapSelector::class);
 
         foreach ($locales as $locale) {
             $pages = $this->buildNavigation(
                 $sitemapSelector->setLocale($locale)
-                    ->setIncludeOffline(false)
-                    ->setIncludeExclude(false)
-                    ->setIncludeExcludeFromMenu(false)
+                    //->setIncludeOffline(false)
+                    //->setIncludeExclude(false)
                     ->getResult(),
                 'frontend'
             );

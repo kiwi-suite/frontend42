@@ -1,24 +1,34 @@
 <?php
 /**
- * frontend42 (www.raum42.at)
+ * core42 (www.raum42.at)
  *
  * @link http://www.raum42.at
  * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
  *
  */
 
-namespace Frontend42\FormElements\Service;
+namespace Frontend42\PageType\Provider\Service;
 
-use Frontend42\FormElements\PageTypeSelector;
-use Frontend42\PageType\Provider\PageTypeProvider;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
-class PageTypeSelectorFactory implements FactoryInterface
+class PageTypeFallbackAbstractFactory implements AbstractFactoryInterface
 {
+    /**
+     * Can the factory create an instance for the service?
+     *
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @return bool
+     */
+    public function canCreate(ContainerInterface $container, $requestedName)
+    {
+        return class_exists($requestedName);
+    }
+
     /**
      * Create an object
      *
@@ -33,10 +43,6 @@ class PageTypeSelectorFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $pageTypeProvider = $container->get(PageTypeProvider::class);
-        $element = new PageTypeSelector();
-        $element->setValueOptions($pageTypeProvider->getDisplayPageTypes());
-
-        return $element;
+        return new $requestedName();
     }
 }

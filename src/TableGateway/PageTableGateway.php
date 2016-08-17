@@ -29,7 +29,7 @@ class PageTableGateway extends AbstractTableGateway
         'publishedUntil' => 'DateTime',
         'status' => 'String',
         'slug' => 'String',
-        'route' => 'String',
+        'route' => 'Json',
         'viewCount' => 'Integer',
         'updated' => 'DateTime',
         'updatedBy' => 'Integer',

@@ -2,6 +2,7 @@
 namespace Frontend42\Link\Adapter\Service;
 
 use Frontend42\Link\Adapter\SitemapLink;
+use Frontend42\Navigation\PageHandler;
 use Frontend42\TableGateway\PageTableGateway;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -28,7 +29,7 @@ class SitemapLinkFactory implements FactoryInterface
         return new SitemapLink(
             $container->get('TableGateway')->get(PageTableGateway::class),
             $container->get('Router'),
-            $container->get('Frontend42\Navigation\PageHandler')
+            $container->get(PageHandler::class)
         );
     }
 }

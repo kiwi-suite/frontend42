@@ -2,17 +2,19 @@
 namespace Frontend42\Command\Sitemap;
 
 use Admin42\Model\User;
+use Cocur\Slugify\Slugify;
 use Core42\Command\AbstractCommand;
-use Frontend42\Event\SitemapEvent;
+use Core42\I18n\Localization\Localization;
+use Frontend42\Command\PageVersion\ApproveCommand;
+use Frontend42\Command\PageVersion\CreateCommand;
+use Frontend42\Event\PageEvent;
 use Frontend42\Model\Page;
-use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
-use Frontend42\PageType\PageTypeContent;
 use Frontend42\PageType\PageTypeInterface;
+use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
-use Zend\Json\Json;
 
 class AddSitemapCommand extends AbstractCommand
 {
@@ -112,20 +114,25 @@ class AddSitemapCommand extends AbstractCommand
     protected function preExecute()
     {
         if (!empty($this->parentPageId)) {
-            $this->parentPage = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $this->parentPageId);
+            $this->parentPage = $this
+                ->getTableGateway(PageTableGateway::class)
+                ->selectByPrimary((int) $this->parentPageId);
         }
 
         if ($this->createdUser !== null) {
             $this->createdBy = $this->createdUser->getId();
         }
 
-        $select = $this->getTableGateway('Frontend42\Sitemap')
+        $select = $this->getTableGateway(SitemapTableGateway::class)
             ->getSql()
             ->select();
 
         $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parentPage->getSitemapId()]);
         $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
-        $statement = $this->getTableGateway('Frontend42\Sitemap')->getSql()->prepareStatementForSqlObject($select);
+        $statement = $this
+            ->getTableGateway(SitemapTableGateway::class)
+            ->getSql()
+            ->prepareStatementForSqlObject($select);
         $result = $statement->execute()->current();
 
         $this->orderNr = $result['orderNr'];
@@ -140,9 +147,15 @@ class AddSitemapCommand extends AbstractCommand
      */
     protected function execute()
     {
+        /** @var PageTypeInterface $pageTypeObject */
+        $pageTypeObject = $this->getServiceManager()->get(PageTypeProvider::class)->get($this->pageType);
+
         $sitemap = new Sitemap();
         $sitemap->setPageType($this->pageType)
             ->setOrderNr($this->orderNr)
+            ->setExclude($pageTypeObject->getExclude())
+            ->setHandle($pageTypeObject->getHandle())
+            ->setTerminal($pageTypeObject->getTerminal())
             ->setCreated(new \DateTime())
             ->setCreatedBy($this->createdBy)
             ->setUpdated(new \DateTime())
@@ -152,19 +165,14 @@ class AddSitemapCommand extends AbstractCommand
             $sitemap->setParentId($this->parentPage->getSitemapId());
         }
 
-        /** @var PageTypeInterface $pageTypeObject */
-        $pageTypeObject = $this->getServiceManager()->get('Frontend42\PageTypeProvider')->getPageType($this->pageType);
+        $this->getTableGateway(SitemapTableGateway::class)->insert($sitemap);
 
-        $pageTypeObject->prepareForAdd($sitemap);
-
-        $this->getTableGateway('Frontend42\Sitemap')->insert($sitemap);
-
-        $defaultLocale = $this->getServiceManager()->get('Localization')->getDefaultLocale();
+        $defaultLocale = $this->getServiceManager()->get(Localization::class)->getDefaultLocale();
         if (!empty($this->parentPage)) {
             $defaultLocale = $this->parentPage->getLocale();
         }
 
-        foreach ($this->getServiceManager()->get('Localization')->getAvailableLocales() as $locale) {
+        foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
             $page = new Page();
             $page->setLocale($locale)
                 ->setStatus(Page::STATUS_OFFLINE)
@@ -175,42 +183,51 @@ class AddSitemapCommand extends AbstractCommand
                 ->setUpdatedBy($this->createdBy);
 
             $pageContent = [
-                'status' => Page::STATUS_OFFLINE
+                'status' => $page->getStatus()
             ];
 
             if ($locale === $defaultLocale) {
-                $page->setName($this->name);
-
                 $pageContent['name'] = $this->name;
             }
 
-            $pageTypeContent = new PageTypeContent();
-            $pageTypeContent->setContent($pageContent);
+            $pageContentObject = $pageTypeObject->getPageContent();
+            $pageContentObject->setContent($pageContent);
 
-            $pageTypeObject->savePage($pageTypeContent, $page, true);
+            $this
+                ->getServiceManager()
+                ->get('Frontend42\Page\EventManager')
+                ->trigger(
+                    PageEvent::EVENT_ADD_PRE,
+                    $page,
+                    ['sitemap' => $sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
+                );
 
-            $this->getTableGateway('Frontend42\Page')->insert($page);
+            $this->getTableGateway(PageTableGateway::class)->insert($page);
 
-            $pageVersion = new PageVersion();
-            $pageVersion->setPageId($page->getId())
-                ->setVersionId(1)
-                ->setContent(Json::encode($pageTypeContent->getContent()))
-                ->setApproved(new \DateTime())
-                ->setCreated(new \DateTime())
-                ->setCreatedBy($this->createdBy);
+            $pageVersion = $this->getCommand(CreateCommand::class)
+                ->setPageId($page->getId())
+                ->setContent($pageContentObject->getContent())
+                ->setCreatedBy($this->createdUser)
+                ->run();
 
-            $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
+            $this->getCommand(ApproveCommand::class)
+                ->setVersion($pageVersion)
+                ->run();
+
+            $this
+                ->getServiceManager()
+                ->get('Frontend42\Page\EventManager')
+                ->trigger(
+                    PageEvent::EVENT_ADD_POST,
+                    $page,
+                    ['sitemap' => $sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
+                );
         }
 
-        $model = $this->getTableGateway('Frontend42\Page')->select([
+        $model = $this->getTableGateway(PageTableGateway::class)->select([
             'sitemapId' => $sitemap->getId(),
             'locale'    => $defaultLocale
         ])->current();
-
-        $this
-            ->getServiceManager()
-            ->get('Frontend42\Sitemap\EventManager')
-            ->trigger(SitemapEvent::EVENT_ADD, $model, ['pageType' => $pageTypeObject, 'sitemap' => $sitemap]);
 
         return $model;
     }

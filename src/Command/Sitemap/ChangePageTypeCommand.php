@@ -3,11 +3,15 @@ namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
 use Core42\Db\ResultSet\ResultSet;
-use Frontend42\Event\SitemapEvent;
+use Frontend42\Event\PageEvent;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
-use Frontend42\PageType\PageTypeContent;
+use Frontend42\PageType\PageTypeInterface;
+use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\PageVersionTableGateway;
+use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Json\Json;
 
 class ChangePageTypeCommand extends AbstractCommand
@@ -87,7 +91,7 @@ class ChangePageTypeCommand extends AbstractCommand
     protected function preExecute()
     {
         if ($this->sitemapId > 0) {
-            $this->sitemap = $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary((int) $this->sitemapId);
+            $this->sitemap = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary((int) $this->sitemapId);
         }
 
         if (empty($this->sitemap)) {
@@ -96,7 +100,7 @@ class ChangePageTypeCommand extends AbstractCommand
             return;
         }
 
-        $this->pages = $this->getTableGateway('Frontend42\Page')->select(['sitemapId' => $this->sitemap->getId()]);
+        $this->pages = $this->getTableGateway(PageTableGateway::class)->select(['sitemapId' => $this->sitemap->getId()]);
     }
 
     /**
@@ -104,20 +108,19 @@ class ChangePageTypeCommand extends AbstractCommand
      */
     protected function execute()
     {
+        /** @var PageTypeInterface $pageTypeObject */
+        $pageTypeObject = $this->getServiceManager()->get(PageTypeProvider::class)->get($this->pageType);
+
         $this->sitemap->setPageType($this->pageType)
-            ->setExclude(false)
-            ->setHandle(null)
-            ->setTerminal(false);
+            ->setExclude($pageTypeObject->getExclude())
+            ->setHandle($pageTypeObject->getHandle())
+            ->setTerminal($pageTypeObject->getTerminal());
 
-        $pageTypeObject = $this->getServiceManager()->get('Frontend42\PageTypeProvider')->getPageType($this->pageType);
-
-        $pageTypeObject->prepareForAdd($this->sitemap);
-
-        $this->getTableGateway('Frontend42\Sitemap')->update($this->sitemap);
+        $this->getTableGateway(SitemapTableGateway::class)->update($this->sitemap);
 
         /** @var Page $page */
         foreach ($this->pages as $page) {
-            $this->getTableGateway('Frontend42\PageVersion')->delete(['pageId' => $page->getId()]);
+            $this->getTableGateway(PageVersionTableGateway::class)->delete(['pageId' => $page->getId()]);
 
             $page->setStatus(Page::STATUS_OFFLINE);
             $pageContent = [
@@ -125,34 +128,37 @@ class ChangePageTypeCommand extends AbstractCommand
                 'name'   => $page->getName()
             ];
 
-            $pageTypeContent = new PageTypeContent();
-            $pageTypeContent->setContent($pageContent);
+            $pageContentObject = $pageTypeObject->getPageContent();
+            $pageContentObject->setContent($pageContent);
 
-            $pageTypeObject->savePage($pageTypeContent, $page, true);
+            $this
+                ->getServiceManager()
+                ->get('Frontend42\Page\EventManager')
+                ->trigger(
+                    PageEvent::EVENT_ADD_PRE,
+                    $page,
+                    ['sitemap' => $this->sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
+                );
 
-            $this->getTableGateway('Frontend42\Page')->update($page);
+            $this->getTableGateway(PageTableGateway::class)->update($page);
 
             $pageVersion = new PageVersion();
             $pageVersion->setPageId($page->getId())
                 ->setVersionId(1)
                 ->setCreated(new \DateTime())
-                ->setContent(Json::encode($pageTypeContent->getContent()))
+                ->setContent(Json::encode($pageContentObject->getContent()))
                 ->setCreatedBy($this->createdBy);
 
-            $this->getTableGateway('Frontend42\PageVersion')->insert($pageVersion);
+            $this->getTableGateway(PageVersionTableGateway::class)->insert($pageVersion);
 
             $this
                 ->getServiceManager()
-                ->get('Frontend42\Sitemap\EventManager')
+                ->get('Frontend42\Page\EventManager')
                 ->trigger(
-                    SitemapEvent::EVENT_CHANGE_PAGETYPE,
+                    PageEvent::EVENT_ADD_POST,
                     $page,
-                    [
-                        'pageType' => $pageTypeObject,
-                        'sitemap' => $this->sitemap
-                    ]
+                    ['sitemap' => $this->sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
                 );
-
         }
     }
 }

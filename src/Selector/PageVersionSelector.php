@@ -4,6 +4,7 @@ namespace Frontend42\Selector;
 use Core42\Db\ResultSet\ResultSet;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\PageVersion;
+use Frontend42\TableGateway\PageVersionTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Json\Json;
@@ -54,7 +55,7 @@ class PageVersionSelector extends AbstractDatabaseSelector
      */
     public function getResult()
     {
-        $result = $this->getTableGateway('Frontend42\PageVersion')->selectWith($this->getSelect());
+        $result = $this->getTableGateway(PageVersionTableGateway::class)->selectWith($this->getSelect());
 
         if ($result->count() > 0) {
             return $result->current();
@@ -73,7 +74,7 @@ class PageVersionSelector extends AbstractDatabaseSelector
      */
     protected function getSelect()
     {
-        $select = $this->getTableGateway('Frontend42\PageVersion')->getSql()->select();
+        $select = $this->getTableGateway(PageVersionTableGateway::class)->getSql()->select();
 
         $select->where(function (Where $where) {
             $where->equalTo('pageId', $this->pageId);

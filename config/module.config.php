@@ -1,10 +1,24 @@
 <?php
 namespace Frontend42;
 
+use Cocur\Slugify\Slugify;
+use Frontend42\Block\BlockProvider;
+use Frontend42\Block\Service\BlockProviderFactory;
 use Frontend42\Command\XmlSitemap\FrontendCommand;
+use Frontend42\Event\PageEventListener;
+use Frontend42\Event\Service\BlockEventManagerFactory;
+use Frontend42\Event\Service\PageEventListenerFactory;
+use Frontend42\Event\Service\PageEventManagerFactory;
+use Frontend42\Event\Service\SitemapEventManagerFactory;
 use Frontend42\Link\Adapter\Service\SitemapLinkFactory;
 use Frontend42\Link\Adapter\SitemapLink;
 use Frontend42\Mvc\Router\Service\HttpRouterFactory;
+use Frontend42\Navigation\PageHandler;
+use Frontend42\Navigation\Provider\Provider;
+use Frontend42\Navigation\Provider\Service\ProviderFactory;
+use Frontend42\Navigation\Service\PageHandlerFactory;
+use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\PageType\Provider\Service\PageTypeProviderFactory;
 use Frontend42\View\Helper\Block;
 use Frontend42\View\Helper\Page;
 use Frontend42\View\Helper\PageRoute;
@@ -15,11 +29,11 @@ use Zend\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
-    'view_manager' => array(
-        'template_path_stack'       => array(
+    'view_manager' => [
+        'template_path_stack'       => [
             __NAMESPACE__               => __DIR__ . '/../view',
-        ),
-    ),
+        ],
+    ],
 
     'migration' => [
         'directory'     => [
@@ -42,17 +56,20 @@ return [
 
     'service_manager' => [
         'factories' => [
-            TreeRouteStack::class       => HttpRouterFactory::class,
-            'Frontend42\PageTypeContent' => InvokableFactory::class,
-            'Frontend42\PageTypeProvider'    => 'Frontend42\PageType\Service\PageTypeProviderFactory',
-            'Frontend42\BlockProvider'       => 'Frontend42\Block\Service\BlockProviderFactory',
-            'Frontend42\Navigation\Provider' => 'Frontend42\Navigation\Provider\Service\ProviderFactory',
-            'Frontend42\Navigation\PageHandler' => 'Frontend42\Navigation\Service\PageHandlerFactory',
+            TreeRouteStack::class               => HttpRouterFactory::class,
+            PageTypeProvider::class             => PageTypeProviderFactory::class,
+            BlockProvider::class                => BlockProviderFactory::class,
+            Provider::class                     => ProviderFactory::class,
+            PageHandler::class                  => PageHandlerFactory::class,
+            Slugify::class                      => InvokableFactory::class,
 
-            SitemapLink::class => SitemapLinkFactory::class,
+            SitemapLink::class                  => SitemapLinkFactory::class,
 
-            'Frontend42\Sitemap\EventManager' => 'Frontend42\Event\Service\SitemapEventManagerFactory',
-            'Frontend42\Block\EventManager' => 'Frontend42\Event\Service\BlockEventManagerFactory',
+            PageEventListener::class            => PageEventListenerFactory::class,
+
+            'Frontend42\Sitemap\EventManager'   => SitemapEventManagerFactory::class,
+            'Frontend42\Block\EventManager'     => BlockEventManagerFactory::class,
+            'Frontend42\Page\EventManager'      => PageEventManagerFactory::class,
         ],
     ],
 

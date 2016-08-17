@@ -1,5 +1,5 @@
 <?php
-namespace Admin42;
+namespace Frontend42;
 
 return array(
     'admin' => array(

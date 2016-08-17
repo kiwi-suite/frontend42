@@ -9,6 +9,7 @@
 
 namespace Frontend42\FormElements\Service;
 
+use Frontend42\Block\BlockProvider;
 use Frontend42\FormElements\Block;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -32,7 +33,7 @@ class BlockFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $blockProvider = $container->get('Frontend42\BlockProvider');
+        $blockProvider = $container->get(BlockProvider::class);
 
         $block = new Block();
         $block->setBlockProvider($blockProvider);

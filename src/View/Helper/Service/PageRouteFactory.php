@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\View\Helper\Service;
 
+use Frontend42\Navigation\PageHandler;
 use Frontend42\View\Helper\PageRoute;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -25,7 +26,7 @@ class PageRouteFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new PageRoute(
-            $container->get('Frontend42\Navigation\PageHandler')
+            $container->get(PageHandler::class)
         );
     }
 }

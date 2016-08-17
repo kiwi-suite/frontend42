@@ -9,8 +9,10 @@
 
 namespace Frontend42\Command\Keyword;
 
+use Admin42\Command\Tag\SaveCommand;
 use Core42\Command\AbstractCommand;
 use Frontend42\Model\PageKeyword;
+use Frontend42\TableGateway\PageKeywordTableGateway;
 
 class RefreshPageKeywordsCommand extends AbstractCommand
 {
@@ -66,13 +68,13 @@ class RefreshPageKeywordsCommand extends AbstractCommand
             return;
         }
 
-        $this->getTableGateway('Frontend42\PageKeyword')->delete(['pageId' => $this->pageId]);
+        $this->getTableGateway(PageKeywordTableGateway::class)->delete(['pageId' => $this->pageId]);
 
         if (empty($this->keywords)) {
             return;
         }
 
-        $cmd = $this->getCommand('Admin42\Tag\Save');
+        $cmd = $this->getCommand(SaveCommand::class);
         $cmd->setTags(implode(",", $this->keywords))
             ->run();
         foreach ($this->keywords as $keyword) {
@@ -80,7 +82,7 @@ class RefreshPageKeywordsCommand extends AbstractCommand
             $pageKeyword->setKeyword($keyword)
                 ->setPageId($this->pageId);
 
-            $this->getTableGateway('Frontend42\PageKeyword')->insert($pageKeyword);
+            $this->getTableGateway(PageKeywordTableGateway::class)->insert($pageKeyword);
         }
     }
 }

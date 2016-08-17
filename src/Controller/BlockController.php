@@ -3,8 +3,15 @@ namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\View\Model\JsonModel;
+use Frontend42\Command\Block\CleanInheritanceCommand;
+use Frontend42\Command\Block\SaveInheritanceCommand;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
+use Frontend42\PageType\PageTypeProvider;
+use Frontend42\Selector\SitemapSelector;
+use Frontend42\TableGateway\BlockInheritanceTableGateway;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Json\Json;
 
 class BlockController extends AbstractAdminController
@@ -15,13 +22,13 @@ class BlockController extends AbstractAdminController
      */
     public function saveInheritanceAction()
     {
-        $this->getCommand('Frontend42\Block\SaveInheritance')
+        $this->getCommand(SaveInheritanceCommand::class)
             ->setSourcePageId($this->params()->fromPost("sourcePageId"))
             ->setTargetPageId($this->params()->fromPost("targetPageId"))
             ->setSection($this->params()->fromPost("section"))
             ->run();
 
-        $result = $this->getTableGateway('Frontend42\BlockInheritance')->select([
+        $result = $this->getTableGateway(BlockInheritanceTableGateway::class)->select([
             'sourcePageId' => $this->params()->fromPost("sourcePageId"),
             'section' => $this->params()->fromPost("section")
         ]);
@@ -32,7 +39,7 @@ class BlockController extends AbstractAdminController
 
         $blockInheritance = $result->current();
 
-        $page = $this->getTableGateway('Frontend42\Page')->selectByPrimary($blockInheritance->getTargetPageId());
+        $page = $this->getTableGateway(PageTableGateway::class)->selectByPrimary($blockInheritance->getTargetPageId());
 
         return new JsonModel([
             'id' => $page->getId(),
@@ -45,7 +52,7 @@ class BlockController extends AbstractAdminController
      */
     public function cleanInheritanceAction()
     {
-        $this->getCommand('Frontend42\Block\CleanInheritance')
+        $this->getCommand(CleanInheritanceCommand::class)
             ->setSourcePageId($this->params()->fromPost("sourcePageId"))
             ->setSection($this->params()->fromPost("section"))
             ->run();
@@ -62,14 +69,14 @@ class BlockController extends AbstractAdminController
         $jsonString = $this->getRequest()->getContent();
         $options = Json::decode($jsonString, Json::TYPE_ARRAY);
 
-        $currentPage = $this->getTableGateway('Frontend42\Page')->selectByPrimary((int) $options['pageId']);
+        $currentPage = $this->getTableGateway(PageTableGateway::class)->selectByPrimary((int) $options['pageId']);
         if (empty($currentPage)) {
             return new JsonModel();
         }
 
-        $sitemap = $this->getTableGateway('Frontend42\Sitemap')->selectByPrimary($currentPage->getSitemapId());
+        $sitemap = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary($currentPage->getSitemapId());
 
-        $result = $this->getSelector('Frontend42\Sitemap')
+        $result = $this->getSelector(SitemapSelector::class)
             ->setLocale($currentPage->getLocale())
             ->getResult();
 
@@ -95,7 +102,7 @@ class BlockController extends AbstractAdminController
 
             } else {
                 $pageTypeOptions = $this->getServiceManager()
-                    ->get('Frontend42\PageTypeProvider')
+                    ->get(PageTypeProvider::class)
                     ->getPageTypeOptions($_item['sitemap']->getPageType());
 
                 $pageTypeElements = $pageTypeOptions->getElements();

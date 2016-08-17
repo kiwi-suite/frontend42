@@ -3,6 +3,7 @@ namespace Frontend42\Selector;
 
 use Admin42\Selector\SmartTable\AbstractSmartTableSelector;
 use Core42\Db\ResultSet\ResultSet;
+use Frontend42\TableGateway\PageTableGateway;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -30,7 +31,7 @@ class FlatSelector extends AbstractSmartTableSelector
      */
     protected function getSelect()
     {
-        $gateway = $this->getTableGateway('Frontend42\Page');
+        $gateway = $this->getTableGateway(PageTableGateway::class);
 
         $select = $gateway->getSql()->select();
         $select->join(['s' => "frontend42_sitemap"], 's.id = sitemapId', ['handle']);
@@ -92,7 +93,7 @@ class FlatSelector extends AbstractSmartTableSelector
             $alternateNames = [];
             if (empty($array['name'])) {
                 $result = $this
-                    ->getTableGateway('Frontend42\Page')
+                    ->getTableGateway(PageTableGateway::class)
                     ->select([
                         'sitemapId' => $array['sitemapId']
                     ]);

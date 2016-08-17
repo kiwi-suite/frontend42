@@ -12,13 +12,16 @@ namespace Frontend42;
 use Admin42\Authentication\AuthenticationService;
 use Admin42\ModuleManager\Feature\AdminAwareModuleInterface;
 use Core42\Console\Console;
+use Core42\I18n\Localization\Localization;
 use Core42\Mvc\Environment\Environment;
+use Frontend42\Event\PageEventListener;
 use Frontend42\FormElements\Block;
 use Frontend42\FormElements\PageSelector;
 use Frontend42\FormElements\PageTypeSelector;
 use Frontend42\FormElements\Service\BlockFactory;
 use Frontend42\FormElements\Service\PageSelectorFactory;
 use Frontend42\FormElements\Service\PageTypeSelectorFactory;
+use Frontend42\Navigation\PageHandler;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -65,6 +68,11 @@ class Module implements
             MvcEvent::EVENT_DISPATCH_ERROR,
             [$this, 'localeErrorSelection']
         );
+
+        $e->getApplication()
+            ->getServiceManager()
+            ->get(PageEventListener::class)
+            ->attach($e->getApplication()->getServiceManager()->get('Frontend42\Page\EventManager'));
     }
 
     /**
@@ -99,12 +107,12 @@ class Module implements
 
         $serviceManager = $e->getApplication()->getServiceManager();
 
-        if ($serviceManager->get(Environment::class)->is(\Admin42\Module::class)) {
+        if ($serviceManager->get(Environment::class)->is(\Admin42\Module::ENVIRONMENT_ADMIN)) {
             return;
         }
 
         $routeMatch = $e->getRouteMatch();
-        $localization = $serviceManager->get('Localization');
+        $localization = $serviceManager->get(Localization::class);
 
         //error page or not mapped page
         if (!($routeMatch->getParam("pageId", null) > 0)) {
@@ -118,18 +126,7 @@ class Module implements
         $localization->acceptLocale($locale);
         $serviceManager->get('MvcTranslator')->setLocale($locale);
 
-        $versionId = $e->getRequest()->getQuery('versionId');
-
-        $pageHandler = $serviceManager->get('Frontend42\Navigation\PageHandler');
-        if ($versionId !== null) {
-            /* @var AuthenticationService $authenticationService */
-            $authenticationService = $serviceManager->get(AuthenticationService::class);
-            if ($authenticationService->hasIdentity()) {
-                $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"), $versionId);
-                return;
-            }
-        }
-
+        $pageHandler = $serviceManager->get(PageHandler::class);
         $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"));
     }
 

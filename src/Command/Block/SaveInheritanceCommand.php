@@ -12,6 +12,7 @@ namespace Frontend42\Command\Block;
 
 use Frontend42\Event\BlockEvent;
 use Frontend42\Model\BlockInheritance;
+use Frontend42\TableGateway\BlockInheritanceTableGateway;
 
 class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
 {
@@ -68,7 +69,7 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
      */
     protected function execute()
     {
-        $result = $this->getTableGateway('Frontend42\BlockInheritance')->select([
+        $result = $this->getTableGateway(BlockInheritanceTableGateway::class)->select([
             'sourcePageId' => $this->targetPageId,
             'section' => $this->section,
         ]);
@@ -77,7 +78,7 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
             $this->targetPageId = $result->current()->getTargetPageId();
         }
 
-        $this->getTableGateway('Frontend42\BlockInheritance')->update([
+        $this->getTableGateway(BlockInheritanceTableGateway::class)->update([
             'targetPageId' => $this->targetPageId
         ], ['targetPageId' => $this->sourcePageId]);
 
@@ -86,7 +87,7 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
             ->setTargetPageId($this->targetPageId)
             ->setSection($this->section);
 
-        $this->getTableGateway('Frontend42\BlockInheritance')->insert($blockInheritance);
+        $this->getTableGateway(BlockInheritanceTableGateway::class)->insert($blockInheritance);
 
         $this
             ->getServiceManager()

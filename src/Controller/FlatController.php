@@ -7,6 +7,7 @@ use Core42\Navigation\Navigation;
 use Core42\View\Model\JsonModel;
 use Frontend42\Command\Sitemap\AddSitemapCommand;
 use Frontend42\Selector\FlatSelector;
+use Frontend42\TableGateway\PageTableGateway;
 use Zend\View\Model\ViewModel;
 
 abstract class FlatController extends SitemapController
@@ -79,13 +80,13 @@ abstract class FlatController extends SitemapController
     {
         $authenticationService = $this->getServiceManager()->get(AuthenticationService::class);
 
-        $parentPage = $this->getTableGateway('Frontend42\Page')->select([
+        $parentPage = $this->getTableGateway(PageTableGateway::class)->select([
             'sitemapId' => $this->sitemapId,
             'locale' => $this->params()->fromPost('locale')
         ])->current();
 
         /* @var AddSitemapCommand $cmd */
-        $cmd = $this->getCommand('Frontend42\Sitemap\AddSitemap')
+        $cmd = $this->getCommand(AddSitemapCommand::class)
             ->setPageType($this->pageType)
             ->setCreatedUser($authenticationService->getIdentity())
             ->setName($this->params()->fromPost('name'))

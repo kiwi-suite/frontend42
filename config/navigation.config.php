@@ -1,10 +1,12 @@
 <?php
 namespace Frontend42;
 
+use Frontend42\Navigation\Provider\Provider;
+
 return array(
     'navigation' => array(
         'containers' => array(
-            'frontend42' => 'Frontend42\Navigation\Provider',
+            'frontend42' => Provider::class,
 
             'admin42' => array(
                 'content' => [

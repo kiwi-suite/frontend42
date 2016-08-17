@@ -10,8 +10,10 @@
 namespace Frontend42\Command\Router;
 
 use Core42\I18n\Localization\Localization;
+use Frontend42\Command\Navigation\CreateFrontendNavigationCommand;
 use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Page;
+use Frontend42\Selector\SitemapSelector;
 
 class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
 {
@@ -75,14 +77,14 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         $locales = $localisation->getAvailableLocales();
 
         /* @var \Frontend42\Selector\SitemapSelector $sitemapSelector */
-        $sitemapSelector = $this->getServiceManager()->get('Selector')->get('Frontend42\Sitemap');
+        $sitemapSelector = $this->getServiceManager()->get('Selector')->get(SitemapSelector::class);
 
         $childRoutes = [];
         foreach ($locales as $locale) {
 
             $sitemapResult = $sitemapSelector
-                ->setIncludeExclude(false)
-                ->setIncludeOffline($this->includeOffline)
+                //->setIncludeExclude(false)
+                //->setIncludeOffline($this->includeOffline)
                 ->setLocale($locale)
                 ->getResult();
 
@@ -99,7 +101,7 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
             $cache->setItem("sitemapMapping", $this->localeMapping);
         }
 
-        $this->getCommand('Frontend42\Navigation\CreateFrontendNavigation')->run();
+        $this->getCommand(CreateFrontendNavigationCommand::class)->run();
 
         $this
             ->getServiceManager()
@@ -125,7 +127,7 @@ class CreateRouteConfigCommand extends \Core42\Command\AbstractCommand
         foreach ($sitemap as $currentSitemap) {
             /* @var Page $page*/
             $page = $currentSitemap['page'];
-            $pageRoute = json_decode($page->getRoute(), true);
+            $pageRoute = $page->getRoute();
 
             if (empty($pageRoute)) {
                 continue;

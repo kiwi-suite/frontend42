@@ -23,7 +23,7 @@ class PageVersionTableGateway extends AbstractTableGateway
         'id' => 'Integer',
         'versionId' => 'Integer',
         'pageId' => 'Integer',
-        'content' => 'String',
+        'content' => 'Json',
         'created' => 'DateTime',
         'createdBy' => 'Integer',
         'approved' => 'DateTime',

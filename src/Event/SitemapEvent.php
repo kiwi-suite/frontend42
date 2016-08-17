@@ -7,11 +7,7 @@ use Zend\EventManager\Event;
 
 class SitemapEvent extends Event
 {
-    const EVENT_APPROVED = 'event_approved';
-    const EVENT_EDIT_PRE = 'event_edit_pre';
-    const EVENT_EDIT_POST = 'event_edit_post';
     const EVENT_ADD = 'event_add';
-    const EVENT_DELETE = 'event_delete';
     const EVENT_CHANGE_PAGETYPE = 'event_change_pagetype';
     const EVENT_SORTING_CHANGE = 'event_sorting_change';
     const EVENT_GENERATE_SITEMAP = 'event_generate_sitemap';

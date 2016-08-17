@@ -10,6 +10,7 @@
 namespace Frontend42\Command\Block;
 
 use Frontend42\Event\BlockEvent;
+use Frontend42\TableGateway\BlockInheritanceTableGateway;
 
 class CleanInheritanceCommand extends \Core42\Command\AbstractCommand
 {
@@ -55,13 +56,13 @@ class CleanInheritanceCommand extends \Core42\Command\AbstractCommand
      */
     protected function execute()
     {
-        $model = $this->getTableGateway('Frontend42\BlockInheritance')->select([
+        $model = $this->getTableGateway(BlockInheritanceTableGateway::class)->select([
             'sourcePageId' => $this->sourcePageId,
             'section' => $this->section,
         ]);
         $model = $model->current();
 
-        $this->getTableGateway('Frontend42\BlockInheritance')->delete([
+        $this->getTableGateway(BlockInheritanceTableGateway::class)->delete([
             'sourcePageId' => $this->sourcePageId,
             'section' => $this->section,
         ]);

@@ -2,8 +2,12 @@
 namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
+use Core42\I18n\Localization\Localization;
+use Frontend42\Command\Router\CreateRouteConfigCommand;
 use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Sitemap;
+use Frontend42\Selector\SitemapSelector;
+use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Json\Json;
 use Zend\Stdlib\ArrayUtils;
 
@@ -49,18 +53,11 @@ class SavePageSortingCommand extends AbstractCommand
             return;
         }
 
-        $result = $this->getSelector('Frontend42\Sitemap')
-            ->setLocale($this->getServiceManager()->get('Localization')->getDefaultLocale())
+        $result = $this->getSelector(SitemapSelector::class)
+            ->setLocale($this->getServiceManager()->get(Localization::class)->getDefaultLocale())
             ->getResult();
 
         $this->recursiveSave($result);
-
-        $this
-            ->getServiceManager()
-            ->get('Frontend42\Sitemap\EventManager')
-            ->trigger(SitemapEvent::EVENT_SORTING_CHANGE);
-
-        $this->getCommand('Frontend42\Router\CreateRouteConfig')->run();
     }
 
     /**
@@ -78,10 +75,13 @@ class SavePageSortingCommand extends AbstractCommand
 
             $sitemapNewOptions = $this->flatTree[$sitemap->getId()];
             $sitemap->setParentId($sitemapNewOptions['parentId'])
-                ->setOrderNr($sitemapNewOptions['orderNr'])
-                ->setUpdated(new \DateTime());
+                ->setOrderNr($sitemapNewOptions['orderNr']);
 
-            $this->getTableGateway('Frontend42\Sitemap')->update($sitemap);
+            if ($sitemap->hasChanged()) {
+                $sitemap->setUpdated(new \DateTime());
+
+                $this->getTableGateway(SitemapTableGateway::class)->update($sitemap);
+            }
 
             if (!empty($item['children'])) {
                 $this->recursiveSave($item['children']);

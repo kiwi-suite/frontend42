@@ -6,6 +6,8 @@ use Core42\Permission\Rbac\AuthorizationService;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
+use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
 
@@ -15,26 +17,6 @@ class SitemapSelector extends AbstractDatabaseSelector
      * @var string
      */
     protected $locale;
-
-    /**
-     * @var bool
-     */
-    protected $includeExclude = true;
-
-    /**
-     * @var bool
-     */
-    protected $includeOffline = true;
-
-    /**
-     * @var bool
-     */
-    protected $includeExcludedFromMenu = true;
-
-    /**
-     * @var bool
-     */
-    protected $authorizationCheck = false;
 
     /**
      * @param string $locale
@@ -48,96 +30,27 @@ class SitemapSelector extends AbstractDatabaseSelector
     }
 
     /**
-     * @param bool $includeExclude
-     * @return $this
-     */
-    public function setIncludeExclude($includeExclude)
-    {
-        $this->includeExclude = $includeExclude;
-
-        return $this;
-    }
-
-    /**
-     * @param bool $includeOffline
-     * @return $this
-     */
-    public function setIncludeOffline($includeOffline)
-    {
-        $this->includeOffline = $includeOffline;
-
-        return $this;
-    }
-
-    /**
-     * @param bool $includeExcludedFromMenu
-     * @return $this
-     */
-    public function setIncludeExcludeFromMenu($includeExcludedFromMenu)
-    {
-        $this->includeExcludedFromMenu = $includeExcludedFromMenu;
-
-        return $this;
-    }
-
-    /**
-     * @param bool $authorizationCheck
-     * @return $this
-     */
-    public function setAuthorizationCheck($authorizationCheck)
-    {
-        $this->authorizationCheck = (boolean) $authorizationCheck;
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getResult()
     {
-        $sql = new Sql($this->getServiceManager()->get('Db\Master'));
-        $statement = $sql->prepareStatementForSqlObject($this->getSelect());
-        $result = $statement->execute();
+        $flatSitemap = $this->getFlatTree();
 
-        $flatSitemap = [];
-        foreach ($result as $_res) {
-            $sitemap = $this->getTableGateway('Frontend42\Sitemap')->getHydrator()->hydrate($_res, new Sitemap());
-            $sitemap->setId($_res['sitemapId'])->memento();
-
-            $page = $this->getTableGateway('Frontend42\Page')->getHydrator()->hydrate($_res, new Page());
-
-            $flatSitemap[$sitemap->getId()] = [
-                'sitemap'       => $sitemap,
-                'page'          => $page,
-                'children'      => []
-            ];
-        }
-
-
-        $sitemap = [];
-        foreach ($flatSitemap as &$_item) {
-            /** @var Sitemap $model */
-
-            if (!isset($_item['sitemap'])) {
-                continue;
-            }
-            $model = $_item['sitemap'];
-            if ($model->getParentId() > 0) {
-                $parent =& $flatSitemap[$model->getParentId()];
-                $parent['children'][] =&$_item;
+        $tree = [];
+        foreach ($flatSitemap as &$item) {
+            /** @var Sitemap $sitemap */
+            $sitemap = $item['sitemap'];
+            if ($sitemap->getParentId() > 0) {
+                $parent =& $flatSitemap[$sitemap->getParentId()];
+                $parent['children'][] =& $item;
 
                 continue;
             }
 
-            $sitemap[] =& $_item;
+            $tree[] =& $item;
         }
 
-        if ($this->authorizationCheck === true) {
-            return $this->getTreePart($sitemap);
-        }
-
-        return $sitemap;
+        return $tree;
     }
 
     /**
@@ -170,14 +83,37 @@ class SitemapSelector extends AbstractDatabaseSelector
      */
     protected function getSelect()
     {
+        $sitemapTableName = $this->getTableGateway(SitemapTableGateway::class)->getTable();
+        $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
+        $select = $sql->select();
+
+        $pageColumns = $this->getTableGateway(PageTableGateway::class)->getColumns();
+        $pageAliasColumns = [];
+        foreach ($pageColumns as $column) {
+            $pageAliasColumns['prefix_page_'.$column] = $column;
+        }
+
+        $select->join(
+            ['p' => $this->getTableGateway(PageTableGateway::class)->getTable()],
+            "{$sitemapTableName}.id=p.sitemapId",
+            $pageAliasColumns
+        );
+
+        $select->where(['p.locale' => $this->locale]);
+
+        $select->order($sitemapTableName.'.orderNr ASC');
+
+        return $select;
+
+        /*
         $sql = new Sql($this->getServiceManager()->get('Db\Master'));
         $select = $sql->select();
 
         $select->from([
-            's' => $this->getTableGateway('Frontend42\Sitemap')->getTable()
+            's' => $this->getTableGateway(SitemapTableGateway::class)->getTable()
         ]);
         $select->join([
-            'p' => $this->getTableGateway('Frontend42\Page')->getTable()
+            'p' => $this->getTableGateway(PageTableGateway::class)->getTable()
         ], "s.id=p.sitemapId");
 
         $select->where(['p.locale' => $this->locale]);
@@ -190,12 +126,38 @@ class SitemapSelector extends AbstractDatabaseSelector
             $select->where(['p.status' => 'online']);
         }
 
-        if ($this->includeExcludedFromMenu === false) {
-            $select->where(['p.excludeMenu' => 'false']);
-        }
-
         $select->order('s.orderNr ASC');
 
-        return $select;
+        return $select;*/
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFlatTree()
+    {
+        $flat = [];
+        $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
+        $statement = $sql->prepareStatementForSqlObject($this->getSelect());
+        $result = $statement->execute();
+        foreach ($result as $res) {
+            $sitemap = $this->getTableGateway(SitemapTableGateway::class)->getHydrator()->hydrate($res, new Sitemap());
+            $pageColumns = [];
+            foreach ($res as $key => $value) {
+                if (substr($key, 0, 12) != "prefix_page_") {
+                    continue;
+                }
+                $pageColumns[substr($key, 12)] = $value;
+            }
+            $page = $this->getTableGateway(PageTableGateway::class)->getHydrator()->hydrate($pageColumns, new Page());
+
+            $flat[$sitemap->getId()] = [
+                'page' => $page,
+                'sitemap' => $sitemap,
+                'children' => []
+            ];
+        }
+
+        return $flat;
     }
 }
