@@ -1,8 +1,9 @@
 <?php
 namespace Frontend42\Mvc\Router\Service;
 
-use Admin42\Authentication\AuthenticationService;
-use Frontend42\Command\Router\CreateRouteConfigCommand;
+use Admin42\Module;
+use Core42\Mvc\Environment\Environment;
+use Frontend42\Page\Data\Data;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\Router\Http\TreeRouteStack;
@@ -34,24 +35,12 @@ class HttpRouterFactory implements FactoryInterface
         $class  = TreeRouteStack::class;
         $config = isset($config['router']) ? $config['router'] : [];
 
-        $cache = $container->get('Cache\Sitemap');
-        if (!$cache->hasItem('sitemap')) {
-            $container->get('Command')->get(CreateRouteConfigCommand::class)->run();
-        }
+        if (!$container->get(Environment::class)->is(Module::ENVIRONMENT_ADMIN)) {
+            $frontendRoutes = $container->get(Data::class)->getRouting();
 
-        $authenticationService = $container->get(AuthenticationService::class);
-        if ($authenticationService->hasIdentity()) {
-            $result = $container->get('Command')->get(CreateRouteConfigCommand::class)
-                ->setIncludeOffline(true)
-                ->setCaching(false)
-                ->run();
-            $frontendRoutes = $result['sitemap'];
-        } else {
-            $frontendRoutes = $cache->getItem("sitemap");
+            $frontendRoutes = (empty($frontendRoutes)) ? [] : $frontendRoutes;
+            $config['routes']['frontend']['child_routes'] = $frontendRoutes;
         }
-
-        $frontendRoutes = (empty($frontendRoutes)) ? [] : $frontendRoutes;
-        $config['routes']['frontend']['child_routes'] = $frontendRoutes;
 
         return $this->createRouter($class, $config, $container);
     }

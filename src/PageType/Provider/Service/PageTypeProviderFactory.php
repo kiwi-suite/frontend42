@@ -36,7 +36,7 @@ class PageTypeProviderFactory implements FactoryInterface
                 $pageTypeName = pathinfo($file, PATHINFO_FILENAME);
                 $options['name'] = $pageTypeName;
 
-                foreach (['label', 'class', 'controller'] as $check) {
+                foreach (['label', 'class'] as $check) {
                     if (empty($options[$check])) {
                         throw new \Exception(sprintf(
                             "No config parameter '%s' found in '%s'",

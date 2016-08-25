@@ -2,7 +2,6 @@
 namespace Frontend42\Command\Sitemap;
 
 use Admin42\Model\User;
-use Cocur\Slugify\Slugify;
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
 use Frontend42\Command\PageVersion\ApproveCommand;

@@ -1,47 +1,88 @@
 <?php
 namespace Frontend42\View\Helper;
 
-use Frontend42\Model\Page as PageModel;
-use Frontend42\Navigation\PageHandler;
 use Zend\View\Helper\AbstractHelper;
+use Frontend42\Page\PageRoute as PageRouteContainer;
 
 class PageRoute extends AbstractHelper
 {
     /**
-     * @var PageHandler
+     * @var PageRouteContainer
      */
-    protected $pageHandler;
+    protected $pageRoute;
+
+    protected $enableAssembleUrl = true;
 
     /**
-     * @param PageHandler $pageHandler
+     * Page constructor.
+     * @param PageRouteContainer $pageRoute
      */
-    public function __construct(PageHandler $pageHandler)
+    public function __construct(PageRouteContainer $pageRoute)
     {
-        $this->pageHandler = $pageHandler;
+        $this->pageRoute = $pageRoute;
     }
 
     /**
+     * @param bool $enableAssembleUrl
      * @return $this
      */
-    public function __invoke()
+    public function __invoke($enableAssembleUrl = null)
     {
+        if ($enableAssembleUrl !== null) {
+            $this->enableAssembleUrl($enableAssembleUrl);
+        }
         return $this;
     }
 
     /**
-     * @param int|PageModel $page
-     * @return string
-     * @throws \Exception
+     * @param $enableAssembleUrl
+     * @return $this
      */
-    public function fromPage($page)
+    public function enableAssembleUrl($enableAssembleUrl)
     {
-        return $this->pageHandler->getRouteByPage($page);
+        $this->enableAssembleUrl = $enableAssembleUrl;
+
+        return $this;
     }
 
     /**
-     * @param string $handle
-     * @param string $locale
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($method, array $arguments = [])
+    {
+        return call_user_func_array([$this->pageRoute, $method], $arguments);
+    }
+
+    /**
+     * @param int $pageId
      * @return string
+     */
+    public function fromPageId($pageId)
+    {
+        $route = $this->pageRoute->getRouteByPageId((int)$pageId);
+
+        if ($this->enableAssembleUrl === false) {
+            return $route;
+        }
+    }
+
+    /**
+     * @deprecated
+     *
+     * @param int $page
+     * @return string
+     */
+    public function fromPage($page)
+    {
+        return $this->fromPageId($page);
+    }
+
+    /**
+     * @param $handle
+     * @param null $locale
+     * @return bool|string
      */
     public function fromHandle($handle, $locale = null)
     {
@@ -49,31 +90,32 @@ class PageRoute extends AbstractHelper
             $locale = $this->getView()->localization()->getActiveLocale();
         }
 
-        return $this->pageHandler->getRouteByHandle($handle, $locale);
+        $route = $this->pageRoute->getRouteByHandle($handle, $locale);
+
+        if ($this->enableAssembleUrl === false) {
+            return $route;
+        }
     }
 
-    /**
-     * @param string $sitemapId
-     * @param string $locale
-     * @return string
-     */
     public function fromSitemapId($sitemapId, $locale = null)
     {
         if ($locale === null) {
             $locale = $this->getView()->localization()->getActiveLocale();
         }
 
-        return $this->pageHandler->getRouteBySitemapId($sitemapId, $locale);
+        $route = $this->pageRoute->getRouteBySitemapId($sitemapId, $locale);
+
+        if ($this->enableAssembleUrl === false) {
+            return $route;
+        }
     }
 
-    /**
-     * @param int|PageModel $page
-     * @param string $locale
-     * @return string
-     * @throws \Exception
-     */
-    public function switchLanguage($page, $locale)
+    public function switchLanguage($pageId, $locale)
     {
-        return $this->pageHandler->getSwitchLanguageRoute($page, $locale);
+        $route = $this->pageRoute->getSwitchLanguageRoute($pageId, $locale);
+
+        if ($this->enableAssembleUrl === false) {
+            return $route;
+        }
     }
 }

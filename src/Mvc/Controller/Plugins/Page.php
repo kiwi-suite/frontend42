@@ -1,10 +1,16 @@
 <?php
-namespace Frontend42\View\Helper;
+namespace Frontend42\Mvc\Controller\Plugins;
 
-use Zend\View\Helper\AbstractHelper;
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Frontend42\Page\Page as PageContainer;
 
-class Page extends AbstractHelper
+
+/**
+ * @method \Frontend42\Model\Page getPage()
+ * @method \Frontend42\Model\Sitemap getSitemap()
+ * @method \Frontend42\PageType\PageContent\PageContent getPageContent()
+ */
+class Page extends AbstractPlugin
 {
     /**
      * @var PageContainer

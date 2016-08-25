@@ -10,11 +10,11 @@
 namespace Frontend42\Command\Block;
 
 
-use Frontend42\Event\BlockEvent;
+use Core42\Command\AbstractCommand;
 use Frontend42\Model\BlockInheritance;
 use Frontend42\TableGateway\BlockInheritanceTableGateway;
 
-class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
+class SaveInheritanceCommand extends AbstractCommand
 {
     /**
      * @var int
@@ -88,21 +88,5 @@ class SaveInheritanceCommand extends \Core42\Command\AbstractCommand
             ->setSection($this->section);
 
         $this->getTableGateway(BlockInheritanceTableGateway::class)->insert($blockInheritance);
-
-        $this
-            ->getServiceManager()
-            ->get('Frontend42\Block\EventManager')
-            ->trigger(BlockEvent::EVENT_ADD_INHERITANCE, $blockInheritance);
-
-        $this
-            ->getServiceManager()
-            ->get('Cache\Block')
-            ->removeItem('block_inheritance_' . $this->sourcePageId . '_' . $this->section);
-
-        $this
-            ->getServiceManager()
-            ->get('Cache\Block')
-            ->removeItem('block_inheritance_' . $this->targetPageId . '_' . $this->section);
-
     }
 }

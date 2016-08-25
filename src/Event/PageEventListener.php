@@ -5,7 +5,6 @@ use Frontend42\Model\Page;
 use Frontend42\Selector\SlugSelector;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Json\Json;
 
 class PageEventListener extends AbstractListenerAggregate
 {
@@ -35,6 +34,7 @@ class PageEventListener extends AbstractListenerAggregate
         $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'getPageRouting']);
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setStandardParams']);
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'getPageRouting']);
+        $events->attach(PageEvent::EVENT_VIEW, [$this, 'onView']);
     }
 
     /**
@@ -79,5 +79,10 @@ class PageEventListener extends AbstractListenerAggregate
         ) {
             $page->setStatus($pageContent->getParam("status"));
         }
+    }
+
+    public function onView(PageEvent $event)
+    {
+
     }
 }

@@ -54,6 +54,11 @@ interface PageTypeInterface
     public function getElements();
 
     /**
+     * @return array
+     */
+    public function getOptions();
+
+    /**
      * @param Page $page
      * @param PageContent $pageContent
      * @param Sitemap $sitemap

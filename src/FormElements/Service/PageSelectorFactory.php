@@ -43,7 +43,7 @@ class PageSelectorFactory implements FactoryInterface
             $selector = $container->get('Selector')->get(SitemapSelector::class);
 
             $sitemapArray[$_locale] = $this->prepareLocaleArray(
-                $selector->setIncludeExclude(false)->setLocale($_locale)->getResult()
+                $selector->setLocale($_locale)->getResult()
             );
         }
 

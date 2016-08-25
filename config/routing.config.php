@@ -4,6 +4,7 @@ namespace Frontend42;
 use Core42\Mvc\Router\Http\AngularSegment;
 use Frontend42\Controller\BlockController;
 use Frontend42\Controller\SitemapController;
+use Frontend42\Middleware\FrontendMiddleware;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Method;
 use Zend\Router\Http\Segment;
@@ -15,6 +16,9 @@ return [
                 'type' => Method::class,
                 'options' => [
                     'verb' => 'post,get,put,delete',
+                    'defaults' => [
+                        'middleware' => FrontendMiddleware::class,
+                    ],
                 ],
                 'may_terminate' => false,
                 'child_routes' => [],

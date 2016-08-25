@@ -35,9 +35,6 @@ class SitemapController extends AbstractAdminController
      */
     public function indexAction()
     {
-        var_dump($this->getCommand(BuildIndexCommand::class)->run());
-        die();
-
         $viewModel = new ViewModel([
             'createForm' => $this->getForm(CreateForm::class),
             'routes' => $this->getAllRoutes(),
@@ -57,8 +54,6 @@ class SitemapController extends AbstractAdminController
 
         $result = $this->getSelector(SitemapSelector::class)
             ->setLocale($options['locale'])
-            ->setAuthorizationCheck(true)
-            ->setIncludeExclude(false)
             ->getResult();
 
         return new JsonModel($this->prepareJsonTree($result));

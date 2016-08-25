@@ -1,16 +1,17 @@
 <?php
-namespace Frontend42\Event\Service;
+namespace Frontend42\Page\Service;
 
-use Frontend42\Event\BlockEvent;
+use Frontend42\Page\Data\Data;
+use Frontend42\Page\Page;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\EventManager\EventManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class BlockEventManagerFactory implements FactoryInterface
+class PageFactory implements FactoryInterface
 {
+
     /**
      * Create an object
      *
@@ -25,9 +26,8 @@ class BlockEventManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $eventManager = new EventManager();
-        $eventManager->setEventPrototype(new BlockEvent());
-
-        return $eventManager;
+        return new Page(
+            $container->get(Data::class)
+        );
     }
 }

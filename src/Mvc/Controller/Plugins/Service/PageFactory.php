@@ -1,16 +1,15 @@
 <?php
-namespace Frontend42\View\Helper\Service;
+namespace Frontend42\Mvc\Controller\Plugins\Service;
 
-use Frontend42\View\Helper\PageRoute;
+use Frontend42\Mvc\Controller\Plugins\Page;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PageRouteFactory implements FactoryInterface
+class PageFactory implements FactoryInterface
 {
-
     /**
      * Create an object
      *
@@ -25,8 +24,8 @@ class PageRouteFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new PageRoute(
-            $container->get(\Frontend42\Page\PageRoute::class)
+        return new Page(
+            $container->get(\Frontend42\Page\Page::class)
         );
     }
 }

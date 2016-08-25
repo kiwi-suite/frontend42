@@ -1,7 +1,6 @@
 <?php
 namespace Frontend42\View\Helper\Service;
 
-use Frontend42\Navigation\PageHandler;
 use Frontend42\View\Helper\Page;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -11,6 +10,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PageFactory implements FactoryInterface
 {
+
     /**
      * Create an object
      *
@@ -26,7 +26,7 @@ class PageFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new Page(
-            $container->get(PageHandler::class)
+            $container->get(\Frontend42\Page\Page::class)
         );
     }
 }

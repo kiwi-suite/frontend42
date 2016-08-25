@@ -1,7 +1,8 @@
 <?php
-namespace Frontend42\View\Helper\Service;
+namespace Frontend42\Page\Service;
 
-use Frontend42\View\Helper\PageRoute;
+use Frontend42\Page\Data\Data;
+use Frontend42\Page\PageRoute;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -26,7 +27,7 @@ class PageRouteFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new PageRoute(
-            $container->get(\Frontend42\Page\PageRoute::class)
+            $container->get(Data::class)
         );
     }
 }

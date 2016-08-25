@@ -7,7 +7,6 @@ use Frontend42\Model\PageVersion;
 use Frontend42\TableGateway\PageVersionTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
-use Zend\Json\Json;
 
 class PageVersionSelector extends AbstractDatabaseSelector
 {
@@ -62,7 +61,7 @@ class PageVersionSelector extends AbstractDatabaseSelector
         }
 
         $pageVersion = new PageVersion();
-        $pageVersion->setContent(Json::encode([]))
+        $pageVersion->setContent([])
             ->setPageId($this->pageId)
             ->setVersionId(1);
 

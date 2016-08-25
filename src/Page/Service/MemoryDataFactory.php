@@ -1,14 +1,15 @@
 <?php
-namespace Frontend42\View\Helper\Service;
+namespace Frontend42\Page\Service;
 
-use Frontend42\View\Helper\PageRoute;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Stash\Driver\Ephemeral;
+use Stash\Pool;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PageRouteFactory implements FactoryInterface
+class MemoryDataFactory implements FactoryInterface
 {
 
     /**
@@ -25,8 +26,7 @@ class PageRouteFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new PageRoute(
-            $container->get(\Frontend42\Page\PageRoute::class)
-        );
+        $driver = new Ephemeral();
+        return new Pool($driver);
     }
 }

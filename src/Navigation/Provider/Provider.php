@@ -4,7 +4,6 @@ namespace Frontend42\Navigation\Provider;
 use Core42\Navigation\Container;
 use Core42\Navigation\Page\PageFactory;
 use Core42\Navigation\Provider\AbstractProvider;
-use Frontend42\Selector\SitemapSelector;
 
 class Provider extends AbstractProvider
 {

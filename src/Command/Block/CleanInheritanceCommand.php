@@ -9,10 +9,10 @@
 
 namespace Frontend42\Command\Block;
 
-use Frontend42\Event\BlockEvent;
+use Core42\Command\AbstractCommand;
 use Frontend42\TableGateway\BlockInheritanceTableGateway;
 
-class CleanInheritanceCommand extends \Core42\Command\AbstractCommand
+class CleanInheritanceCommand extends AbstractCommand
 {
     /**
      * @var int
@@ -67,14 +67,5 @@ class CleanInheritanceCommand extends \Core42\Command\AbstractCommand
             'section' => $this->section,
         ]);
 
-        $this
-            ->getServiceManager()
-            ->get('Frontend42\Block\EventManager')
-            ->trigger(BlockEvent::EVENT_DELETE_INHERITANCE, $model);
-
-        $this
-            ->getServiceManager()
-            ->get('Cache\Block')
-            ->removeItem('block_inheritance_' . $this->sourcePageId . '_' . $this->section);
     }
 }

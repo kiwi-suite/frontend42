@@ -3,8 +3,6 @@ namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
-use Frontend42\Command\Router\CreateRouteConfigCommand;
-use Frontend42\Event\SitemapEvent;
 use Frontend42\Model\Sitemap;
 use Frontend42\Selector\SitemapSelector;
 use Frontend42\TableGateway\SitemapTableGateway;

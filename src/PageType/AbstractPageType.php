@@ -1,8 +1,8 @@
 <?php
 namespace Frontend42\PageType;
 
+use Frontend42\Controller\ContentController;
 use Frontend42\PageType\PageContent\PageContent;
-use Zend\Form\Factory;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\Form\FormElementManager\FormElementManagerV3Polyfill;
@@ -18,12 +18,12 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     /**
      * @var string
      */
-    protected $controller;
+    protected $controller = ContentController::class;
 
     /**
      * @var string
      */
-    protected $action;
+    protected $action = "index";
 
     /**
      * @var string
@@ -59,6 +59,11 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
      * @var FormElementManagerV3Polyfill
      */
     protected $formElementManager;
+
+    /**
+     * @var array
+     */
+    protected $options = [];
 
     /**
      * @return string|null
@@ -210,6 +215,22 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     public function setFormElementManager(FormElementManagerV3Polyfill $formElementManager)
     {
         $this->formElementManager = $formElementManager;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**

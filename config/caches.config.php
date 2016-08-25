@@ -1,26 +1,28 @@
 <?php
+namespace Frontend42;
 return [
-    'caches' => [
-        'Cache\Sitemap' => [
-            'adapter' => [
-                'name' => 'memory',
-                'options' => [
-                    'namespace' => 'sitemap',
-                ],
+
+    'cache' => [
+        'caches' => [
+            'frontend' => [
+                'driver' => 'ephemeral',
+                'namespace' => 'frontend',
             ],
-            'plugins' => [
-                'Serializer'
+            'sitemap' => [
+                'driver' => 'ephemeral',
+                'namespace' => 'sitemap',
             ],
-        ],
-        'Cache\Block' => [
-            'adapter' => [
-                'name' => 'memory',
-                'options' => [
-                    'namespace' => 'block',
-                ],
+            'page' => [
+                'driver' => 'ephemeral',
+                'namespace' => 'page',
             ],
-            'plugins' => [
-                'Serializer'
+            'pageversion' => [
+                'driver' => 'ephemeral',
+                'namespace' => 'pageversion',
+            ],
+            'block' => [
+                'driver' => 'ephemeral',
+                'namespace' => 'block',
             ],
         ],
     ],

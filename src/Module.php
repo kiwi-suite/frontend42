@@ -9,7 +9,6 @@
 
 namespace Frontend42;
 
-use Admin42\Authentication\AuthenticationService;
 use Admin42\ModuleManager\Feature\AdminAwareModuleInterface;
 use Core42\Console\Console;
 use Core42\I18n\Localization\Localization;
@@ -21,8 +20,8 @@ use Frontend42\FormElements\PageTypeSelector;
 use Frontend42\FormElements\Service\BlockFactory;
 use Frontend42\FormElements\Service\PageSelectorFactory;
 use Frontend42\FormElements\Service\PageTypeSelectorFactory;
-use Frontend42\Navigation\PageHandler;
 use Zend\EventManager\EventInterface;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
@@ -48,6 +47,7 @@ class Module implements
             include __DIR__ . '/../config/cli.config.php',
             include __DIR__ . '/../config/caches.config.php',
             include __DIR__ . '/../config/permission.config.php',
+            include __DIR__ . '/../config/services.config.php',
             include __DIR__ . '/../config/translation.config.php'
         );
     }
@@ -60,14 +60,14 @@ class Module implements
      */
     public function onBootstrap(EventInterface $e)
     {
-        $e->getApplication()->getEventManager()->attach(
+        /*$e->getApplication()->getEventManager()->attach(
             MvcEvent::EVENT_ROUTE,
             [$this, 'localeSelection']
         );
         $e->getApplication()->getEventManager()->attach(
             MvcEvent::EVENT_DISPATCH_ERROR,
             [$this, 'localeErrorSelection']
-        );
+        );*/
 
         $e->getApplication()
             ->getServiceManager()
@@ -93,7 +93,7 @@ class Module implements
         $localization = $serviceManager->get('Localization');
         $locale = $localization->getDefaultLocale();
         $localization->acceptLocale($locale);
-        $serviceManager->get('MvcTranslator')->setLocale($locale);
+        $serviceManager->get(TranslatorInterface::class)->setLocale($locale);
     }
 
     /**
@@ -118,13 +118,13 @@ class Module implements
         if (!($routeMatch->getParam("pageId", null) > 0)) {
             $locale = $localization->getDefaultLocale();
             $localization->acceptLocale($locale);
-            $serviceManager->get('MvcTranslator')->setLocale($locale);
+            $serviceManager->get(TranslatorInterface::class)->setLocale($locale);
             return;
         }
 
         $locale = $routeMatch->getParam("locale", $localization->getLocaleFromHeader());
         $localization->acceptLocale($locale);
-        $serviceManager->get('MvcTranslator')->setLocale($locale);
+        $serviceManager->get(TranslatorInterface::class)->setLocale($locale);
 
         $pageHandler = $serviceManager->get(PageHandler::class);
         $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"));
@@ -136,7 +136,7 @@ class Module implements
     public function getAdminStylesheets()
     {
         return [
-            '/assets/admin/frontend/css/frontend42.min.css'
+            '/assets/admin/frontend42/css/frontend42.min.css'
         ];
     }
 
@@ -146,8 +146,8 @@ class Module implements
     public function getAdminJavascript()
     {
         return [
-            '/assets/admin/frontend/js/vendor.min.js',
-            '/assets/admin/frontend/js/frontend42.min.js'
+            '/assets/admin/frontend42/js/vendor.min.js',
+            '/assets/admin/frontend42/js/frontend42.min.js'
         ];
     }
 
