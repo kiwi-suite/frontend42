@@ -2,14 +2,12 @@
 namespace Frontend42\Selector;
 
 use Core42\Db\ResultSet\ResultSet;
-use Core42\Permission\Rbac\AuthorizationService;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 
 class SitemapSelector extends AbstractDatabaseSelector
 {
