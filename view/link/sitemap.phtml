@@ -28,7 +28,7 @@ $templateContent = <<<EOT
 </div>
 </div>
 EOT;
-$this->admin()->addHtmlTemplate("/link/sitemap.html", $templateContent);
+$this->angular()->addHtmlTemplate("/link/sitemap.html", $templateContent);
 
 $sitemapContent = <<<EOT
 <div class="dd3-content" style="padding-left:10px;" ng-style="selectableStyle(item)" ng-click="select(item)">
@@ -45,4 +45,4 @@ $sitemapContent = <<<EOT
     <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'linkSitemapNode.html'" ng-show="visible(item)"></li>
 </ol>
 EOT;
-$this->admin()->addHtmlTemplate("linkSitemapNode.html", $sitemapContent);
+$this->angular()->addHtmlTemplate("linkSitemapNode.html", $sitemapContent);

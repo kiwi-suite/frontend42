@@ -42,6 +42,9 @@ class HttpRouterFactory implements FactoryInterface
             $config['routes']['frontend']['child_routes'] = $frontendRoutes;
         }
 
+        //print_r($config['routes']['frontend']);
+        //die();
+
         return $this->createRouter($class, $config, $container);
     }
 }

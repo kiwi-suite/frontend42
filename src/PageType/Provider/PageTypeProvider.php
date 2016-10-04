@@ -3,6 +3,7 @@ namespace Frontend42\PageType\Provider;
 
 use Frontend42\PageType\PageTypeInterface;
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 class PageTypeProvider extends AbstractPluginManager
 {
@@ -17,18 +18,6 @@ class PageTypeProvider extends AbstractPluginManager
      * @var null|string
      */
     protected $instanceOf = PageTypeInterface::class;
-
-    /**
-     * Should the services be shared by default?
-     *
-     * @var bool
-     */
-    protected $sharedByDefault = false;
-
-    /**
-     * @var array
-     */
-    protected $aliasInstances = [];
 
     /**
      * @param string $name
@@ -52,14 +41,12 @@ class PageTypeProvider extends AbstractPluginManager
      * @param array|null $options
      * @return mixed
      */
-    public function get($name, array $options = null)
+    public function build($name, array $options = null)
     {
-        if (isset($this->aliases[$name])) {
-            if (!isset($this->aliasInstances[$name])) {
-                $this->aliasInstances[$name] = parent::get($name, $options);
-            }
-            return $this->aliasInstances[$name];
+        if (!isset($this->factories[$name])) {
+            $this->setFactory($name, InvokableFactory::class);
         }
-        return parent::get($name, $options);
+
+        return parent::build($name, $options);
     }
 }

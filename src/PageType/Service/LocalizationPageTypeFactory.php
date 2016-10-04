@@ -1,24 +1,17 @@
 <?php
-/**
- * frontend42 (www.raum42.at)
- *
- * @link http://www.raum42.at
- * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
- *
- */
+namespace Frontend42\PageType\Service;
 
-namespace Frontend42\FormElements\Service;
-
-use Admin42\FormElements\Select;
-use Frontend42\PageType\Provider\PageTypeProvider;
+use Core42\I18n\Localization\Localization;
+use Frontend42\PageType\LocalizationPageType;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PageTypeSelectorFactory implements FactoryInterface
+class LocalizationPageTypeFactory implements FactoryInterface
 {
+
     /**
      * Create an object
      *
@@ -33,10 +26,8 @@ class PageTypeSelectorFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $pageTypeProvider = $container->get(PageTypeProvider::class);
-        $element = $container->get('FormElementManager')->get(Select::class);
-        $element->setValueOptions($pageTypeProvider->getDisplayPageTypes());
-
-        return $element;
+        return new LocalizationPageType(
+            $container->get(Localization::class)
+        );
     }
 }

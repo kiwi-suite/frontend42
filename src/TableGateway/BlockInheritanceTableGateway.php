@@ -20,9 +20,9 @@ class BlockInheritanceTableGateway extends AbstractTableGateway
      * @var array
      */
     protected $databaseTypeMap = [
-        'sourcePageId' => 'Integer',
-        'targetPageId' => 'Integer',
-        'section' => 'String',
+        'sourcePageId' => 'integer',
+        'targetPageId' => 'integer',
+        'section' => 'string',
     ];
 
     /**

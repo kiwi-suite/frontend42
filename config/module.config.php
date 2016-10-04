@@ -41,9 +41,9 @@ return [
         ],
     ],
 
-    'link' => [
+    /*'link' => [
         'adapter' => [
             'sitemap' => SitemapLink::class,
         ],
-    ],
+    ],*/
 ];

@@ -57,10 +57,10 @@ class FlatSelector extends AbstractSmartTableSelector
     protected function getDatabaseTypeMap()
     {
         return [
-            'id' => 'Mysql/Integer',
-            'created' => 'Mysql/Datetime',
-            'publishedFrom' => 'Mysql/Datetime',
-            'publishedUntil' => 'Mysql/Datetime',
+            'id' => 'integer',
+            'created' => 'datetime',
+            'publishedFrom' => 'datetime',
+            'publishedUntil' => 'datetime',
         ];
     }
 

@@ -4,10 +4,13 @@ namespace Frontend42\Selector;
 use Core42\Db\ResultSet\ResultSet;
 use Core42\Selector\AbstractDatabaseSelector;
 use Frontend42\Model\Page;
+use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
 use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\TableGateway\PageVersionTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 
 class SitemapSelector extends AbstractDatabaseSelector
 {
@@ -17,12 +20,44 @@ class SitemapSelector extends AbstractDatabaseSelector
     protected $locale;
 
     /**
+     * @var boolean
+     */
+    protected $enablePageVersion = false;
+
+    /**
+     * @var bool
+     */
+    protected $enableStatusCheck = true;
+
+    /**
      * @param string $locale
      * @return $this
      */
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $enablePageVersion
+     * @return $this
+     */
+    public function setEnablePageVersion($enablePageVersion)
+    {
+        $this->enablePageVersion = $enablePageVersion;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $enableStatusCheck
+     * @return $this
+     */
+    public function setEnableStatusCheck($enableStatusCheck)
+    {
+        $this->enableStatusCheck = $enableStatusCheck;
 
         return $this;
     }
@@ -97,10 +132,32 @@ class SitemapSelector extends AbstractDatabaseSelector
             $pageAliasColumns
         );
 
+        if ($this->enablePageVersion) {
+            $pageVersionColumns = $this->getTableGateway(PageVersionTableGateway::class)->getColumns();
+            $pageVersionAliasColumns = [];
+            foreach ($pageVersionColumns as $column) {
+                $pageVersionAliasColumns['prefix_version_'.$column] = $column;
+            }
+
+            $select->join(
+                ['v' => $this->getTableGateway(PageVersionTableGateway::class)->getTable()],
+                "p.id = v.pageId",
+                $pageVersionAliasColumns
+            );
+
+            $select->where(function (Where $where) {
+                $where->isNotNull('v.approved');
+            });
+        }
+
         $select->where(['p.locale' => $this->locale]);
 
-        $select->order($sitemapTableName.'.orderNr ASC');
+        if ($this->enableStatusCheck) {
+            $select->where(['p.status' => 'online']);
+        }
 
+        $select->order($sitemapTableName.'.orderNr ASC');
+        //var_dump($select->getSqlString($this->getServiceManager()->get('Db\Master')->getPlatform()));
         return $select;
 
         /*
@@ -154,6 +211,20 @@ class SitemapSelector extends AbstractDatabaseSelector
                 'sitemap' => $sitemap,
                 'children' => []
             ];
+
+            if ($this->enablePageVersion) {
+                $pageVersionColumns = [];
+                foreach ($res as $key => $value) {
+                    if (substr($key, 0, 15) != "prefix_version_") {
+                        continue;
+                    }
+                    $pageVersionColumns[substr($key, 15)] = $value;
+                }
+                $flat[$sitemap->getId()]['pageVersion'] = $this
+                    ->getTableGateway(PageVersionTableGateway::class)
+                    ->getHydrator()
+                    ->hydrate($pageVersionColumns, new PageVersion());
+            }
         }
 
         return $flat;

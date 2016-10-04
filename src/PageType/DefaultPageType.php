@@ -23,8 +23,6 @@ class DefaultPageType extends AbstractPageType
                 'defaults' => [
                     'controller' => $this->getController(),
                     'action' => $this->getAction(),
-                    'pageId' => $page->getId(),
-                    'locale' => $page->getLocale(),
                 ]
             ]
         ];

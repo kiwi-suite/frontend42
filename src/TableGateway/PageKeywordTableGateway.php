@@ -20,9 +20,9 @@ class PageKeywordTableGateway extends AbstractTableGateway
      * @var array
      */
     protected $databaseTypeMap = [
-        'id' => 'Integer',
-        'pageId' => 'Integer',
-        'keyword' => 'String',
+        'id' => 'integer',
+        'pageId' => 'integer',
+        'keyword' => 'string',
     ];
 
     /**

@@ -1,49 +1,6 @@
 @import '../../../admin42/assets/less/_mixins';
 @import '../../../admin42/assets/less/_variables';
 
-.angular-ui-tree-empty, .angular-ui-tree-loading {
-    min-height: 100px;
-}
-
-/*.angular-ui-tree-nodes .angular-ui-tree-nodes {
-  padding-left: 20px;
-}
-.angular-ui-tree-node, .angular-ui-tree-placeholder {
-  display: block;
-  position: relative;
-  margin: 0px;
-  padding: 0px;
-  min-height: 20px;
-  line-height: 20px;
-}*/
-
-.angular-ui-tree-hidden {
-    display: none;
-}
-
-.angular-ui-tree-handle {
-    cursor: move;
-}
-
-.angular-ui-tree-drag {
-    position: absolute;
-    pointer-events: none;
-    z-index: 999;
-    opacity: .8;
-}
-
-.angular-ui-tree-placeholder {
-    margin: 5px 0;
-    padding: 0;
-    min-height: 30px;
-
-    background: #f0f0f0;
-    border: 2px dashed #ccdf6c;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
 .dd {
     position: relative;
     display: block;
@@ -114,9 +71,6 @@
     border-radius: 3px;
     box-shadow: 1px 1px 2px @brand-light;
    // .transition(background 0.25s ease-out);
-    &:hover {
-        background: @list-hover-color !important;
-    }
 }
 
 .dd3-item > button {
@@ -156,64 +110,3 @@
 .dd3-handle:hover {
     background: #f7f7f7;
 }
-
-@list-base-color: #BBD051; // raum42
-@list-base-color: #fff7bc;
-@list-base-color: #fee391;
-@list-base-color: #c7e9c0;
-@list-base-color: #a1d99b;
-
-@list-hover-color: #C6DBEF;
-@list-hover-color: #c7e9c0;
-@list-hover-color: #fff7bc;
-@list-hover-color: #fee391;
-
-/*.dd-list {
-    .dd3-content {
-        background: lighten(@list-base-color, 0%);
-    }
-    .dd3-item:hover > .dd3-content {
-        //background: lighten(@list-hover-color, 0%);
-    }
-    .dd-list {
-        .dd3-content {
-            background: lighten(@list-base-color, 6%);
-        }
-        .dd3-item:hover > .dd3-content {
-            //background: lighten(@list-hover-color, 3%);
-        }
-        .dd-list {
-            .dd3-content {
-                background: lighten(@list-base-color, 12%);
-            }
-            .dd3-item:hover > .dd3-content {
-                //background: lighten(@list-hover-color, 6%);
-            }
-            .dd-list {
-                .dd3-content {
-                    background: lighten(@list-base-color, 15%);
-                }
-                .dd3-item:hover > .dd3-content {
-                    //background: lighten(@list-hover-color, 9%);
-                }
-                .dd-list {
-                    .dd3-content {
-                        background: lighten(@list-base-color, 22%);
-                    }
-                    .dd3-item:hover > .dd3-content {
-                        //background: lighten(@list-hover-color, 12%);
-                    }
-                    .dd-list {
-                        .dd3-content {
-                            background: lighten(@list-base-color, 26%);
-                        }
-                        .dd3-item:hover > .dd3-content {
-                            //background: lighten(@list-hover-color, 15%);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}*/
-

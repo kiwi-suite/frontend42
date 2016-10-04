@@ -18,10 +18,11 @@ class ChangePageTypeForm extends Form
      */
     public function init()
     {
-        $pageTypeSelector = $this->getFormFactory()->getFormElementManager()->get('page_type_selector');
-        $pageTypeSelector->setName("page_type_selector");
-        $pageTypeSelector->setLabel("label.pageType");
-        $pageTypeSelector->setAttribute("required", "required");
-        $this->add($pageTypeSelector);
+        $this->add([
+            'name' => 'pageTypeSelector',
+            'type' => 'pageTypeSelector',
+            'label' => 'label.pageType',
+            'required' => true,
+        ]);
     }
 }

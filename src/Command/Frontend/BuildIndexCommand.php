@@ -4,8 +4,12 @@ namespace Frontend42\Command\Frontend;
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
 use Frontend42\Model\Page;
+use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
 use Frontend42\Page\Data\Data;
+use Frontend42\PageType\PageTypeInterface;
+use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\Selector\PageVersionSelector;
 use Frontend42\Selector\SitemapSelector;
 
 class BuildIndexCommand extends AbstractCommand
@@ -95,8 +99,8 @@ class BuildIndexCommand extends AbstractCommand
             $tree = $this
                 ->getSelector(SitemapSelector::class)
                 ->setLocale($locale)
+                ->setEnablePageVersion(true)
                 ->getResult();
-
             $index = $this->buildRecursive($tree, $locale, $this->routePrefix);
             $routes = array_merge($index['routing'], $routes);
             $navigation[$locale] = $index['navigation'];
@@ -118,6 +122,12 @@ class BuildIndexCommand extends AbstractCommand
         return $this->result;
     }
 
+    /**
+     * @param $tree
+     * @param $locale
+     * @param $routePrefix
+     * @return array
+     */
     protected function buildRecursive($tree, $locale, $routePrefix)
     {
         $navigation = [];
@@ -143,18 +153,35 @@ class BuildIndexCommand extends AbstractCommand
                 $this->result['page'][$page->getId()] = $page;
             }
 
-            $route = $routePrefix . '/' . $page->getId();
+            /** @var PageVersion $pageVersion */
+            $pageVersion = $item['pageVersion'];
 
-            $routing[$page->getId()] = $page->getRoute();
+            /** @var PageTypeInterface $pageType */
+            $pageType = $this->getServiceManager()->get(PageTypeProvider::class)->get($sitemap->getPageType());
+            $pageContent = $pageType->getPageContent();
+            $pageContent->setContent($pageVersion->getContent());
+
+            if ($this->caching === true) {
+                $this->data->writePageContent(PageVersionSelector::VERSION_APPROVED, $page->getId(), $pageContent);
+            }
+
+            $route = $routePrefix . '/f' . $page->getId();
+
+            $routing['f' . $page->getId()] = $pageType->getRouting($page, $pageContent, $sitemap);
+            $routing['f' . $page->getId()]['may_terminate'] = true;
+
+            if (empty($routing['f' . $page->getId()]['options']['defaults']['pageId'])) {
+                $routing['f' . $page->getId()]['options']['defaults']['pageId'] = $page->getId();
+            }
+            if (empty($routing['f' . $page->getId()]['options']['defaults']['locale'])) {
+                $routing['f' . $page->getId()]['options']['defaults']['locale'] = $page->getLocale();
+            }
 
             $navPage = [
-                'options' => [
-                    'label'     => $page->getName(),
-                    'pageId'    => $page->getId(),
-                    'sitemapId' => $sitemap->getId(),
-                    'order'     => $sitemap->getOrderNr(),
-                    'route'     => $route
-                ]
+                'label'     => $page->getName(),
+                'pageId'    => $page->getId(),
+                'sitemapId' => $sitemap->getId(),
+                'order'     => $sitemap->getOrderNr(),
             ];
 
             if ($this->caching === true) {
@@ -182,7 +209,7 @@ class BuildIndexCommand extends AbstractCommand
                 $childrenItems = $this->buildRecursive($item['children'], $locale, $route);
 
                 if (!empty($childrenItems['routing']) && $sitemap->getExclude() !== true) {
-                    $routing[$route]['child_routes'] = $childrenItems['routing'];
+                    $routing['f' . $page->getId()]['child_routes'] = $childrenItems['routing'];
                 }
 
                 if (!empty($childrenItems['navigation'])) {

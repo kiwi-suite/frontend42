@@ -1,16 +1,14 @@
 <?php
-namespace Frontend42\Navigation\Provider\Service;
+namespace Frontend42\PageType\Service;
 
-use Core42\I18n\Localization\Localization;
-use Frontend42\Navigation\Provider\Provider;
-use Frontend42\Page\Data\Data;
+use Admin42\FormElements\Form;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ProviderFactory implements FactoryInterface
+class PageFormFactory implements FactoryInterface
 {
 
     /**
@@ -27,13 +25,8 @@ class ProviderFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $locale = $container->get(Localization::class)->getActiveLocale();
-        $pages = $container->get(Data::class)->getNavigation($locale);
-        $pages = (empty($pages)) ? [] : $pages;
-
-        return new Provider(
-            $pages,
-            $locale
+        return new PageForm(
+            $container->get('FormElementManager')->get(Form::class)
         );
     }
 }

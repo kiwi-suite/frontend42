@@ -41,9 +41,14 @@ class Page extends AbstractHelper
     /**
      * @param string $name
      * @param mixed $default
+     * @return mixed|null
      */
     public function getParam($name, $default = null)
     {
-        $this->page->getPageContent()->getParam($name, $default);
+        $pageContent =  $this->page->getPageContent();
+        if ($pageContent === null) {
+            return $default;
+        }
+        return $this->page->getPageContent()->getParam($name, $default);
     }
 }

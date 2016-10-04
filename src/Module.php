@@ -10,8 +10,10 @@
 namespace Frontend42;
 
 use Admin42\ModuleManager\Feature\AdminAwareModuleInterface;
+use Admin42\ModuleManager\GetAdminConfigTrait;
 use Core42\Console\Console;
 use Core42\I18n\Localization\Localization;
+use Core42\ModuleManager\GetConfigTrait;
 use Core42\Mvc\Environment\Environment;
 use Frontend42\Event\PageEventListener;
 use Frontend42\FormElements\Block;
@@ -31,26 +33,8 @@ class Module implements
     BootstrapListenerInterface,
     AdminAwareModuleInterface
 {
-    /**
-     * @return array
-     */
-    public function getConfig()
-    {
-        return array_merge(
-            include __DIR__ . '/../config/module.config.php',
-            include __DIR__ . '/../config/pagetypes.config.php',
-            include __DIR__ . '/../config/blocks.config.php',
-            include __DIR__ . '/../config/assets.config.php',
-            include __DIR__ . '/../config/admin.config.php',
-            include __DIR__ . '/../config/navigation.config.php',
-            include __DIR__ . '/../config/routing.config.php',
-            include __DIR__ . '/../config/cli.config.php',
-            include __DIR__ . '/../config/caches.config.php',
-            include __DIR__ . '/../config/permission.config.php',
-            include __DIR__ . '/../config/services.config.php',
-            include __DIR__ . '/../config/translation.config.php'
-        );
-    }
+    use GetConfigTrait;
+    use GetAdminConfigTrait;
 
     /**
      * Listen to the bootstrap event
@@ -128,55 +112,5 @@ class Module implements
 
         $pageHandler = $serviceManager->get(PageHandler::class);
         $pageHandler->loadCurrentPage($routeMatch->getParam("pageId"));
-    }
-
-    /**
-     * @return array
-     */
-    public function getAdminStylesheets()
-    {
-        return [
-            '/assets/admin/frontend42/css/frontend42.min.css'
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAdminJavascript()
-    {
-        return [
-            '/assets/admin/frontend42/js/vendor.min.js',
-            '/assets/admin/frontend42/js/frontend42.min.js'
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAdminViewHelpers()
-    {
-        return [
-
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAdminFormElements()
-    {
-        return [
-            'factories' => [
-                PageTypeSelector::class     => PageTypeSelectorFactory::class,
-                PageSelector::class         => PageSelectorFactory::class,
-                Block::class                => BlockFactory::class,
-            ],
-            'aliases' => [
-                'page_type_selector'        => PageTypeSelector::class,
-                'page_selector'             => PageSelector::class,
-                'block'                     => Block::class,
-            ],
-        ];
     }
 }

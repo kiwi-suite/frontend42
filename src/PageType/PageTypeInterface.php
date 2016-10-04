@@ -1,10 +1,10 @@
 <?php
 namespace Frontend42\PageType;
 
+use Core42\Form\Service\FormElementManager;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\PageContent\PageContent;
-use Zend\Form\FormElementManager\FormElementManagerV3Polyfill;
 
 interface PageTypeInterface
 {
@@ -36,7 +36,7 @@ interface PageTypeInterface
     /**
      * @return array
      */
-    public function getFormDefinition();
+    public function getSections();
 
     /**
      * @return boolean
@@ -51,11 +51,6 @@ interface PageTypeInterface
     /**
      * @return array
      */
-    public function getElements();
-
-    /**
-     * @return array
-     */
     public function getOptions();
 
     /**
@@ -65,16 +60,6 @@ interface PageTypeInterface
      * @return array
      */
     public function getRouting(Page $page, PageContent $pageContent, Sitemap $sitemap);
-
-    /**
-     * @return Form
-     */
-    public function getPageForm();
-
-    /**
-     * @param FormElementManagerV3Polyfill $formElementManager
-     */
-    public function setFormElementManager(FormElementManagerV3Polyfill $formElementManager);
 
     /**
      * @return PageContent

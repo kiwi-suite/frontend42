@@ -20,21 +20,18 @@ class PageTableGateway extends AbstractTableGateway
      * @var array
      */
     protected $databaseTypeMap = [
-        'id' => 'Integer',
-        'sitemapId' => 'Integer',
-        'locale' => 'String',
-        'name' => 'String',
-        'excludeMenu' => 'Boolean',
-        'publishedFrom' => 'DateTime',
-        'publishedUntil' => 'DateTime',
-        'status' => 'String',
-        'slug' => 'String',
-        'route' => 'Json',
-        'viewCount' => 'Integer',
-        'updated' => 'DateTime',
-        'updatedBy' => 'Integer',
-        'created' => 'DateTime',
-        'createdBy' => 'Integer',
+        'id' => 'integer',
+        'sitemapId' => 'integer',
+        'locale' => 'string',
+        'name' => 'string',
+        'publishedFrom' => 'dateTime',
+        'publishedUntil' => 'dateTime',
+        'status' => 'string',
+        'slug' => 'string',
+        'updated' => 'dateTime',
+        'updatedBy' => 'integer',
+        'created' => 'dateTime',
+        'createdBy' => 'integer',
     ];
 
     /**

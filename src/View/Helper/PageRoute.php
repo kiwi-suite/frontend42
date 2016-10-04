@@ -3,6 +3,7 @@ namespace Frontend42\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use Frontend42\Page\PageRoute as PageRouteContainer;
+use Zend\View\Helper\Url;
 
 class PageRoute extends AbstractHelper
 {
@@ -56,6 +57,14 @@ class PageRoute extends AbstractHelper
     }
 
     /**
+     * @return Url
+     */
+    protected function getUrlHelper()
+    {
+        return $this->view->plugin('url');
+    }
+
+    /**
      * @param int $pageId
      * @return string
      */
@@ -66,6 +75,13 @@ class PageRoute extends AbstractHelper
         if ($this->enableAssembleUrl === false) {
             return $route;
         }
+
+        if (empty($route)) {
+            return "";
+        }
+
+        $url = $this->getUrlHelper();
+        return $url($route);
     }
 
     /**
@@ -91,10 +107,16 @@ class PageRoute extends AbstractHelper
         }
 
         $route = $this->pageRoute->getRouteByHandle($handle, $locale);
-
         if ($this->enableAssembleUrl === false) {
             return $route;
         }
+
+        if (empty($route)) {
+            return "";
+        }
+
+        $url = $this->getUrlHelper();
+        return $url($route);
     }
 
     public function fromSitemapId($sitemapId, $locale = null)
@@ -108,6 +130,13 @@ class PageRoute extends AbstractHelper
         if ($this->enableAssembleUrl === false) {
             return $route;
         }
+
+        if (empty($route)) {
+            return "";
+        }
+
+        $url = $this->getUrlHelper();
+        return $url($route);
     }
 
     public function switchLanguage($pageId, $locale)
@@ -117,5 +146,12 @@ class PageRoute extends AbstractHelper
         if ($this->enableAssembleUrl === false) {
             return $route;
         }
+
+        if (empty($route)) {
+            return "";
+        }
+
+        $url = $this->getUrlHelper();
+        return $url($route);
     }
 }

@@ -21,7 +21,7 @@
         </div>
         <div class="col-sm-3 text-right">
             <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['add-sitemap'])): ?>
-            <a ng-if="item.droppable" class="btn btn-default btn-xs" ng-click="addSubPage(item.pageId)">
+            <a ng-if="item.droppable" class="btn btn-default btn-xs" ng-click="addSubPage('<?= $this->createForm->getOption('formServiceHash') ?>', item.pageId)">
                 <span class="fa fa-plus"></span>
             </a>
             <?php endif; ?>

@@ -23,8 +23,6 @@ class HomePageType extends AbstractPageType
                 'defaults' => [
                     'controller' => $this->getController(),
                     'action' => $this->getAction(),
-                    'pageId' => $page->getId(),
-                    'locale' => $page->getLocale(),
                 ]
             ]
         ];

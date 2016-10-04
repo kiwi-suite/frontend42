@@ -6,27 +6,6 @@ class PageContent
     /**
      * @var array
      */
-    protected $formDefinition = [];
-
-    /**
-     * @var array
-     */
-    protected $elements = [];
-
-    /**
-     * PageContent constructor.
-     * @param array $formDefinition
-     * @param array $elements
-     */
-    public function __construct(array $formDefinition, array $elements)
-    {
-        $this->formDefinition = $formDefinition;
-        $this->elements = $elements;
-    }
-
-    /**
-     * @var array
-     */
     protected $content;
 
     /**
@@ -81,47 +60,5 @@ class PageContent
     public function hasParam($name)
     {
         return array_key_exists($name, $this->content);
-    }
-
-    /**
-     * @return array
-     */
-    public function generateFormData()
-    {
-        $formContent = [];
-        foreach ($this->formDefinition as $sectionHandle => $subFormInfo) {
-            foreach ($subFormInfo['elements'] as $element) {
-                if (empty($this->elements[$element])) {
-                    continue;
-                }
-                $formContent[$sectionHandle][$element] = $this->getParam($element);
-            }
-        }
-
-        return $formContent;
-    }
-
-    /**
-     * @param array $rawContent
-     * @return array
-     */
-    public function setFromFormData(array $rawContent)
-    {
-        foreach ($this->formDefinition as $sectionHandle => $subFormInfo) {
-            foreach ($subFormInfo['elements'] as $element) {
-                if (empty($this->elements[$element])) {
-                    continue;
-                }
-
-                $value = null;
-                if (!empty($rawContent[$sectionHandle][$element])) {
-                    $value = $rawContent[$sectionHandle][$element];
-                }
-
-                $this->content[$element] = $value;
-            }
-        }
-
-        return $this->getContent();
     }
 }

@@ -15,6 +15,5 @@
     "tests"
   ],
   "dependencies": {
-    "angular-ui-tree": "~2.9.0"
   }
 }

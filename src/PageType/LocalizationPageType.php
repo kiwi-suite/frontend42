@@ -30,14 +30,14 @@ class LocalizationPageType extends AbstractPageType
     {
         $locale = $page->getLocale();
 
-        $localizationPart = \Locale::getPrimaryLanguage($this->localization->getDefaultLocale());
+        $localizationPart = \Locale::getPrimaryLanguage($locale);
         $localizationPartName = 'language';
         $localizationCondition = array_map(function ($value){
             return \Locale::getPrimaryLanguage($value);
         }, $this->localization->getAvailableLocales());
 
         if ($this->localization->getType() == Localization::TYPE_REGION) {
-            $localizationPart = \Locale::getPrimaryLanguage($this->localization->getDefaultLocale());
+            $localizationPart = \Locale::getPrimaryLanguage($locale);
             $localizationPartName = 'locale';
             $localizationCondition = $this->localization->getAvailableLocales();
         }
@@ -49,9 +49,7 @@ class LocalizationPageType extends AbstractPageType
                 'defaults' => [
                     'controller' => $this->getController(),
                     'action' => $this->getAction(),
-                    'pageId' => $page->getId(),
-                    'locale' => $locale,
-                    'language' => \Locale::getPrimaryLanguage($locale),
+                    $localizationPartName => $localizationPart,
                 ]
             ]
         ];

@@ -31,24 +31,8 @@ class PageEventListener extends AbstractListenerAggregate
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'setStandardParams']);
-        $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'getPageRouting']);
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setStandardParams']);
-        $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'getPageRouting']);
         $events->attach(PageEvent::EVENT_VIEW, [$this, 'onView']);
-    }
-
-    /**
-     * @param PageEvent $event
-     */
-    public function getPageRouting(PageEvent $event)
-    {
-        /** @var Page $page */
-        $page = $event->getTarget();
-
-        $pageType = $event->getPageType();
-        $page->setRoute(
-            $pageType->getRouting($page, $event->getPageContent(), $event->getSitemap())
-        );
     }
 
     /**

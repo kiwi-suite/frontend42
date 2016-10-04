@@ -1,8 +1,7 @@
 {
     "name": "fruit42/frontend42",
     "require": {
-        "php": "^5.5 || ^7.0",
-        "cocur/slugify": "v1.1"
+        "php": "^5.5 || ^7.0"
     },
     "autoload": {
         "psr-4": {

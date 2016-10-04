@@ -96,44 +96,25 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     $scope.sitemap = [];
     loadTree();
 
-    $scope.addSubPage = function(parentId) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'addSubPageModalContent.html',
-            controller: 'AddPageModalController',
-            size: 'lg',
-            resolve: {
-                addSitemapUrl: function(){
-                    return $attrs.addUrl;
-                },
-                parentId: function(){
-                    return parentId;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (data) {
-            if (angular.isDefined(data.url)) {
-                $window.location.href = data.url;
-            }
-
-        }, function () {
-
-        });
-    };
-
-    $scope.addPage = function(parentId) {
+    $scope.addPage = function(formId, parentId) {
         var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'addPageModalContent.html',
             controller: 'AddPageModalController',
             size: 'lg',
             resolve: {
-                addSitemapUrl: function(){
-                    return $attrs.addUrl;
-                },
-                parentId: function(){
-                    return null;
+                data: function() {
+                    data = {
+                        url: $attrs.addUrl,
+                        formId: formId,
+                        parentId: 0
+                    };
+
+                    if (angular.isDefined(parentId)) {
+                        data.parentId = parseInt(parentId);
+                    }
+
+                    return data;
                 }
             }
         });
@@ -154,20 +135,39 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
 }]);
 
-angular.module('frontend42').controller('AddPageModalController', ['$scope', '$uibModalInstance', '$http', 'addSitemapUrl', 'parentId', function ($scope, $uibModalInstance, $http, addSitemapUrl, parentId) {
+angular.module('frontend42').controller('AddPageModalController', ['$scope', '$uibModalInstance', '$http', 'data', '$formService', function ($scope, $uibModalInstance, $http, data, $formService) {
     $scope.ok = function () {
-        if (parentId !== null) {
-        } else {
-            parentId = $scope.formElement.page_selector;
+
+        var pageName = $formService.get(data.formId, 'name');
+        var pageTypeSelector = $formService.get(data.formId, 'pageTypeSelector');
+
+        var check = false;
+        if (angular.isDefined(pageName.value)) {
+            if (pageName.value.length == 0) {
+                pageName.errors = [''];
+            } else {
+                check = true;
+            }
+        }
+        if (angular.isDefined(pageTypeSelector.value)) {
+            if (pageTypeSelector.value.length == 0) {
+                pageTypeSelector.errors = [''];
+            } else {
+                check = true;
+            }
+        }
+
+        if (check !== true) {
+            return;
         }
         $http({
                 method: 'POST',
-                url: addSitemapUrl,
+                url: data.url,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 data: {
-                    page_selector: parentId,
-                    page_type_selector: $scope.formElement.page_type_selector,
-                    name: $scope.formElement.name
+                    pageSelector: parseInt(data.parentId),
+                    pageTypeSelector: pageTypeSelector.value,
+                    name: pageName.value
                 },
                 transformRequest: function(obj) {
                     var str = [];

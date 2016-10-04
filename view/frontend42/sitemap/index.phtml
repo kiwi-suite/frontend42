@@ -1,4 +1,6 @@
 <?php
+$this->createForm->prepare();
+
 $defaultLocale = $this->localization()->getDefaultLocale();
 $availableLocales = [];
 foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay) {
@@ -47,7 +49,7 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
             <?php
             $nodesContent = $this->partial('partial/frontend42/nodes-content');
 
-            $this->admin()->addHtmlTemplate("nodes_renderer.html", $nodesContent);
+            $this->angular()->addHtmlTemplate("nodes_renderer.html", $nodesContent);
             ?>
             <div ng-show="isLoading" class="angular-ui-tree-loading text-center">
                 <i class="fa fa-spin fa-refresh"></i>
@@ -60,7 +62,7 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
         </div>
         <div class="panel-footer">
             <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['add-sitemap'])): ?>
-            <a class="btn btn-default" ng-click="addPage()">
+            <a class="btn btn-default" ng-click="addPage('<?= $this->createForm->getOption('formServiceHash') ?>')">
                 <span class="fa fa-plus-circle"></span>
                 <?= $this->translate('button.page-add', 'admin') ?>
             </a>
@@ -89,7 +91,9 @@ $templateContent = <<<EOT
 </div>
 EOT;
 
-$this->admin()->addHtmlTemplate("sortModalContent.html", $templateContent);
+$this->angular()->addHtmlTemplate("sortModalContent.html", $templateContent);
+
+
 
 $templateContent = <<<EOT
 <div class="modal-header">
@@ -110,30 +114,5 @@ $templateContent = <<<EOT
     <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
 </div>
 EOT;
-$this->admin()->addHtmlTemplate("addPageModalContent.html", $templateContent);
-
-
-$subPageForm = clone $this->createForm;
-$subPageForm->remove("page_selector");
-$templateContent = <<<EOT
-<div class="modal-header">
-    <h3 class="modal-title">Add Page</h3>
-</div>
-<div class="modal-body">
-    <div class="container-fluid">
-        <form class="form-horizontal" role="form">
-            {$this->form($subPageForm)}
-        </form>
-    </div>
-</div>
-<div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">
-        <span class="fa fa-plus-circle"></span>
-        {$this->translate('button.page-add', 'admin')}
-    </button>
-    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
-</div>
-EOT;
-$this->admin()->addHtmlTemplate("addSubPageModalContent.html", $templateContent);
-
+$this->angular()->addHtmlTemplate("addPageModalContent.html", $templateContent);
 ?>

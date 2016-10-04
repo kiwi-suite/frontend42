@@ -11,6 +11,8 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
     $defaultLocale = key($availableLocales);
     reset($availableLocales);
 }
+
+$this->pageForm->prepare();
 ?>
 
 <div class="hbox hbox-auto-xs" ng-init="app.appContentFull = true">
@@ -58,15 +60,12 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
 
                     <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
                         <uib-tabset <?php if (false): ?>uib-tabset-persist="<?= md5($this->url(null, [], [], true)) ?>"  <?php endif; ?> class="tab-container">
-                            <?php
-                            $this->pageForm->prepare();
-                            ?>
                             <?php foreach ($this->pageForm as $fieldset): ?>
                                 <uib-tab class="<?= count($fieldset->getMessages()) ? 'has-errors' : '' ?>">
                                     <uib-tab-heading>
-                                        <?= $this->translate($fieldset->getLabel(), 'admin') ?>
+                                        <span class="fa fa-fw fa-pencil-square-o"></span> <?= $this->translate($fieldset->getLabel(), 'admin') ?>
                                     </uib-tab-heading>
-                                    <?= $this->formCollection($fieldset) ?>
+                                    <?= $this->formRow($fieldset) ?>
                                 </uib-tab>
                             <?php endforeach; ?>
                         </uib-tabset>
@@ -138,7 +137,7 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                                     <dt>Last Modified</dt>
                                     <dd><?= $this->page->getUpdated()->format("Y-m-d H:i:s") ?></dd>
                                     <dt>Created By</dt>
-                                    <dd><?= $this->admin()->getUserDisplayNameById($this->page->getCreatedBy()) ?></dd>
+                                    <dd><?= $this->user()->getDisplayName($this->page->getCreatedBy()) ?></dd>
                                 </dl>
                             </div>
                         </li>
@@ -148,8 +147,8 @@ if (!in_array($defaultLocale, array_keys($availableLocales))) {
                                 <div class="tl-wrap <?= $version->getId()!== $this->currentVersion->getId() ? 'b-dark' : 'b-primary' ?>">
                                     <span class="tl-date text-xs">
                                         <div>
-                                            <span class="shortname-container-xs" popover-trigger="mouseenter" popover-placement="left" uib-popover="<?= $this->admin()->getUserDisplayNameById($version->getCreatedBy()) ?>">
-                                                <?= $this->admin()->getUserShortNameNameById($version->getCreatedBy()) ?>
+                                            <span class="shortname-container-xs" popover-trigger="mouseenter" popover-placement="left" uib-popover="<?= $this->user()->getDisplayName($version->getCreatedBy()) ?>">
+                                                <?= $this->user()->getShortName($version->getCreatedBy()) ?>
                                             </span>
                                         </div>
                                         <div class="m-t-xs">
@@ -213,5 +212,5 @@ $modalContent = <<<EOT
 </div>
 EOT;
 
-$this->admin()->addHtmlTemplate("changePageTypeModal.html", $modalContent);
+$this->angular()->addHtmlTemplate("changePageTypeModal.html", $modalContent);
 ?>

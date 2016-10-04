@@ -3,6 +3,8 @@ namespace Frontend42\Controller;
 
 use Admin42\Authentication\AuthenticationService;
 use Admin42\Mvc\Controller\AbstractAdminController;
+use Core42\Hydrator\Strategy\Database\MySQL\IntegerStrategy;
+use Core42\Hydrator\Strategy\Service\StrategyPluginManager;
 use Core42\View\Model\JsonModel;
 use Frontend42\Command\Frontend\BuildIndexCommand;
 use Frontend42\Command\Page\EditCommand;
@@ -15,13 +17,17 @@ use Frontend42\Form\Sitemap\ChangePageTypeForm;
 use Frontend42\Form\Sitemap\CreateForm;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
+use Frontend42\PageType\PageContent\FormFactory;
+use Frontend42\PageType\PageTypeInterface;
 use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\PageType\Service\PageForm;
 use Frontend42\Selector\PageVersionSelector;
 use Frontend42\Selector\SitemapSelector;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\PageVersionTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Select;
+use Zend\Form\FieldsetInterface;
 use Zend\Form\Form;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
@@ -51,11 +57,10 @@ class SitemapController extends AbstractAdminController
     {
         $jsonString = $this->getRequest()->getContent();
         $options = Json::decode($jsonString, Json::TYPE_ARRAY);
-
         $result = $this->getSelector(SitemapSelector::class)
             ->setLocale($options['locale'])
+            ->setEnableStatusCheck(false)
             ->getResult();
-
         return new JsonModel($this->prepareJsonTree($result));
     }
 
@@ -92,7 +97,6 @@ class SitemapController extends AbstractAdminController
                 'locale'    => $_item['page']->getLocale(),
                 'title'     => $title,
                 'status'    => $_item['page']->getStatus(),
-                'viewCount' => $_item['page']->getViewCount(),
                 'pageType'  => $_item['sitemap']->getPageType(),
                 'droppable' => !$_item['sitemap']->getTerminal(),
                 'alternateNames' => $alternateNames,
@@ -166,10 +170,10 @@ class SitemapController extends AbstractAdminController
     {
         /* @var AddSitemapCommand $cmd */
         $cmd = $this->getCommand(AddSitemapCommand::class)
-            ->setPageType($this->params()->fromPost('page_type_selector'))
+            ->setPageType($this->params()->fromPost('pageTypeSelector'))
             ->setCreatedUser($this->getIdentity())
             ->setName($this->params()->fromPost('name'))
-            ->setParentPageId($this->params()->fromPost('page_selector'));
+            ->setParentPageId($this->params()->fromPost('pageSelector'));
 
         $page = $cmd->run();
 
@@ -199,12 +203,15 @@ class SitemapController extends AbstractAdminController
         /** @var Sitemap $sitemap */
         $sitemap = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary($page->getSitemapId());
 
-        /** @var Form $pageForm */
-        $pageForm = $pageTypeProvider->get($sitemap->getPageType())->getPageForm();
+        $pageForm = $this
+            ->getServiceManager()
+            ->get(PageForm::class)
+            ->create(
+                $pageTypeProvider->get($sitemap->getPageType())->getSections()
+            );
 
         if ($prg !== false) {
             $pageForm->setData($prg);
-
             if ($pageForm->isValid()) {
                 $approve = false;
                 if (array_key_exists('save', $prg)) {
@@ -214,8 +221,12 @@ class SitemapController extends AbstractAdminController
                     unset($prg['save']);
                 }
 
-                $pageContent = $pageTypeProvider->get($sitemap->getPageType())->getPageContent();
-                $pageContent->setFromFormData($pageForm->getInputFilter()->getValues());
+                /** @var PageTypeInterface $pageType */
+                $pageType = $pageTypeProvider->get($sitemap->getPageType());
+                $pageContent = $pageType->getPageContent();
+                $pageContent->setContent(
+                    FormFactory::fromForm($pageType->getSections(), $pageForm->getData())
+                );
 
                 /** @var EditCommand $cmd */
                 $cmd = $this->getCommand(EditCommand::class);
@@ -246,9 +257,11 @@ class SitemapController extends AbstractAdminController
                 $selector->setVersionName($this->params()->fromRoute("version"));
             }
             $pageVersion = $selector->getResult();
-            $pageContent = $pageTypeProvider->get($sitemap->getPageType())->getPageContent();
-            $pageContent->setContent($pageVersion->getContent());
-            $pageForm->setData($pageContent->generateFormData());
+            /** @var PageTypeInterface $pageType */
+            $pageType = $pageTypeProvider->get($sitemap->getPageType());
+            $pageForm->setData(
+                FormFactory::toForm($pageType->getSections(), $pageVersion->getContent())
+            );
         }
 
         $versions = $this->getTableGateway(PageVersionTableGateway::class)->select(function (Select $select) use ($page) {

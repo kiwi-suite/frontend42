@@ -12,8 +12,6 @@ use Core42\Model\AbstractModel;
  * @method string getLocale() getLocale()
  * @method Page setName() setName(string $name)
  * @method string getName() getName()
- * @method Page setExcludeMenu() setExcludeMenu(boolean $excludeMenu)
- * @method boolean getExcludeMenu() getExcludeMenu()
  * @method Page setPublishedFrom() setPublishedFrom(\DateTime $publishedFrom)
  * @method \DateTime getPublishedFrom() getPublishedFrom()
  * @method Page setPublishedUntil() setPublishedUntil(\DateTime $publishedUntil)
@@ -22,10 +20,6 @@ use Core42\Model\AbstractModel;
  * @method string getStatus() getStatus()
  * @method Page setSlug() setSlug(string $slug)
  * @method string getSlug() getSlug()
- * @method Page setRoute() setRoute(string $route)
- * @method string getRoute() getRoute()
- * @method Page setViewCount() setViewCount(int $viewCount)
- * @method int getViewCount() getViewCount()
  * @method Page setUpdated() setUpdated(\DateTime $updated)
  * @method \DateTime getUpdated() getUpdated()
  * @method Page setUpdatedBy() setUpdatedBy(int $updatedBy)
@@ -48,13 +42,10 @@ class Page extends AbstractModel
         'sitemapId',
         'locale',
         'name',
-        'excludeMenu',
         'publishedFrom',
         'publishedUntil',
         'status',
         'slug',
-        'route',
-        'viewCount',
         'updated',
         'updatedBy',
         'created',

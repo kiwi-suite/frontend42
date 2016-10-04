@@ -9,11 +9,14 @@
 
 namespace Frontend42\PageType\Provider\Service;
 
+use Frontend42\PageType\Provider\PageTypeConfigProvider;
+use Frontend42\PageType\Provider\PageTypeProvider;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Zend\Stdlib\AbstractOptions;
 
 class PageTypeFallbackAbstractFactory implements AbstractFactoryInterface
 {
@@ -26,7 +29,8 @@ class PageTypeFallbackAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return class_exists($requestedName);
+        $pageTypeOption = $this->getPageTypeOptions($container, $requestedName);
+        return ($pageTypeOption !== false);
     }
 
     /**
@@ -43,6 +47,28 @@ class PageTypeFallbackAbstractFactory implements AbstractFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new $requestedName();
+        $pageTypeOption = $this->getPageTypeOptions($container, $requestedName);
+        $pageType = $container->get(PageTypeProvider::class)->build($pageTypeOption['class']);
+        if (!($pageType instanceof AbstractOptions)) {
+            return $pageType;
+        }
+        unset($pageTypeOption['class']);
+        $pageType->setFromArray($pageTypeOption);
+        return $pageType;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @return bool|array
+     */
+    protected function getPageTypeOptions(ContainerInterface $container, $requestedName)
+    {
+        $pageTypeOptions = $container->get(PageTypeConfigProvider::class)->getPageTypeOptions();
+        if (isset($pageTypeOptions[$requestedName])) {
+            return $pageTypeOptions[$requestedName];
+        }
+
+        return false;
     }
 }

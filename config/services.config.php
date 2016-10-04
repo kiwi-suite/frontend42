@@ -21,7 +21,9 @@ use Frontend42\Page\Service\DataFactory;
 use Frontend42\Page\Service\MemoryDataFactory;
 use Frontend42\Page\Service\PageFactory;
 use Frontend42\Page\Service\PageRouteFactory;
+use Frontend42\PageType\Provider\PageTypeConfigProvider;
 use Frontend42\PageType\Provider\PageTypeProvider;
+use Frontend42\PageType\Provider\Service\PageTypeConfigProviderFactory;
 use Frontend42\PageType\Provider\Service\PageTypeProviderFactory;
 use Zend\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -32,12 +34,11 @@ return [
             TreeRouteStack::class               => HttpRouterFactory::class,
             PageTypeProvider::class             => PageTypeProviderFactory::class,
             BlockProvider::class                => BlockProviderFactory::class,
-            Slugify::class                      => InvokableFactory::class,
             Data::class                         => DataFactory::class,
             FrontendMiddleware::class           => FrontendMiddlewareFactory::class,
             Page::class                         => PageFactory::class,
             PageRoute::class                    => PageRouteFactory::class,
-            Provider::class                     => ProviderFactory::class,
+            PageTypeConfigProvider::class       => PageTypeConfigProviderFactory::class,
 
             SitemapLink::class                  => SitemapLinkFactory::class,
 

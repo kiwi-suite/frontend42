@@ -9,9 +9,7 @@
 
 namespace Frontend42\Form\Sitemap;
 
-use Frontend42\FormElements\PageTypeSelector;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
+use Admin42\FormElements\Form;
 
 class CreateForm extends Form
 {
@@ -20,22 +18,16 @@ class CreateForm extends Form
      */
     public function init()
     {
-        $name = new Text("name");
-        $name->setLabel("label.name");
-        $name->setAttribute("required", "required");
-        $this->add($name);
-        
-        /** @var PageTypeSelector $role */
-        $pageTypeSelector = $this->getFormFactory()->getFormElementManager()->get('page_type_selector');
-        $pageTypeSelector->setName("page_type_selector");
-        $pageTypeSelector->setLabel("label.pageType");
-        $pageTypeSelector->setAttribute("required", "required");
-        $this->add($pageTypeSelector);
+        $this->add([
+            'name' => 'name',
+            'type' => 'text',
+            'label' => 'label.name',
+        ]);
 
-        $pageSelector = $this->getFormFactory()->getFormElementManager()->get('page_selector');
-        $pageSelector->setName("page_selector");
-        $pageSelector->setLabel("label.pageSelector");
-        $pageSelector->setAttribute("required", "required");
-        $this->add($pageSelector);
+        $this->add([
+            'name' => 'pageTypeSelector',
+            'type' => 'pageTypeSelector',
+            'label' => 'label.pageType',
+        ]);
     }
 }

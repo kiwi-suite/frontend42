@@ -3,9 +3,6 @@ namespace Frontend42\PageType;
 
 use Frontend42\Controller\ContentController;
 use Frontend42\PageType\PageContent\PageContent;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\Form\FormElementManager\FormElementManagerV3Polyfill;
 use Zend\Stdlib\AbstractOptions;
 
 abstract class AbstractPageType extends AbstractOptions implements PageTypeInterface
@@ -36,11 +33,6 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     protected $label;
 
     /**
-     * @var array
-     */
-    protected $formDefinition;
-
-    /**
      * @var boolean
      */
     protected $terminal = false;
@@ -53,17 +45,12 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     /**
      * @var array
      */
-    protected $elements = [];
-
-    /**
-     * @var FormElementManagerV3Polyfill
-     */
-    protected $formElementManager;
+    protected $options = [];
 
     /**
      * @var array
      */
-    protected $options = [];
+    protected $sections = [];
 
     /**
      * @return string|null
@@ -146,22 +133,6 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     }
 
     /**
-     * @return array
-     */
-    public function getFormDefinition()
-    {
-        return $this->formDefinition;
-    }
-
-    /**
-     * @param array $formDefinition
-     */
-    public function setFormDefinition($formDefinition)
-    {
-        $this->formDefinition = $formDefinition;
-    }
-
-    /**
      * @return boolean
      */
     public function getTerminal()
@@ -194,30 +165,6 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     }
 
     /**
-     * @return array
-     */
-    public function getElements()
-    {
-        return $this->elements;
-    }
-
-    /**
-     * @param array $elements
-     */
-    public function setElements($elements)
-    {
-        $this->elements = $elements;
-    }
-
-    /**
-     * @param FormElementManagerV3Polyfill $formElementManager
-     */
-    public function setFormElementManager(FormElementManagerV3Polyfill $formElementManager)
-    {
-        $this->formElementManager = $formElementManager;
-    }
-
-    /**
      * @param array $options
      */
     public function setOptions(array $options)
@@ -233,39 +180,28 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
         return $this->options;
     }
 
-    /**
-     * @return Form
-     * @throws \Exception
-     */
-    public function getPageForm()
-    {
-        /** @var Form $form */
-        $form =  $this->formElementManager->get(Form::class);
-
-        foreach ($this->getFormDefinition() as $sectionHandle => $subFormInfo) {
-            /** @var Fieldset $fieldset */
-            $fieldset = $this->formElementManager->get(Fieldset::class);
-            $fieldset->setName($sectionHandle);
-            $fieldset->setLabel($subFormInfo['label']);
-
-            foreach ($subFormInfo['elements'] as $element) {
-                if (empty($this->getElements()[$element])) {
-                    throw new \Exception(sprintf("Invalid element '%s' in pageType '%s' ", $element, get_class($this)));
-                }
-                $fieldset->add($this->getElements()[$element]);
-            }
-
-            $form->add($fieldset);
-        }
-
-        return $form;
-    }
 
     /**
      * @return PageContent
      */
     public function getPageContent()
     {
-        return new PageContent($this->getFormDefinition(), $this->getElements());
+        return new PageContent();
+    }
+
+    /**
+     * @return array
+     */
+    public function getSections()
+    {
+        return $this->sections;
+    }
+
+    /**
+     * @param array $sections
+     */
+    public function setSections($sections)
+    {
+        $this->sections = $sections;
     }
 }
