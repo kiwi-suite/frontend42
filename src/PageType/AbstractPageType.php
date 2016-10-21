@@ -1,27 +1,12 @@
 <?php
 namespace Frontend42\PageType;
 
-use Frontend42\Controller\ContentController;
-use Frontend42\PageType\PageContent\PageContent;
+use Frontend42\Model\Page;
+use Frontend42\Model\PageContent;
 use Zend\Stdlib\AbstractOptions;
 
 abstract class AbstractPageType extends AbstractOptions implements PageTypeInterface
 {
-    /**
-     * @var string|null
-     */
-    protected $handle;
-
-    /**
-     * @var string
-     */
-    protected $controller = ContentController::class;
-
-    /**
-     * @var string
-     */
-    protected $action = "index";
-
     /**
      * @var string
      */
@@ -33,19 +18,19 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     protected $label;
 
     /**
-     * @var boolean
+     * @var string|null
      */
-    protected $terminal = false;
+    protected $handle = null;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    protected $exclude = false;
+    protected $root = null;
 
     /**
      * @var array
      */
-    protected $options = [];
+    protected $properties = [];
 
     /**
      * @var array
@@ -53,52 +38,29 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     protected $sections = [];
 
     /**
-     * @return string|null
+     * @var string
      */
-    public function getHandle()
-    {
-        return $this->handle;
-    }
+    protected $controller;
 
     /**
-     * @param string $handle
+     * @var string
      */
-    public function setHandle($handle)
-    {
-        $this->handle = $handle;
-    }
+    protected $action;
 
     /**
-     * @return string
+     * @var bool
      */
-    public function getController()
-    {
-        return $this->controller;
-    }
+    protected $terminal = false;
 
     /**
-     * @param string $controller
+     * @var null|array
      */
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-    }
+    protected $allowedChildren = null;
 
     /**
-     * @return string
+     * @var null|array
      */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
-     * @param string $action
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-    }
+    protected $allowedParents = null;
 
     /**
      * @return string
@@ -110,10 +72,13 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
 
     /**
      * @param string $name
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -126,67 +91,51 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
 
     /**
      * @param string $label
+     * @return $this
      */
     public function setLabel($label)
     {
         $this->label = $label;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return null|string
      */
-    public function getTerminal()
+    public function getHandle()
     {
-        return $this->terminal;
+        return $this->handle;
     }
 
     /**
-     * @param boolean $terminal
+     * @param null|string $handle
+     * @return $this
      */
-    public function setTerminal($terminal)
+    public function setHandle($handle)
     {
-        $this->terminal = $terminal;
+        $this->handle = $handle;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool|null
      */
-    public function getExclude()
+    public function getRoot()
     {
-        return $this->exclude;
+        return $this->root;
     }
 
     /**
-     * @param boolean $exclude
+     * @param bool|null $root
+     * @return $this
      */
-    public function setExclude($exclude)
+    public function setRoot($root)
     {
-        $this->exclude = $exclude;
-    }
+        $this->root = $root;
 
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-
-    /**
-     * @return PageContent
-     */
-    public function getPageContent()
-    {
-        return new PageContent();
+        return $this;
     }
 
     /**
@@ -199,9 +148,167 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
 
     /**
      * @param array $sections
+     * @return $this
      */
-    public function setSections($sections)
+    public function setSections(array $sections)
     {
         $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param array $properties
+     * @return $this
+     */
+    public function setProperties(array $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    /**
+     * @param string $controller
+     * @return $this
+     */
+    public function setController($controller)
+    {
+        $this->controller = $controller;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param string $action
+     * @return $this
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTerminal()
+    {
+        return $this->terminal;
+    }
+
+    /**
+     * @param boolean $terminal
+     * @return $this
+     */
+    public function setTerminal($terminal)
+    {
+        $this->terminal = $terminal;
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getAllowedChildren()
+    {
+        return $this->allowedChildren;
+    }
+
+    /**
+     * @param array|null $allowedChildren
+     * @return $this
+     */
+    public function setAllowedChildren($allowedChildren)
+    {
+        $this->allowedChildren = $allowedChildren;
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getAllowedParents()
+    {
+        return $this->allowedParents;
+    }
+
+    /**
+     * @param array|null $allowedParents
+     * @return $this
+     */
+    public function setAllowedParents($allowedParents)
+    {
+        $this->allowedParents = $allowedParents;
+        return $this;
+    }
+
+    /**
+     * @param array $content
+     * @param Page $page
+     * @return PageContent
+     */
+    public function getPageContent(array $content = [], Page $page = null)
+    {
+        $properties = [];
+
+        foreach ($this->getSections() as $section) {
+            if (empty($section['elements'])) {
+                continue;
+            }
+
+            foreach ($section['elements'] as $element) {
+                if (empty($element['name'])) {
+                    continue;
+                }
+
+                $properties[] = $element['name'];
+            }
+        }
+
+        $autoFilledForcedProperties = [];
+        foreach (['name', 'status', 'publishedFrom', 'publishedUntil', 'slug'] as $forcedProperty) {
+            if (!in_array($forcedProperty, $properties)) {
+                $properties[] = $forcedProperty;
+            }
+
+            if (!array_key_exists($forcedProperty, $content) && $page !== null) {
+                $getter = "get" . ucfirst($forcedProperty);
+                $autoFilledForcedProperties[] = $forcedProperty;
+                $content[$forcedProperty] = $page->{$getter}();
+            }
+        }
+
+        $pageContent = new PageContent($properties);
+        $pageContent->populate($content);
+        $pageContent->memento();
+        foreach ($autoFilledForcedProperties as $property) {
+            $pageContent->addAutoFilledProperty($property);
+        }
+
+        return $pageContent;
     }
 }

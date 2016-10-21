@@ -4,38 +4,29 @@ namespace Frontend42\Command\Sitemap;
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
-use Frontend42\Command\PageVersion\ApproveCommand;
-use Frontend42\Command\PageVersion\CreateCommand;
-use Frontend42\Event\PageEvent;
-use Frontend42\Model\Page;
+use Frontend42\Command\Page\AddPageCommand;
 use Frontend42\Model\Sitemap;
-use Frontend42\PageType\PageTypeInterface;
-use Frontend42\PageType\Provider\PageTypeProvider;
-use Frontend42\TableGateway\PageTableGateway;
+use Frontend42\PageType\Service\PageTypePluginManager;
+use Frontend42\Selector\AvailablePageTypesSelector;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 
 class AddSitemapCommand extends AbstractCommand
 {
     /**
+     * @var null|int
+     */
+    protected $parentId;
+
+    /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * @var string
      */
     protected $pageType;
-
-    /**
-     * @var User
-     */
-    protected $createdUser;
-
-    /**
-     * @var int
-     */
-    protected $parentPageId;
-
-    /**
-     * @var Page
-     */
-    protected $parentPage;
 
     /**
      * @var string
@@ -43,14 +34,36 @@ class AddSitemapCommand extends AbstractCommand
     protected $name;
 
     /**
-     * @var int
+     * @var User
      */
-    protected $orderNr;
+    protected $user;
 
     /**
-     * @var int
+     * @var Sitemap
      */
-    protected $createdBy;
+    protected $parent;
+
+    /**
+     * @param int|null $parentId
+     * @return $this
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+
+        return $this;
+    }
+
+    /**
+     * @param string $locale
+     * @return $this
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
 
     /**
      * @param string $pageType
@@ -59,17 +72,6 @@ class AddSitemapCommand extends AbstractCommand
     public function setPageType($pageType)
     {
         $this->pageType = $pageType;
-
-        return $this;
-    }
-
-    /**
-     * @param int $parentPageId
-     * @return $this
-     */
-    public function setParentPageId($parentPageId)
-    {
-        $this->parentPageId = $parentPageId;
 
         return $this;
     }
@@ -86,59 +88,71 @@ class AddSitemapCommand extends AbstractCommand
     }
 
     /**
-     * @param User $createdUser
+     * @param User $user
      * @return $this
      */
-    public function setCreatedUser(User $createdUser)
+    public function setUser(User $user)
     {
-        $this->createdUser = $createdUser;
+        $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @param int $createdBy
-     * @return $this
-     */
-    public function setCreatedBy($createdBy)
-    {
-        $this->createdBy = $createdBy;
 
-        return $this;
+    public function hydrate(array $values)
+    {
+        $this->setPageType($values['pageType']);
+        $this->setName($values['name']);
     }
 
-    /**
-     * @throws \Exception
-     */
     protected function preExecute()
     {
-        if (!empty($this->parentPageId)) {
-            $this->parentPage = $this
-                ->getTableGateway(PageTableGateway::class)
-                ->selectByPrimary((int) $this->parentPageId);
+        if (empty($this->pageType)) {
+            $this->addError("pageType", "invalid pageType");
+
+            return;
         }
 
-        if ($this->createdUser !== null) {
-            $this->createdBy = $this->createdUser->getId();
+        try {
+            $this->getServiceManager()->get(PageTypePluginManager::class)->get($this->pageType);
+        } catch (\Exception $e) {
+            $this->addError("pageType", "invalid pageType");
+
+            return;
         }
 
-        $select = $this->getTableGateway(SitemapTableGateway::class)
-            ->getSql()
-            ->select();
+        /** @var Localization $localization */
+        $localization = $this->getServiceManager()->get(Localization::class);
+        if (!in_array($this->locale, $localization->getAvailableLocales())) {
+            $this->addError("locale", "invalid locale");
 
-        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parentPage->getSitemapId()]);
-        $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
-        $statement = $this
-            ->getTableGateway(SitemapTableGateway::class)
-            ->getSql()
-            ->prepareStatementForSqlObject($select);
-        $result = $statement->execute()->current();
-
-        $this->orderNr = $result['orderNr'];
-        if (empty($this->orderNr)) {
-            $this->orderNr = 0;
+            return;
         }
-        $this->orderNr++;
+
+        if ($this->parentId > 0) {
+            $this->parentId = (int) $this->parentId;
+            $this->parent = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary($this->parentId);
+
+            if (empty($this->parent)) {
+                $this->addError("parentId", "invalid parentId");
+
+                return;
+            }
+        } else {
+            $this->parentId = null;
+        }
+
+        /** @var AvailablePageTypesSelector $availablePageTypeSelector */
+        $availablePageTypeSelector = $this->getSelector(AvailablePageTypesSelector::class);
+        $availablePageTypes = $availablePageTypeSelector
+            ->setParentId($this->parentId)
+            ->getResult();
+
+        if (!isset($availablePageTypes[$this->pageType])) {
+            $this->addError("pageType", "invalid pageType");
+
+            return;
+        }
     }
 
     /**
@@ -146,88 +160,45 @@ class AddSitemapCommand extends AbstractCommand
      */
     protected function execute()
     {
-        /** @var PageTypeInterface $pageTypeObject */
-        $pageTypeObject = $this->getServiceManager()->get(PageTypeProvider::class)->get($this->pageType);
+        $select = $this->getTableGateway(SitemapTableGateway::class)
+            ->getSql()
+            ->select();
+
+        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parent->getParentId()]);
+        $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
+        $statement = $this
+            ->getTableGateway(SitemapTableGateway::class)
+            ->getSql()
+            ->prepareStatementForSqlObject($select);
+        $result = $statement->execute()->current();
+        $orderNr = $result['orderNr'];
+        if (empty($orderNr)) {
+            $orderNr = 0;
+        }
+        $orderNr++;
+
+        $handle = $this->getServiceManager()->get(PageTypePluginManager::class)->get($this->pageType)->getHandle();
 
         $sitemap = new Sitemap();
-        $sitemap->setPageType($this->pageType)
-            ->setOrderNr($this->orderNr)
-            ->setExclude($pageTypeObject->getExclude())
-            ->setHandle($pageTypeObject->getHandle())
-            ->setTerminal($pageTypeObject->getTerminal())
-            ->setCreated(new \DateTime())
-            ->setCreatedBy($this->createdBy)
-            ->setUpdated(new \DateTime())
-            ->setUpdatedBy($this->createdBy);
-
-        if (!empty($this->parentPage)) {
-            $sitemap->setParentId($this->parentPage->getSitemapId());
-        }
+        $sitemap->setParentId($this->parentId)
+            ->setOrderNr($orderNr)
+            ->setPageType($this->pageType)
+            ->setHandle($handle);
 
         $this->getTableGateway(SitemapTableGateway::class)->insert($sitemap);
 
-        $defaultLocale = $this->getServiceManager()->get(Localization::class)->getDefaultLocale();
-        if (!empty($this->parentPage)) {
-            $defaultLocale = $this->parentPage->getLocale();
-        }
-
         foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
-            $page = new Page();
-            $page->setLocale($locale)
-                ->setStatus(Page::STATUS_OFFLINE)
-                ->setSitemapId($sitemap->getId())
-                ->setCreated(new \DateTime())
-                ->setCreatedBy($this->createdBy)
-                ->setUpdated(new \DateTime())
-                ->setUpdatedBy($this->createdBy);
+            /** @var AddPageCommand $cmd */
+            $cmd = $this->getCommand(AddPageCommand::class);
+            $cmd->setUser($this->user)
+                ->setLocale($locale)
+                ->setSitemap($sitemap);
 
-            $pageContent = [
-                'status' => $page->getStatus()
-            ];
-
-            if ($locale === $defaultLocale) {
-                $pageContent['name'] = $this->name;
+            if ($this->locale === $locale) {
+                $cmd->setName($this->name);
             }
 
-            $pageContentObject = $pageTypeObject->getPageContent();
-            $pageContentObject->setContent($pageContent);
-
-            $this
-                ->getServiceManager()
-                ->get('Frontend42\Page\EventManager')
-                ->trigger(
-                    PageEvent::EVENT_ADD_PRE,
-                    $page,
-                    ['sitemap' => $sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
-                );
-
-            $this->getTableGateway(PageTableGateway::class)->insert($page);
-
-            $pageVersion = $this->getCommand(CreateCommand::class)
-                ->setPageId($page->getId())
-                ->setContent($pageContentObject->getContent())
-                ->setCreatedBy($this->createdUser)
-                ->run();
-
-            $this->getCommand(ApproveCommand::class)
-                ->setVersion($pageVersion)
-                ->run();
-
-            $this
-                ->getServiceManager()
-                ->get('Frontend42\Page\EventManager')
-                ->trigger(
-                    PageEvent::EVENT_ADD_POST,
-                    $page,
-                    ['sitemap' => $sitemap, 'approved' => true, 'pageContent' => $pageContentObject]
-                );
+            $cmd->run();
         }
-
-        $model = $this->getTableGateway(PageTableGateway::class)->select([
-            'sitemapId' => $sitemap->getId(),
-            'locale'    => $defaultLocale
-        ])->current();
-
-        return $model;
     }
 }

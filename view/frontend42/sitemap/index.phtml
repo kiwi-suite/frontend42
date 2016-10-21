@@ -1,118 +1,43 @@
 <?php
-$this->createForm->prepare();
-
-$defaultLocale = $this->localization()->getDefaultLocale();
-$availableLocales = [];
-foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $localeDisplay) {
-    if(!$this->permission('admin42')->isGranted('sitemap/locale/' . $locale)) continue;
-
-    $availableLocales[$locale] = $localeDisplay;
-}
-
-if (!in_array($defaultLocale, array_keys($availableLocales))) {
-    $defaultLocale = key($availableLocales);
-    reset($availableLocales);
-}
+$this->angular()->addHtmlPartial('sitemap/node.html', 'partial/sitemap-node');
 ?>
 
-<div class="wrapper-md bg-white b-b box-shadow">
-    <h1 class="m-n font-thin h3">
-        <span class="fa fa-sitemap"></span>
-        <?= $this->translate('title.sitemap', 'admin') ?>
-    </h1>
-</div>
-
-<div class="wrapper-md"
-     data-request-url="<?= $this->url($this->routes['list'])?>"
-     data-save-url="<?= $this->url($this->routes['save'])?>"
-     data-add-url="<?= $this->url($this->routes['add-sitemap'])?>"
-     ng-controller="SitemapController"
-     data-active-locale="<?= $defaultLocale ?>"
-    >
-    <div class="panel panel-default">
+<?= $this->pageHeader($this->translate('frontend42.title.sitemap', 'admin'), 'fa fa-sitemap') ?>
+<div class="wrapper-md" ng-controller="SitemapController" sitemap-url="<?= $this->url('admin/sitemap/list') ?>" locale="<?= $this->defaultLocale ?>">
+    <div class="panel b-a">
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-9">
-                    <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
+                    <input placeholder="<?= $this->translate('frontend42.sitemap.search-placeholder', 'admin') ?>" class="form-control" type="text" ng-model="query">
                 </div>
                 <div class="col-sm-3">
-                    <select ng-model="locale" class="form-control" ng-change="loadTree()">
-                        <?php foreach($availableLocales as $_locale => $_name): ?>
-                            <option value="<?= $_locale?>"><?= $_name ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <?php if (count($this->availableLocales) > 1): ?>
+                        <select class="form-control" ng-model="locale">
+                            <?php foreach ($this->availableLocales as $locale => $localeDisplay): ?>
+                                <option value="<?= $locale?>"><?= $localeDisplay ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
         <div class="panel-body">
-
-            <?php
-            $nodesContent = $this->partial('partial/frontend42/nodes-content');
-
-            $this->angular()->addHtmlTemplate("nodes_renderer.html", $nodesContent);
-            ?>
             <div ng-show="isLoading" class="angular-ui-tree-loading text-center">
                 <i class="fa fa-spin fa-refresh"></i>
             </div>
             <div ng-hide="isLoading" class="dd" ui-tree="treeOptions">
-                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root"<?= (!$this->permission('admin42')->isGranted('route/' . $this->routes['save'])) ? ' data-nodrag' : '' ?>>
-                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="visible(item)"></li>
+                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root"<?= (!$this->permission('admin42')->isGranted('route/admin/sitemap/sort-save')) ? ' data-nodrag' : '' ?>>
+                    <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'sitemap/node.html'" ng-show="visible(item)"></li>
                 </ol>
             </div>
         </div>
+        <?php if ($this->canAddRoutePages && $this->permission('admin42')->isGranted('route/admin/sitemap/add-page')): ?>
         <div class="panel-footer">
-            <?php if($this->permission('admin42')->isGranted('route/' . $this->routes['add-sitemap'])): ?>
-            <a class="btn btn-default" ng-click="addPage('<?= $this->createForm->getOption('formServiceHash') ?>')">
-                <span class="fa fa-plus-circle"></span>
-                <?= $this->translate('button.page-add', 'admin') ?>
+            <a class="btn btn-default btn-addon" ng-href="<?= $this->url('admin/sitemap/add-page', ['locale' => '{{ locale }}']) ?>">
+                <i class="fa fa-plus-circle"></i>
+                <?= $this->translate('frontend42.title.add-page', 'admin') ?>
             </a>
-            <?php endif; ?>
         </div>
+        <?php endif; ?>
     </div>
 </div>
-
-<?php
-$checkContent = "";
-if (count($this->localization()->getAvailableLocales()) > 1) {
-    $checkContent = "<br><br><em>{$this->translate('modal.sitemap.sorting-lang-warning', 'admin')}</em>";
-}
-$templateContent = <<<EOT
-<div class="modal-header">
-    <h3 class="modal-title">{$this->translate('modal.sitemap.sorting-title', 'admin')}</h3>
-</div>
-<div class="modal-body">
-    {$this->translate('modal.sitemap.sorting-warning', 'admin')}
-    {$checkContent}
-
-</div>
-<div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">{$this->translate('button.save', 'admin')}</button>
-    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
-</div>
-EOT;
-
-$this->angular()->addHtmlTemplate("sortModalContent.html", $templateContent);
-
-
-
-$templateContent = <<<EOT
-<div class="modal-header">
-    <h3 class="modal-title">Add Page</h3>
-</div>
-<div class="modal-body">
-    <div class="container-fluid">
-        <form class="form-horizontal" role="form">
-            {$this->form($this->createForm)}
-        </form>
-    </div>
-</div>
-<div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">
-        <span class="fa fa-plus-circle"></span>
-        {$this->translate('button.page-add', 'admin')}
-    </button>
-    <button class="btn btn-default" ng-click="cancel()">{$this->translate('button.cancel', 'admin')}</button>
-</div>
-EOT;
-$this->angular()->addHtmlTemplate("addPageModalContent.html", $templateContent);
-?>

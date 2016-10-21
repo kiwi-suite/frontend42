@@ -1,7 +1,19 @@
 {
     "name": "fruit42/frontend42",
+    "description": "frontend42",
+    "license": "MIT",
+    "type": "project",
+    "keywords": [
+        "fruit42",
+        "kiwi42",
+        "cms"
+    ],
+    "homepage": "https://www.raum42.at/",
     "require": {
-        "php": "^5.5 || ^7.0"
+        "php": "^5.6 || ^7.0"
+    },
+    "require-dev": {
+        "zendframework/zend-test": "^3.0"
     },
     "autoload": {
         "psr-4": {

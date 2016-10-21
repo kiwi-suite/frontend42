@@ -21,12 +21,12 @@ class PageVersionTableGateway extends AbstractTableGateway
      */
     protected $databaseTypeMap = [
         'id' => 'integer',
-        'versionId' => 'integer',
+        'versionName' => 'integer',
         'pageId' => 'integer',
         'content' => 'json',
-        'created' => 'dateTime',
-        'createdBy' => 'integer',
         'approved' => 'dateTime',
+        'createdBy' => 'integer',
+        'created' => 'dateTime',
     ];
 
     /**

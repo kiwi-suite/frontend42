@@ -24,19 +24,13 @@ class SitemapTableGateway extends AbstractTableGateway
         'parentId' => 'integer',
         'orderNr' => 'integer',
         'pageType' => 'string',
-        'terminal' => 'boolean',
-        'exclude' => 'boolean',
-        'lockedFrom' => 'dateTime',
-        'lockedBy' => 'integer',
         'handle' => 'string',
-        'updated' => 'dateTime',
-        'updatedBy' => 'integer',
-        'created' => 'dateTime',
-        'createdBy' => 'integer',
     ];
 
     /**
      * @var string
      */
     protected $modelPrototype = 'Frontend42\\Model\\Sitemap';
+
+
 }

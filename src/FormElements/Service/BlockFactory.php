@@ -1,15 +1,6 @@
 <?php
-/**
- * frontend42 (www.raum42.at)
- *
- * @link http://www.raum42.at
- * @copyright Copyright (c) 2010-2014 raum42 OG (http://www.raum42.at)
- *
- */
-
 namespace Frontend42\FormElements\Service;
 
-use Frontend42\Block\BlockProvider;
 use Frontend42\FormElements\Block;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -19,6 +10,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 class BlockFactory implements FactoryInterface
 {
+
     /**
      * Create an object
      *
@@ -33,11 +25,20 @@ class BlockFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $blockProvider = $container->get(BlockProvider::class);
+        if ($options === null) {
+            $options = [];
+        }
 
-        $block = new Block();
-        $block->setBlockProvider($blockProvider);
+        $name = null;
+        if (isset($options['name'])) {
+            $name = $options['name'];
+        }
 
-        return $block;
+        if (isset($options['options'])) {
+            $options = $options['options'];
+        }
+
+        $blockConfig = $container->get('config')['blocks']['blocks'];
+        return new Block($name, $options, $blockConfig);
     }
 }

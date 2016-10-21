@@ -1,33 +1,22 @@
 <?php
 
-return array(
-    'title.edit-sitemap'                => 'Edit Page',
+return [
+    'frontend42.title.sitemap'                                  => 'Sitemap',
+    'frontend42.sitemap.search-placeholder'                     => 'Search',
+    'frontend42.title.add-page'                                 => 'Add Page',
 
-    'label.sitemap'                     => 'Sitemap',
-    'label.pageType'                    => 'Page Type',
-    'label.pageSelector'                => 'Page',
-    'label.name'                        => 'Name',
+    'frontend42.button.publish'                                 => 'Publish',
+    'frontend42.version-history'                                => 'Version History',
 
-    'placeholder.pageselector'          => 'Select a Page',
+    'frontend42.label.pageType'                                 => 'Page Type',
+    'frontend42.label.name'                                     => 'Name',
+    'frontend42.label.status'                                   => 'Status',
 
-    'title.sitemap'                     => 'Sitemap',
 
-    'button.page-add'                   => 'Add Page',
-    'button.change-pageType'            => 'Change PageType',
-    'button.save-approve'               => 'Save & Approve',
-
-    'alert.unpublished-version'         => "The most recent version of this page is pending approval.",
-
-    'modal.sitemap.sorting-title'       => 'Save sorting',
-    'modal.sitemap.sorting-warning'     => 'Do you really want to save the new sorting?',
-    'modal.sitemap.sorting-lang-warning'=> 'Be careful! The new sorting will affect all languages.',
-
-    'sitemap.modal.delete.title'        => 'Delete Page',
-    'sitemap.modal.delete.content'      => 'Do you really want to delete the page? Be careful! All subpages will be deletetd too.',
-    'sitemap.modal.change-page-type.title'      => 'Change PageType',
-    'sitemap.modal.change-page-type.content'      => 'Do you really want to change the PageType? All data and versions associated will be deleted.',
-    'toaster.sitemap.delete.title.success'      => 'Page deleted',
-    'toaster.sitemap.delete.message.success'    => 'Page with all subpages successfully deleted.',
-
-    'link-type.sitemap'               => 'Sitemap Link',
-);
+    'frontend42.toaster.page-version.approve.title.success'     => 'Approved',
+    'frontend42.toaster.page-version.approve.message.success'   => 'Successfully approved',
+    'frontend42.toaster.page-version.delete.title.error'        => 'Error',
+    'frontend42.toaster.page-version.delete.message.error'      => 'Error while deleting version',
+    'frontend42.toaster.page-version.delete.title.success'      => 'Deleted',
+    'frontend42.toaster.page-version.delete.message.success'    => 'Version successfully deleted',
+];

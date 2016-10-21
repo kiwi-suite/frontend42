@@ -1,20 +1,18 @@
 <?php
 namespace Frontend42\Command\PageVersion;
 
-use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
-use Frontend42\Command\Router\CreateRouteConfigCommand;
-use Frontend42\Event\SitemapEvent;
+use Core42\Stdlib\DateTime;
+use Frontend42\Event\PageEvent;
 use Frontend42\Model\Page;
+use Frontend42\Model\PageContent;
 use Frontend42\Model\PageVersion;
 use Frontend42\Model\Sitemap;
-use Frontend42\PageType\PageTypeContent;
-use Frontend42\PageType\PageTypeProvider;
-use Frontend42\Selector\PageVersionSelector;
+use Frontend42\PageType\PageTypeInterface;
+use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\PageVersionTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
-use Zend\Json\Json;
 
 class ApproveCommand extends AbstractCommand
 {
@@ -75,9 +73,32 @@ class ApproveCommand extends AbstractCommand
             ->getTableGateway(PageVersionTableGateway::class)
             ->update(['approved' => null], ['pageId' => $this->version->getPageId()]);
 
-        $this->version->setApproved(new \DateTime());
+        $this->version->setApproved(new DateTime());
 
         $this->getTableGateway(PageVersionTableGateway::class)->update($this->version);
+
+        /** @var Page $page */
+        $page = $this->getTableGateway(PageTableGateway::class)->selectByPrimary($this->version->getPageId());
+
+        /** @var Sitemap $sitemap */
+        $sitemap = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary($page->getSitemapId());
+
+        /** @var PageTypeInterface $pageType */
+        $pageType = $this->getServiceManager()->get(PageTypePluginManager::class)->get($sitemap->getPageType());
+
+        /** @var PageContent $pageContent */
+        $pageContent = $pageType->getPageContent($this->version->getContent(), $page);
+
+        $this
+            ->getServiceManager()
+            ->get('Frontend42\Page\EventManager')
+            ->trigger(
+                PageEvent::EVENT_APPROVED,
+                $page,
+                ['sitemap' => $sitemap, 'approved' => true, 'pageContent' => $pageContent]
+            );
+
+        $this->getTableGateway(PageTableGateway::class)->update($page);
 
         return $this->version;
     }

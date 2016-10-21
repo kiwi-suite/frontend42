@@ -18,12 +18,28 @@ class SlugSelector extends AbstractSelector
     protected $page;
 
     /**
+     * @var string
+     */
+    protected $slug;
+
+    /**
      * @param Page $page
      * @return SlugSelector
      */
     public function setPage(Page $page)
     {
         $this->page = $page;
+        return $this;
+    }
+
+    /**
+     * @param string $slug
+     * @return $this
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
         return $this;
     }
 
@@ -52,7 +68,7 @@ class SlugSelector extends AbstractSelector
 
         $i = 0;
         do {
-            $name = $this->page->getName();
+            $name = $this->slug;
             if ($i > 0) {
                 $name .= " ".$i;
             }

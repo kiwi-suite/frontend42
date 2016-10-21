@@ -1,0 +1,37 @@
+<div class="dd-handle dd3-handle" ui-tree-handle>&nbsp;</div>
+<div class="dd3-content">
+    <div class="row">
+        <div class="col-sm-8 col-md-9">
+            <a ng-if="item.items.length > 0" class="btn btn-link btn-xs" ng-click="toggle(this)">
+                <span class="glyphicon text-muted" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+            </a>
+            <i class="fa fa-circle" ng-class="{'text-success': item.status == 'online', 'text-danger': item.status == 'offline'}"></i>
+            <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
+            <span ng-if="item.alternateNames.length > 0">
+                <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">
+                    [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.title }}</del> ]
+                </small>
+            </span>
+        </div>
+        <div class="col-sm-4 col-md-3 text-right">
+            <a ng-if="item.droppable && item.canAdd" class="btn btn-default btn-xs" ng-href="<?= $this->url('admin/sitemap/add-page', ['parentId' => '{{ item.id }}', 'locale' => '{{ locale }}']) ?>">
+                <span class="fa fa-plus"></span>
+            </a>
+            <a class="btn btn-info btn-xs" ng-href="<?= $this->url('admin/page/edit', ['id' => '{{ item.pageId }}']) ?>">
+                <span class="fa fa-pencil"></span>
+            </a>
+            <delete
+                url=""
+                title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
+                size="xs"
+                content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
+                request-id="{{item.id}}"
+                method="delete"
+                callback="deleteCallback"
+            </delete>
+        </div>
+    </div>
+</div>
+<ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'sitemap/node.html'" ng-show="visible(item)"></li>
+</ol>

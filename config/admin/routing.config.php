@@ -2,27 +2,14 @@
 namespace Frontend42;
 
 use Core42\Mvc\Router\Http\AngularSegment;
-use Frontend42\Controller\BlockController;
+use Frontend42\Controller\PageController;
 use Frontend42\Controller\SitemapController;
-use Frontend42\Middleware\FrontendMiddleware;
 use Zend\Router\Http\Literal;
-use Zend\Router\Http\Method;
 use Zend\Router\Http\Segment;
 
 return [
     'router' => [
         'routes' => [
-            'frontend' => [
-                'type' => Method::class,
-                'options' => [
-                    'verb' => 'post,get,put,delete',
-                    'defaults' => [
-                        'middleware' => FrontendMiddleware::class,
-                    ],
-                ],
-                'may_terminate' => false,
-                'child_routes' => [],
-            ],
             'admin' => [
                 'child_routes' => [
                     'sitemap' => [
@@ -45,130 +32,75 @@ return [
                                     ],
                                 ],
                             ],
-                            'save' => [
+                            'sort-save' => [
                                 'type' => Literal::class,
                                 'options' => [
-                                    'route' => 'save/',
+                                    'route' => 'sort-save/',
                                     'defaults' => [
-                                        'action' => 'save',
+                                        'action' => 'sort-save',
                                     ],
                                 ],
                             ],
-                            'add-sitemap' => [
-                                'type' => Literal::class,
+                            'add-page' => [
+                                'type' => AngularSegment::class,
                                 'options' => [
-                                    'route' => 'add-sitemap/',
+                                    'route' => 'add-page/:locale/[:parentId/]',
                                     'defaults' => [
-                                        'action' => 'add-sitemap',
+                                        'action' => 'add-page',
                                     ],
                                 ],
                             ],
+                        ],
+                    ],
+                    'page' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => 'page/',
+                            'defaults' => [
+                                'controller' => PageController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
                             'edit' => [
                                 'type' => AngularSegment::class,
                                 'options' => [
-                                    'route' => 'edit/:id/[:version/]',
+                                    'route' => 'edit/:id/[:versionId/]',
                                     'defaults' => [
                                         'action' => 'edit',
-                                        'approve' => false,
-                                    ],
-                                ],
-                            ],
-                            'preview' => [
-                                'type' => AngularSegment::class,
-                                'options' => [
-                                    'route' => 'preview/:id/[:version/]',
-                                    'defaults' => [
-                                        'action' => 'preview',
-                                    ],
-                                ],
-                            ],
-                            'edit-approve' => [
-                                'type' => AngularSegment::class,
-                                'options' => [
-                                    'route' => 'edit/:id/[:version/]',
-                                    'defaults' => [
-                                        'action' => 'edit',
-                                        'approve' => true,
                                     ],
                                 ],
                             ],
                             'approve' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => 'approve/:id/:version',
+                                    'route' => 'approve/:versionId/',
                                     'defaults' => [
                                         'action' => 'approve',
                                     ],
                                 ],
                             ],
-                            'delete' => [
-                                'type' => Literal::class,
+                            'delete-version' => [
+                                'type' => Segment::class,
                                 'options' => [
-                                    'route' => 'delete/',
+                                    'route' => 'delete-version/:id/:versionId/',
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'action' => 'delete-version',
                                     ],
                                 ],
                             ],
-                            'change-language' => [
+                            'change-locale' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => 'change-language/:locale/:sitemapId/',
+                                    'route' => 'change-locale/:sitemapId/:locale/',
                                     'defaults' => [
-                                        'action' => 'change-language',
-                                    ],
-                                ],
-                            ],
-                            'change-page-type' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => 'change-page-type/:pageId/:sitemapId/',
-                                    'defaults' => [
-                                        'action' => 'change-page-type',
+                                        'action' => 'change-locale',
                                     ],
                                 ],
                             ],
                         ],
-                    ],
-                    'block' => [
-                        'type' => Literal::class,
-                        'options' => [
-                            'route' => 'block/',
-                            'defaults' => [
-                                'controller' => BlockController::class,
-                            ],
-                        ],
-                        'may_terminate' => false,
-                        'child_routes' => [
-                            'inheritance-save' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => 'inheritance-save/',
-                                    'defaults' => [
-                                        'action' => 'save-inheritance',
-                                    ],
-                                ],
-                            ],
-                            'inheritance-clean' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => 'inheritance-clean/',
-                                    'defaults' => [
-                                        'action' => 'clean-inheritance',
-                                    ],
-                                ],
-                            ],
-                            'inheritance-list' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => 'inheritance-list/',
-                                    'defaults' => [
-                                        'action' => 'list-inheritance-page',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                    ]
                 ],
             ],
         ],

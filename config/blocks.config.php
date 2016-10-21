@@ -2,6 +2,7 @@
 
 return [
     'blocks' => [
-        'paths' => [],
+        'search_path' => [],
+        'blocks' => [],
     ]
 ];

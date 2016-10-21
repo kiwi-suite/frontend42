@@ -1,0 +1,100 @@
+<?php $this->pageHeader($this->page->getName()) ?>
+<?php
+$this->pageForm->prepare();
+?>
+
+<div class="hbox hbox-auto-sm hbox-auto-xs" ng-init="app.appContentFull = true">
+    <div class="col">
+        <div class="wrapper-md bg-white b-b box-shadow">
+            <h1 class="m-n font-thin h3 pull-left">
+                <span class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($this->page->getLocale())) ?>"></span>
+                <?= $this->page->getName() ?>
+            </h1>
+            <div class="pull-right hidden-sm hidden-xs">
+                <?php foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $displayName): ?>
+                    <?php if ($this->page->getLocale() == $locale) continue; ?>
+                    <a href="<?= $this->url('admin/page/change-locale', ['locale' => $locale, 'sitemapId' => $this->page->getSitemapId()]) ?>" title="<?= $displayName ?>">
+                        <i class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($locale))?> m-r-xs"></i>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="wrapper-md">
+            <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
+                <?php foreach ($this->pageForm as $fieldset): ?>
+                    <?php
+                    if ($fieldset instanceof \Zend\Form\FieldsetInterface) {
+                        continue;
+                    }
+                    ?>
+                    <?= $this->formRow($fieldset) ?>
+                <?php endforeach; ?>
+                <uib-tabset class="tab-container">
+                    <?php foreach ($this->pageForm as $fieldset): ?>
+                        <?php
+                        if (!($fieldset instanceof \Zend\Form\FieldsetInterface)) {
+                            continue;
+                        }
+                        ?>
+                        <uib-tab>
+                            <uib-tab-heading>
+                                <span class="fa fa-fw fa-pencil-square-o"></span> <?= $this->translate($fieldset->getLabel(), 'admin') ?>
+                            </uib-tab-heading>
+                            <?= $this->formRow($fieldset) ?>
+                        </uib-tab>
+                    <?php endforeach; ?>
+                </uib-tabset>
+                <div class="panel b-a">
+                    <div class="panel-body">
+                        <submit submit-text="<?= $this->translate('frontend42.button.publish', 'admin') ?>" name="__save__" value="approve"></submit>
+                        <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="__save__" value="save" btn-class="btn-default"></submit>
+                        <delete
+                            url=""
+                            title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
+                            content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
+                            request-id="<?= $this->page->getSitemapId() ?>"
+                        >
+                        </delete>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col w-lg bg-light lter b-l">
+        <div class="vbox">
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <div class="cell-inner">
+                        <div class="wrapper-md">
+                            <div class="m-b text-md"><?= $this->translate('frontend42.version-history', 'admin') ?></div>
+                            <div class="streamline b-l m-b">
+                                <?php foreach ($this->versions as $version): ?>
+                                    <div class="sl-item b-l b-2x <?= ($version->getApproved() !== null) ? 'b-success': 'b-dark'?><?= $this->currentVersion->getId() == $version->getId() ? ' bg-light dker' : '' ?>">
+                                        <div class="m-l m-b-md">
+                                            <div><code>#<?= $version->getVersionName() ?></code> - <small class="text-xs"><?= $this->user()->getDisplayName($version->getCreatedBy()) ?></small></div>
+                                            <div class="text-muted"><small class="text-xs"><?= $version->getCreated()->format('Y-m-d H:i') ?></small></div>
+                                            <p>
+                                                <a href="<?= $this->url('admin/page/edit', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-default btn-sm btn-rounded btn-icon">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                <?php if ($version->getApproved() === null): ?>
+                                                    <a href="<?= $this->url('admin/page/approve', ['versionId' => $version->getId()]) ?>" class="btn btn-info btn-sm btn-rounded btn-icon">
+                                                        <i class="fa fa-check"></i>
+                                                    </a>
+                                                    <a href="<?= $this->url('admin/page/delete-version', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-danger btn-sm btn-rounded btn-icon">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                <?php endif; ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

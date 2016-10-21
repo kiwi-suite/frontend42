@@ -1,8 +1,6 @@
 <?php
 namespace Frontend42;
 
-use Frontend42\Navigation\Service\ContainerFactory;
-
 return [
     'navigation' => [
         'containers' => [
@@ -10,19 +8,13 @@ return [
                 'content' => [
                     'pages' => [
                         'sitemap' => [
-                            'label' => 'label.sitemap',
+                            'label' => 'frontend42.title.sitemap',
                             'route' => 'admin/sitemap',
                             'icon' => 'fa fa-sitemap fa-fw',
                             'order' => 1000,
                         ],
                     ]
                 ]
-            ],
-        ],
-
-        'service_manager' => [
-            'factories' => [
-                'frontend42' => ContainerFactory::class
             ],
         ],
     ],

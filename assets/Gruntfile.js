@@ -23,6 +23,7 @@ module.exports = function(grunt) {
                 src: [
                     'javascripts/*.js',
                     'javascripts/directive/*.js',
+                    'javascripts/directive/form/*.js',
                     'javascripts/filter/*.js',
                     'javascripts/controller/*.js'
                 ],

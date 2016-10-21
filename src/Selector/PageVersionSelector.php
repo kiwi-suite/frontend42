@@ -3,6 +3,7 @@ namespace Frontend42\Selector;
 
 use Core42\Db\ResultSet\ResultSet;
 use Core42\Selector\AbstractDatabaseSelector;
+use Core42\Stdlib\DateTime;
 use Frontend42\Model\PageVersion;
 use Frontend42\TableGateway\PageVersionTableGateway;
 use Zend\Db\Sql\Select;
@@ -16,7 +17,7 @@ class PageVersionSelector extends AbstractDatabaseSelector
     /**
      * @var string
      */
-    protected $versionName = self::VERSION_HEAD;
+    protected $versionId = self::VERSION_HEAD;
 
     /**
      * @var int
@@ -24,16 +25,16 @@ class PageVersionSelector extends AbstractDatabaseSelector
     protected $pageId;
 
     /**
-     * @param string $versionName
+     * @param string $versionId
      * @return $this;
      */
-    public function setVersionName($versionName)
+    public function setVersionId($versionId)
     {
-        if (!in_array($versionName, [self::VERSION_HEAD, self::VERSION_APPROVED])) {
-            $versionName = (int) $versionName;
+        if (!in_array($versionId, [self::VERSION_HEAD, self::VERSION_APPROVED])) {
+            $versionId = (int) $versionId;
         }
 
-        $this->versionName = $versionName;
+        $this->versionId = $versionId;
 
         return $this;
     }
@@ -63,7 +64,8 @@ class PageVersionSelector extends AbstractDatabaseSelector
         $pageVersion = new PageVersion();
         $pageVersion->setContent([])
             ->setPageId($this->pageId)
-            ->setVersionId(1);
+            ->setVersionName(0)
+            ->setCreated(new DateTime());
 
         return $pageVersion;
     }
@@ -78,15 +80,15 @@ class PageVersionSelector extends AbstractDatabaseSelector
         $select->where(function (Where $where) {
             $where->equalTo('pageId', $this->pageId);
 
-            if ($this->versionName === self::VERSION_APPROVED) {
+            if ($this->versionId === self::VERSION_APPROVED) {
                 $where->isNotNull('approved');
-            } elseif (is_int($this->versionName)) {
-                $where->equalTo('versionId', $this->versionName);
+            } elseif (is_int($this->versionId)) {
+                $where->equalTo('id', $this->versionId);
             }
         });
 
-        if ($this->versionName === self::VERSION_HEAD) {
-            $select->order('versionId DESC');
+        if ($this->versionId === self::VERSION_HEAD) {
+            $select->order('created DESC');
         }
 
         $select->limit(1);

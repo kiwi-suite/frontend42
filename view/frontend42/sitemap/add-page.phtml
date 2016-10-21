@@ -1,0 +1,22 @@
+<?= $this->pageHeader($this->translate('frontend42.title.add-page', 'admin'), 'fa fa-sitemap') ?>
+
+<div class="wrapper-md">
+    <div class="row">
+        <div class="col-sm-12">
+            <form class="form-horizontal" action="<?= $this->url(null, [], [], true) ?>" method="post">
+                <div class="panel b-a">
+                    <div class="panel-body">
+                        <?= $this->form($this->addPageForm) ?>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-md-10">
+                                <submit submit-text="<?= $this->translate('button.save', 'admin') ?>"></submit>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

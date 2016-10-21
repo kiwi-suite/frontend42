@@ -5,7 +5,6 @@ use Core42\Db\TableGateway\AbstractTableGateway;
 
 class PageTableGateway extends AbstractTableGateway
 {
-
     /**
      * @var string
      */
@@ -29,9 +28,7 @@ class PageTableGateway extends AbstractTableGateway
         'status' => 'string',
         'slug' => 'string',
         'updated' => 'dateTime',
-        'updatedBy' => 'integer',
         'created' => 'dateTime',
-        'createdBy' => 'integer',
     ];
 
     /**

@@ -2,7 +2,6 @@
 namespace Frontend42\Event\Service;
 
 use Frontend42\Event\PageEventListener;
-use Frontend42\Selector\SlugSelector;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -26,6 +25,6 @@ class PageEventListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new PageEventListener($container->get('Selector')->get(SlugSelector::class));
+        return new PageEventListener($container);
     }
 }

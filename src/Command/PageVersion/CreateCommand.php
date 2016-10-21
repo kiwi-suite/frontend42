@@ -3,10 +3,11 @@ namespace Frontend42\Command\PageVersion;
 
 use Admin42\Model\User;
 use Core42\Command\AbstractCommand;
+use Core42\Stdlib\DateTime;
+use Frontend42\Model\PageContent;
 use Frontend42\Model\PageVersion;
 use Frontend42\Selector\PageVersionSelector;
 use Frontend42\TableGateway\PageVersionTableGateway;
-use Zend\Json\Json;
 
 class CreateCommand extends AbstractCommand
 {
@@ -18,12 +19,12 @@ class CreateCommand extends AbstractCommand
     /**
      * @var User
      */
-    protected $createdBy;
+    protected $user;
 
     /**
-     * @var array
+     * @var PageContent
      */
-    protected $content;
+    protected $pageContent;
 
     /**
      * @var PageVersion
@@ -32,72 +33,76 @@ class CreateCommand extends AbstractCommand
 
     /**
      * @param int $pageId
-     * @return CreateCommand
+     * @return $this
      */
     public function setPageId($pageId)
     {
         $this->pageId = $pageId;
+
         return $this;
     }
 
     /**
-     * @param User $createdBy
-     * @return CreateCommand
+     * @param User $user
+     * @return $this
      */
-    public function setCreatedBy(User $createdBy)
+    public function setUser($user)
     {
-        $this->createdBy = $createdBy;
+        $this->user = $user;
+
         return $this;
     }
 
     /**
-     * @param array $content
-     * @return CreateCommand
+     * @param PageContent $pageContent
+     * @return $this
      */
-    public function setContent($content)
+    public function setPageContent($pageContent)
     {
-        $this->content = $content;
+        $this->pageContent = $pageContent;
+
         return $this;
     }
 
     /**
      * @param PageVersion $previousVersion
-     * @return CreateCommand
+     * @return $this
      */
-    public function setPreviousVersion($previousVersion)
+    public function setPreviousVersion(PageVersion $previousVersion)
     {
         $this->previousVersion = $previousVersion;
+
         return $this;
     }
 
     /**
-     *
-     */
-    protected function preExecute()
-    {
-        if (empty($this->previousVersion)) {
-            $this->previousVersion = $this
-                ->getSelector(PageVersionSelector::class)
-                ->setPageId($this->pageId)
-                ->setVersionName(PageVersionSelector::VERSION_HEAD)
-                ->getResult();
-        }
-    }
-
-    /**
-     * @return mixed
+     * @return PageVersion
      */
     protected function execute()
     {
-        $pageVersion = new PageVersion();
-        $pageVersion->setVersionId($this->previousVersion->getVersionId() + 1)
-            ->setContent($this->content)
+        if ($this->previousVersion instanceof PageVersion) {
+            $this->previousVersion->setContent($this->pageContent->toArray());
+
+            if (!$this->previousVersion->hasChanged('content')) {
+                return $this->previousVersion;
+            }
+        }
+
+        $headVersion = $this->getSelector(PageVersionSelector::class)
+            ->setVersionId(PageVersionSelector::VERSION_HEAD)
             ->setPageId($this->pageId)
-            ->setCreated(new \DateTime())
-            ->setCreatedBy($this->createdBy->getId());
+            ->getResult();
+
+        $pageVersion = new PageVersion();
+        $pageVersion->setVersionName($headVersion->getVersionName() + 1)
+            ->setContent($this->pageContent->toArray())
+            ->setPageId($this->pageId)
+            ->setCreated(new DateTime())
+            ->setCreatedBy($this->user->getId());
 
         $this->getTableGateway(PageVersionTableGateway::class)->insert($pageVersion);
 
         return $pageVersion;
+
     }
 }

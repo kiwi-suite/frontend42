@@ -2,7 +2,6 @@
 namespace Frontend42\Event\Service;
 
 use Frontend42\Event\PageEvent;
-use Frontend42\PageType\Provider\PageTypeProvider;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\EventManager\EventManager;
@@ -27,11 +26,7 @@ class PageEventManagerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $eventManager = new EventManager();
-        $pageEvent = new PageEvent(
-            $container->get(PageTypeProvider::class),
-            $container
-        );
-        $eventManager->setEventPrototype($pageEvent);
+        $eventManager->setEventPrototype(new PageEvent());
 
         return $eventManager;
     }
