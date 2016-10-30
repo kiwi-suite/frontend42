@@ -1,22 +1,11 @@
 <?php
 namespace Frontend42\PageType;
 
-use Frontend42\Controller\Frontend\DefaultController;
 use Frontend42\Model\Page;
 use Zend\Router\Http\Literal;
 
-class DefaultPageType extends AbstractPageType
+class RootPageType extends AbstractPageType
 {
-    /**
-     * @var string
-     */
-    protected $controller = DefaultController::class;
-
-    /**
-     * @var string
-     */
-    protected $action = "content";
-
     /**
      * @var string
      */
@@ -43,18 +32,14 @@ class DefaultPageType extends AbstractPageType
 
     /**
      * @param Page $page
-     * @return array|false
+     * @return array
      */
     public function getRouting(Page $page)
     {
-        if (strlen($page->getSlug()) == 0) {
-            return false;
-        }
-
         return [
             'type' => Literal::class,
             'options' => [
-                'route' => $page->getSlug() . '/',
+                'route' => '/',
                 'defaults' => [
                     'controller' => $this->getController(),
                     'action' => $this->getAction(),

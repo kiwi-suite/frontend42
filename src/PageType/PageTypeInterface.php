@@ -2,6 +2,7 @@
 namespace Frontend42\PageType;
 
 
+use Frontend42\Model\Page;
 use Frontend42\Model\PageContent;
 
 interface PageTypeInterface
@@ -132,4 +133,10 @@ interface PageTypeInterface
      * @return PageContent
      */
     public function getPageContent();
+
+    /**
+     * @param Page $page
+     * @return array|false
+     */
+    public function getRouting(Page $page);
 }

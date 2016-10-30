@@ -1,13 +1,14 @@
 <?php
-namespace Frontend42\PageType\Service;
+namespace Frontend42\Middleware\Service;
 
+use Frontend42\Middleware\FrontendMiddleware;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PageTypePluginManagerFactory implements FactoryInterface
+class FrontendMiddlewareFactory implements FactoryInterface
 {
 
     /**
@@ -24,15 +25,6 @@ class PageTypePluginManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $pageTypes = $container->get('config')['page_types']['page_types'];
-        if (!empty($pageTypes)){
-            $pageTypes = array_keys($pageTypes);
-        }
-
-        return new PageTypePluginManager(
-            $container,
-            $pageTypes,
-            $container->get('config')['page_types']['service_manager']
-        );
+        return new FrontendMiddleware($container);
     }
 }

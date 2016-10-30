@@ -1,13 +1,15 @@
 <?php
 namespace Frontend42\PageType\Service;
 
+use Core42\I18n\Localization\Localization;
+use Frontend42\PageType\LocalizationPageType;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PageTypePluginManagerFactory implements FactoryInterface
+class LocalizationPageTypeFactory implements FactoryInterface
 {
 
     /**
@@ -24,15 +26,11 @@ class PageTypePluginManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $pageTypes = $container->get('config')['page_types']['page_types'];
-        if (!empty($pageTypes)){
-            $pageTypes = array_keys($pageTypes);
-        }
-
-        return new PageTypePluginManager(
-            $container,
-            $pageTypes,
-            $container->get('config')['page_types']['service_manager']
+        $pageType = new LocalizationPageType(
+            $container->get(Localization::class)
         );
+        $pageType->setFromArray($options);
+
+        return $pageType;
     }
 }
