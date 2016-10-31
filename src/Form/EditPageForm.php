@@ -3,10 +3,22 @@ namespace Frontend42\Form;
 
 use Admin42\FormElements\Fieldset;
 use Admin42\FormElements\Form;
-use Zend\Form\FormInterface;
+use Admin42\FormElements\StrategyAwareInterface;
+use Core42\Hydrator\Strategy\StringStrategy;
+use Core42\Model\GenericModel;
 
 class EditPageForm extends Form
 {
+    /**
+     * @var array
+     */
+    protected $defaults = [];
+
+    /**
+     * @var array
+     */
+    protected $sections = [];
+
     /**
      *
      */
@@ -22,11 +34,33 @@ class EditPageForm extends Form
     }
 
     /**
-     * @param array $sections
+     * @param array $defaults
+     * @return $this
      */
-    public function addPageElements(array $sections)
+    public function setDefaults(array $defaults)
     {
-        foreach ($sections as $key => $section) {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * @param array $sections
+     * @return $this
+     */
+    public function setSections(array $sections)
+    {
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     *
+     */
+    public function addPageElements()
+    {
+        foreach ($this->sections as $key => $section) {
             if (empty($section['elements'])) {
                 continue;
             }
@@ -45,15 +79,66 @@ class EditPageForm extends Form
         }
     }
 
+    protected function getDefaults()
+    {
+        $defaults = [];
+        foreach ($this->defaults as $defaultSpec) {
+            if (empty($defaultSpec['name'])) {
+                continue;
+            }
+            if (empty($defaultSpec['type'])) {
+                continue;
+            }
+            if (!array_key_exists("value", $defaultSpec)) {
+                continue;
+            }
+            foreach ($this->sections as $section) {
+                foreach ($section['elements'] as $element) {
+                    if (empty($element['name'])) {
+                        continue;
+                    }
+
+                    if ($element['name'] === $defaultSpec['name']) {
+                        continue 2;
+                    }
+                }
+            }
+
+            $defaults[] = $defaultSpec;
+        }
+
+        return $defaults;
+    }
+
     /**
-     * @param int $flag
      * @return array
      */
-    public function getData($flag = FormInterface::VALUES_NORMALIZED)
+    public function getDataForDatabase()
     {
-        $data = parent::getData($flag);
-
         $newData = [];
+
+        $hydrator = clone $this->hydratorPrototype;
+        $strategies = [];
+        $defaultData = [];
+
+        foreach ($this->getDefaults() as $default) {
+            $element = $this->getFormFactory()->getFormElementManager()->get($default['type']);
+            $strategy = StringStrategy::class;
+            if ($element instanceof StrategyAwareInterface) {
+                $strategy = $element->getStrategy();
+            }
+            $strategies[] = $strategy;
+
+            $defaultData[$default['name']] = $default['value'];
+        }
+
+        if (!empty($defaultData)) {
+            $hydrator->addStrategies($strategies);
+            $model = $hydrator->hydrate($defaultData, new GenericModel());
+            $newData = $model->toArray();
+        }
+
+        $data = $this->getData();
         foreach ($data as $name => $fieldset) {
             if (substr($name, 0 ,7) !== 'section') {
                 continue;
@@ -65,13 +150,12 @@ class EditPageForm extends Form
     }
 
     /**
-     * @param array $sections
      * @param array $data
      */
-    public function setDatabaseData(array $sections, array $data)
+    public function setDatabaseData(array $data)
     {
         $newData = [];
-        foreach ($sections as $key => $section) {
+        foreach ($this->sections as $key => $section) {
             if (empty($section['elements'])) {
                 continue;
             }

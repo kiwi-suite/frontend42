@@ -9,8 +9,10 @@ use Frontend42\Middleware\Service\FrontendMiddlewareFactory;
 use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\PageType\Service\PageTypePluginManagerFactory;
 use Frontend42\Router\Service\HttpRouterFactory;
+use Frontend42\View\Helper\Service\CurrentPageContentFactory;
 use Frontend42\View\Helper\Service\CurrentPageFactory;
 use Frontend42\View\Helper\Service\CurrentSitemapFactory;
+use Frontend42\View\Helper\Service\PageContentFactory;
 use Frontend42\View\Helper\Service\PageFactory;
 use Frontend42\View\Helper\Service\SitemapFactory;
 use Zend\Router\Http\TreeRouteStack;
@@ -29,8 +31,10 @@ return [
         'factories'  => [
             'currentPage'                       => CurrentPageFactory::class,
             'currentSitemap'                    => CurrentSitemapFactory::class,
+            'currentPageContent'                => CurrentPageContentFactory::class,
             'page'                              => PageFactory::class,
             'sitemap'                           => SitemapFactory::class,
+            'pageContent'                       => PageContentFactory::class,
         ],
     ],
 ];

@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\PageType;
 
+use Core42\Hydrator\Mutator\Mutator;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageContent;
 use Zend\Stdlib\AbstractOptions;
@@ -61,6 +62,16 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
      * @var null|array
      */
     protected $allowedParents = null;
+
+    /**
+     * @var array
+     */
+    protected $defaults = [];
+
+    /**
+     * @var Mutator
+     */
+    protected $mutator;
 
     /**
      * @return string
@@ -267,6 +278,25 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     }
 
     /**
+     * @return array
+     */
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+
+    /**
+     * @param array $defaults
+     * @return $this
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
      * @param array $content
      * @param Page $page
      * @return PageContent
@@ -308,6 +338,62 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
         foreach ($autoFilledForcedProperties as $property) {
             $pageContent->addAutoFilledProperty($property);
         }
+
+        return $pageContent;
+    }
+
+    /**
+     * @param Mutator $mutator
+     * @return $this
+     */
+    public function setMutator(Mutator $mutator)
+    {
+        $this->mutator = $mutator;
+
+        return $this;
+    }
+
+    /**
+     * @param PageContent $pageContent
+     * @return PageContent
+     */
+    public function mutate(PageContent $pageContent)
+    {
+        $spec = [];
+
+        foreach ($this->getSections() as $section) {
+            if (empty($section['elements'])) {
+                continue;
+            }
+
+            foreach ($section['elements'] as $element) {
+                if (empty($element['name'])) {
+                    continue;
+                }
+
+                $spec[] = [
+                    'name' => $element['name'],
+                    'type' => $element['type'],
+                ];
+            }
+        }
+
+        foreach ($this->getDefaults() as $default) {
+            if (empty($default['name'])) {
+                continue;
+            }
+
+            $spec[] = [
+                'name' => $default['name'],
+                'type' => $default['type'],
+            ];
+        }
+
+        $content = $this->mutator->hydrate($pageContent->toArray(), $spec);
+
+        $pageContent = new PageContent(array_keys($content));
+        $pageContent->populate($content);
+        $pageContent->memento();
 
         return $pageContent;
     }

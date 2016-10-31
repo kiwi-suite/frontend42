@@ -2,6 +2,7 @@
 namespace Frontend42\PageType;
 
 
+use Core42\Hydrator\Mutator\Mutator;
 use Frontend42\Model\Page;
 use Frontend42\Model\PageContent;
 
@@ -130,13 +131,38 @@ interface PageTypeInterface
     public function setAllowedParents($allowedParents);
 
     /**
+     * @param array $content
+     * @param Page $page
      * @return PageContent
      */
-    public function getPageContent();
+    public function getPageContent(array $content = [], Page $page = null);
 
     /**
      * @param Page $page
      * @return array|false
      */
     public function getRouting(Page $page);
+
+    /**
+     * @param array $defaults
+     * @return $this
+     */
+    public function setDefaults(array $defaults);
+
+    /**
+     * @return array
+     */
+    public function getDefaults();
+
+    /**
+     * @param Mutator $mutator
+     * @return $this
+     */
+    public function setMutator(Mutator $mutator);
+
+    /**
+     * @param PageContent $pageContent
+     * @return PageContent
+     */
+    public function mutate(PageContent $pageContent);
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Frontend42\PageType\Service;
 
+use Core42\Hydrator\Mutator\Mutator;
 use Frontend42\PageType\DefaultPageType;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -50,6 +51,9 @@ class PageTypeAbstractFactory implements AbstractFactoryInterface
 
         unset($options['class']);
 
-        return $pageTypePluginManager->build($pageTypeClass, $options);
+        $pageType = $pageTypePluginManager->build($pageTypeClass, $options);
+        $pageType->setMutator($container->get(Mutator::class));
+
+        return $pageType;
     }
 }

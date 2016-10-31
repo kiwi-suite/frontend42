@@ -54,13 +54,15 @@ class PageController extends AbstractAdminController
 
         /** @var EditPageForm $form */
         $form = $this->getForm(EditPageForm::class);
-        $form->addPageElements($pageType->getSections());
+        $form->setSections($pageType->getSections())
+            ->setDefaults($pageType->getDefaults())
+            ->addPageElements();
 
         if ($prg !== false) {
             $approve = (isset($prg['__save__']) && $prg['__save__'] == 'approve');
             $form->setData($prg);
             if ($form->isValid()) {
-                $content = $form->getData();
+                $content = $form->getDataForDatabase();
                 $cmd = $this->getCommand(EditPageCommand::class)
                     ->setPage($page)
                     ->setSitemap($sitemap)
@@ -87,7 +89,7 @@ class PageController extends AbstractAdminController
                 ]);
             }
         } else {
-            $form->setDatabaseData($pageType->getSections(), $version->getContent());
+            $form->setDatabaseData($version->getContent());
         }
 
         $versions = $this

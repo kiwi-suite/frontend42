@@ -12,9 +12,9 @@ return [
                 'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
                 'namespace' =>  'sitemap',
             ],
-            'page_content' => [
+            'pageContent' => [
                 'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
-                'namespace' =>  'page_content',
+                'namespace' =>  'pageContent',
             ],
             'routing' => [
                 'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
