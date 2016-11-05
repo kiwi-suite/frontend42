@@ -5,6 +5,8 @@ use Admin42\Mvc\Controller\AbstractAdminController;
 use Core42\I18n\Localization\Localization;
 use Core42\View\Model\JsonModel;
 use Frontend42\Command\Sitemap\AddSitemapCommand;
+use Frontend42\Command\Sitemap\DeleteSitemapCommand;
+use Frontend42\Command\Sitemap\ResortSitemapCommand;
 use Frontend42\Form\AddPageForm;
 use Frontend42\Selector\AngularSitemapSelector;
 use Frontend42\Selector\AvailablePageTypesSelector;
@@ -54,7 +56,44 @@ class SitemapController extends AbstractAdminController
 
     public function sortSaveAction()
     {
+        $jsonString = $this->getRequest()->getContent();
+        $sitemap = Json::decode($jsonString, Json::TYPE_ARRAY);
 
+        $cmd = $this->getCommand(ResortSitemapCommand::class);
+        $cmd->setSitemapArray($sitemap)
+            ->run();
+
+        return new JsonModel(['success' => !$cmd->hasErrors()]);
+    }
+
+    public function deleteAction()
+    {
+        if ($this->getRequest()->isDelete()) {
+            $deleteCmd = $this->getCommand(DeleteSitemapCommand::class);
+
+            $deleteParams = [];
+            parse_str($this->getRequest()->getContent(), $deleteParams);
+
+            $deleteCmd->setSitemapId((int) $deleteParams['id'])
+                ->run();
+
+            return new JsonModel([
+                'success' => true,
+            ]);
+        } elseif ($this->getRequest()->isPost()) {
+            $deleteCmd = $this->getCommand(DeleteSitemapCommand::class);
+
+            $deleteCmd->setSitemapId((int) $this->params()->fromPost('id'))
+                ->run();
+
+            return new JsonModel([
+                'redirect' => $this->url()->fromRoute('admin/sitemap'),
+            ]);
+        }
+
+        return new JsonModel([
+            'redirect' => $this->url()->fromRoute('admin/sitemap'),
+        ]);
     }
 
     public function addPageAction()

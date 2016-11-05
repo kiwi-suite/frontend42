@@ -14,14 +14,14 @@
             </span>
         </div>
         <div class="col-sm-4 col-md-3 text-right">
-            <a ng-if="item.droppable && item.canAdd" class="btn btn-default btn-xs" ng-href="<?= $this->url('admin/sitemap/add-page', ['parentId' => '{{ item.id }}', 'locale' => '{{ locale }}']) ?>">
+            <a ng-if="canAddPage(item)" class="btn btn-default btn-xs" ng-href="<?= $this->url('admin/sitemap/add-page', ['parentId' => '{{ item.id }}', 'locale' => '{{ locale }}']) ?>">
                 <span class="fa fa-plus"></span>
             </a>
             <a class="btn btn-info btn-xs" ng-href="<?= $this->url('admin/page/edit', ['id' => '{{ item.pageId }}']) ?>">
                 <span class="fa fa-pencil"></span>
             </a>
             <delete
-                url=""
+                url="<?= $this->url('admin/sitemap/delete') ?>"
                 title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
                 size="xs"
                 content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"

@@ -3,7 +3,7 @@ $this->angular()->addHtmlPartial('sitemap/node.html', 'partial/sitemap-node');
 ?>
 
 <?= $this->pageHeader($this->translate('frontend42.title.sitemap', 'admin'), 'fa fa-sitemap') ?>
-<div class="wrapper-md" ng-controller="SitemapController" sitemap-url="<?= $this->url('admin/sitemap/list') ?>" locale="<?= $this->defaultLocale ?>">
+<div class="wrapper-md" ng-controller="SitemapController" sitemap-url="<?= $this->url('admin/sitemap/list') ?>" locale="<?= $this->defaultLocale ?>" sort-save-url="<?= $this->url('admin/sitemap/sort-save') ?>">
     <div class="panel b-a">
         <div class="panel-heading">
             <div class="row">

@@ -7,6 +7,7 @@ use Frontend42\Model\Sitemap;
 use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
+use Zend\Db\Sql\Where;
 
 class AngularSitemapSelector extends AbstractSelector
 {
@@ -45,7 +46,7 @@ class AngularSitemapSelector extends AbstractSelector
      * @param $items
      * @return array
      */
-    protected function prepareJsonTree($items)
+    protected function prepareJsonTree($items, $parentSitemapId = null)
     {
         $tree = [];
         foreach ($items as $_item) {
@@ -65,21 +66,26 @@ class AngularSitemapSelector extends AbstractSelector
                 ->get(PageTypePluginManager::class)
                 ->get($_item['sitemap']->getPageType());
 
-            $availablePageTypes = $this->pageTypeSelector->setParent($_item['sitemap'])->setParentId(null)->getResult();
+            $availablePageTypes = $this
+                ->pageTypeSelector
+                ->setParent($_item['sitemap'])
+                ->setParentId($parentSitemapId)
+                ->getResult();
 
             $node = [
                 'id'        => $_item['sitemap']->getId(),
+                'pageType'  => $_item['sitemap']->getPageType(),
                 'pageId'    => $_item['page']->getId(),
                 'locale'    => $_item['page']->getLocale(),
                 'title'     => $title,
                 'status'    => $_item['page']->getStatus(),
-                'droppable' => !$pageType->isTerminal(),
-                'canAdd'    => !empty($availablePageTypes),
+                'isTerminal'=> $pageType->isTerminal(),
+                'pageTypes' => $availablePageTypes,
                 'alternateNames' => $alternateNames,
                 'items'     => [],
             ];
             if (!empty($_item['children']) && !$pageType->isTerminal()) {
-                $node['items'] = $this->prepareJsonTree($_item['children']);
+                $node['items'] = $this->prepareJsonTree($_item['children'], $_item['sitemap']->getId());
             }
 
             $tree[] = $node;
@@ -166,7 +172,11 @@ class AngularSitemapSelector extends AbstractSelector
             $pageAliasColumns
         );
 
-        $select->order($sitemapTableName.'.orderNr ASC');
+        $select->where(function (Where $where) use ($sitemapTableName){
+           $where->isNotNull($sitemapTableName .".nestedLeft");
+        });
+
+        $select->order($sitemapTableName.'.nestedLeft ASC');
         return $select;
     }
 }
