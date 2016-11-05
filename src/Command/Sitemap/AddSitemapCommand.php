@@ -10,6 +10,7 @@ use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\Selector\AvailablePageTypesSelector;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Where;
 
 class AddSitemapCommand extends AbstractCommand
 {
@@ -160,32 +161,64 @@ class AddSitemapCommand extends AbstractCommand
      */
     protected function execute()
     {
-        $select = $this->getTableGateway(SitemapTableGateway::class)
-            ->getSql()
-            ->select();
+        if ($this->parent === null) {
+            $select = $this->getTableGateway(SitemapTableGateway::class)
+                ->getSql()
+                ->select();
 
-        $select->where(['parentId' => (empty($this->parentPageId)) ? null : $this->parent->getParentId()]);
-        $select->columns(['orderNr' => new Expression('MAX(orderNr)')]);
-        $statement = $this
-            ->getTableGateway(SitemapTableGateway::class)
-            ->getSql()
-            ->prepareStatementForSqlObject($select);
-        $result = $statement->execute()->current();
-        $orderNr = $result['orderNr'];
-        if (empty($orderNr)) {
-            $orderNr = 0;
+            $select->where(['parentId' => null]);
+            $select->columns(['nestedRight' => new Expression('MAX(nestedRight)')]);
+            $statement = $this
+                ->getTableGateway(SitemapTableGateway::class)
+                ->getSql()
+                ->prepareStatementForSqlObject($select);
+            $result = $statement->execute()->current();
+            $right = $result['nestedRight'];
+            if (empty($right)) {
+                $right = 0;
+            }
+
+            $left = $right + 1;
+            $right = $right + 2;
+        } else {
+            $left = $this->parent->getNestedRight();
+            $right = $left + 1;
+
+            $update = $this->getTableGateway(SitemapTableGateway::class)
+                ->getSql()
+                ->update();
+            $update->set([
+                'nestedRight' => new Expression("nestedRight + 2"),
+            ]);
+            $update->where(function (Where $where) {
+                $where->greaterThanOrEqualTo("nestedRight", $this->parent->getNestedRight());
+            });
+            $this->getTableGateway(SitemapTableGateway::class)->updateWith($update);
+
+            $update = $this->getTableGateway(SitemapTableGateway::class)
+                ->getSql()
+                ->update();
+            $update->set([
+                'nestedLeft' => new Expression("nestedLeft + 2"),
+            ]);
+            $update->where(function (Where $where) {
+                $where->greaterThan("nestedLeft", $this->parent->getNestedRight());
+            });
+            $this->getTableGateway(SitemapTableGateway::class)->updateWith($update);
         }
-        $orderNr++;
 
         $handle = $this->getServiceManager()->get(PageTypePluginManager::class)->get($this->pageType)->getHandle();
 
         $sitemap = new Sitemap();
         $sitemap->setParentId($this->parentId)
-            ->setOrderNr($orderNr)
+            ->setNestedLeft($left)
+            ->setNestedRight($right)
             ->setPageType($this->pageType)
             ->setHandle($handle);
 
         $this->getTableGateway(SitemapTableGateway::class)->insert($sitemap);
+
+        $this->getCommand(UpdateNestedInfoCommand::class)->run();
 
         foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
             /** @var AddPageCommand $cmd */

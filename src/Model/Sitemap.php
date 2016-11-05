@@ -8,8 +8,10 @@ use Core42\Model\AbstractModel;
  * @method int getId() getId()
  * @method Sitemap setParentId() setParentId(int $parentId)
  * @method int getParentId() getParentId()
- * @method Sitemap setOrderNr() setOrderNr(int $orderNr)
- * @method int getOrderNr() getOrderNr()
+ * @method Sitemap setNestedLeft() setNestedLeft(int $nestedLeft)
+ * @method int getNestedLeft() getNestedLeft()
+ * @method Sitemap setNestedRight() setNestedRight(int $nestedRight)
+ * @method int getNestedRight() getNestedRight()
  * @method Sitemap setPageType() setPageType(string $pageType)
  * @method string getPageType() getPageType()
  * @method Sitemap setHandle() setHandle(string $handle)
@@ -24,7 +26,8 @@ class Sitemap extends AbstractModel
     public $properties = [
         'id',
         'parentId',
-        'orderNr',
+        'nestedLeft',
+        'nestedRight',
         'pageType',
         'handle',
     ];

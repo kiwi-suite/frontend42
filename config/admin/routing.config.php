@@ -50,6 +50,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'delete' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => 'delete/',
+                                    'defaults' => [
+                                        'action' => 'delete',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'page' => [

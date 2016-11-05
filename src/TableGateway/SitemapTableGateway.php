@@ -22,7 +22,8 @@ class SitemapTableGateway extends AbstractTableGateway
     protected $databaseTypeMap = [
         'id' => 'integer',
         'parentId' => 'integer',
-        'orderNr' => 'integer',
+        'nestedLeft' => 'integer',
+        'nestedRight' => 'integer',
         'pageType' => 'string',
         'handle' => 'string',
     ];
