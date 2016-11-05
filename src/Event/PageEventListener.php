@@ -2,6 +2,7 @@
 namespace Frontend42\Event;
 
 use Core42\Stdlib\DefaultGetterTrait;
+use Frontend42\Command\Navigation\SaveNavigationCommand;
 use Frontend42\Model\Page;
 use Frontend42\Selector\SlugSelector;
 use Zend\EventManager\AbstractListenerAggregate;
@@ -34,11 +35,16 @@ class PageEventListener extends AbstractListenerAggregate
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'setStandardParams']);
-        $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'setSlug']);
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setStandardParams']);
-        $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setSlug']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'setStandardParams']);
+
+        $events->attach(PageEvent::EVENT_ADD_PRE, [$this, 'setSlug']);
+        $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setSlug']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'setSlug']);
+
+        $events->attach(PageEvent::EVENT_ADD_POST, [$this, 'saveNavigation']);
+        $events->attach(PageEvent::EVENT_EDIT_POST, [$this, 'saveNavigation']);
+        $events->attach(PageEvent::EVENT_APPROVED, [$this, 'saveNavigation']);
     }
 
     /**
@@ -99,5 +105,30 @@ class PageEventListener extends AbstractListenerAggregate
             ->setStatus($pageContent->getStatus())
             ->setPublishedFrom($publishedFrom)
             ->setPublishedUntil($publishedUntil);
+    }
+
+    public function saveNavigation(PageEvent $event)
+    {
+        if ($event->getApproved() === false) {
+            return;
+        }
+
+        $pageContent = $event->getPageContent();
+
+        if (!in_array("navigation", $pageContent->getProperties())) {
+            return;
+        }
+
+        $navs = $pageContent->getNavigation();
+        if (!is_array($navs) || empty($navs)) {
+            $navs = [];
+        }
+
+
+        $this
+            ->getCommand(SaveNavigationCommand::class)
+            ->setPageId($event->getTarget()->getId())
+            ->setNavs($navs)
+            ->run();
     }
 }

@@ -20,6 +20,10 @@ return [
                 'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
                 'namespace' =>  'routing',
             ],
+            'navigation' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'navigation',
+            ],
         ],
     ],
 ];

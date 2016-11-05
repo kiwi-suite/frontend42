@@ -7,6 +7,7 @@ use Frontend42\PageType\PageTypeInterface;
 use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
+use Zend\Db\Sql\Where;
 
 class RoutingSelector extends AbstractSelector
 {
@@ -86,7 +87,11 @@ class RoutingSelector extends AbstractSelector
             ['pageId' => 'id', 'sitemapId', 'locale']
         );
 
-        $select->order($sitemapTableName.'.orderNr ASC');
+        $select->where(function (Where $where) use ($sitemapTableName){
+            $where->isNotNull($sitemapTableName .".nestedLeft");
+        });
+
+        $select->order($sitemapTableName.'.nestedLeft ASC');
 
         $flat = [];
         $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();

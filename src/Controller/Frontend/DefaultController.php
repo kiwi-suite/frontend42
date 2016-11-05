@@ -3,6 +3,7 @@ namespace Frontend42\Controller\Frontend;
 
 use Core42\Mvc\Controller\AbstractActionController;
 use Frontend42\PageType\Service\PageTypePluginManager;
+use Frontend42\Selector\NavigationSelector;
 use Zend\View\Model\ViewModel;
 
 class DefaultController extends AbstractActionController
@@ -23,6 +24,8 @@ class DefaultController extends AbstractActionController
 
     public function localizationAction()
     {
+        $this->getSelector(NavigationSelector::class)->setLocale('en-US')->setNavigation('main')->getResult();
+        die();
         return $this->getViewModel();
     }
 
