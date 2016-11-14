@@ -81,7 +81,15 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
     };
     
     $scope.canAddPage = function(item) {
+        if (item.isTerminal === true) {
+            return false;
+        }
+
         return (item.pageTypes.length !== 0);
+    }
+
+    $scope.deleteCallback = function () {
+        loadTree();
     }
 }]);
 

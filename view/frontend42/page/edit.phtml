@@ -50,7 +50,7 @@ $this->pageForm->prepare();
                         <submit submit-text="<?= $this->translate('frontend42.button.publish', 'admin') ?>" name="__save__" value="approve"></submit>
                         <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="__save__" value="save" btn-class="btn-default"></submit>
                         <delete
-                            url=""
+                            url="<?= $this->url('admin/sitemap/delete') ?>"
                             title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
                             content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
                             request-id="<?= $this->page->getSitemapId() ?>"
