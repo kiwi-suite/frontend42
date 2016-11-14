@@ -49,6 +49,7 @@ FROM {$tableName} node
 ORDER BY nestedLeft
 ) as sub ON (p.sitemapId = sub.id AND p.locale='{$locale}')
 SET p.route=sub.route";
+
             $adapter = $this->getTableGateway(PageTableGateway::class)->getAdapter();
             $adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
         }

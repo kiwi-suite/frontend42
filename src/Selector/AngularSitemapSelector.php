@@ -46,7 +46,7 @@ class AngularSitemapSelector extends AbstractSelector
      * @param $items
      * @return array
      */
-    protected function prepareJsonTree($items, $parentSitemapId = null)
+    protected function prepareJsonTree($items)
     {
         $tree = [];
         foreach ($items as $_item) {
@@ -69,7 +69,6 @@ class AngularSitemapSelector extends AbstractSelector
             $availablePageTypes = $this
                 ->pageTypeSelector
                 ->setParent($_item['sitemap'])
-                ->setParentId($parentSitemapId)
                 ->getResult();
 
             $node = [
@@ -85,7 +84,7 @@ class AngularSitemapSelector extends AbstractSelector
                 'items'     => [],
             ];
             if (!empty($_item['children']) && !$pageType->isTerminal()) {
-                $node['items'] = $this->prepareJsonTree($_item['children'], $_item['sitemap']->getId());
+                $node['items'] = $this->prepareJsonTree($_item['children']);
             }
 
             $tree[] = $node;
