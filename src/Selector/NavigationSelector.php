@@ -69,8 +69,7 @@ class NavigationSelector extends AbstractSelector
      */
     protected function getUncachedResult()
     {
-        $flat = $this->getTree();
-        die();
+        return $this->getTree();
     }
 
     /**
@@ -81,7 +80,7 @@ class NavigationSelector extends AbstractSelector
         $sitemapTableName = $this->getTableGateway(SitemapTableGateway::class)->getTable();
         $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
         $select = $sql->select();
-        $select->columns(['parentId']);
+        $select->columns(['parentId', 'nestedLeft', 'nestedRight', 'level']);
 
         $select->join(
             ['p' => $this->getTableGateway(PageTableGateway::class)->getTable()],
@@ -103,24 +102,32 @@ class NavigationSelector extends AbstractSelector
         $select->order($sitemapTableName.'.nestedLeft ASC');
 
         $tree = [];
+        $hash = [];
+        $firstLevel = false;
+
         $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
         $statement = $sql->prepareStatementForSqlObject($select);
         $result = $statement->execute();
         foreach ($result as $res) {
-            $tree[$res['sitemapId']] = $res;
-            $tree[$res['sitemapId']]['children'] = [];
-        }
-
-
-        foreach ($tree as $item) {
-            if ($item['parentId'] === null) {
-                continue;
-            }
-            if (!isset($tree[$item['parentId']])) {
-                continue;
+            $hash[$res['sitemapId']] = [
+                'pageId' => $res['pageId'],
+                'children' => [],
+            ];
+            if ($firstLevel === false) {
+                $firstLevel = $res['level'];
             }
 
-            $tree[$item['parentId']]['children'][] =& $item;
+            if ($res['level'] !== $firstLevel && !isset($hash[$res['parentId']])) {
+                continue;
+            }
+
+            if ($res['level'] === $firstLevel) {
+                $tree[] =& $hash[$res['sitemapId']];
+
+                continue;
+            }
+
+            $hash[$res['parentId']]['children'][] =& $hash[$res['sitemapId']];
         }
 
         return $tree;
