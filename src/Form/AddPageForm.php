@@ -15,13 +15,28 @@ class AddPageForm extends Form
 
     public function addDefaultElements(array $pageTypes)
     {
-        $this->add([
-            'name'      => 'pageType',
-            'label'     => 'frontend42.label.pageType',
-            'type'      => 'select',
-            'required'  => true,
-            'values'    => $pageTypes,
-        ]);
+        asort($pageTypes);
+
+        $current = array_keys($pageTypes);
+        $current = current($current);
+
+        if (count($pageTypes) > 1) {
+            $this->add([
+                'name'      => 'pageType',
+                'label'     => 'frontend42.label.pageType',
+                'type'      => 'select',
+                'required'  => true,
+                'values'    => $pageTypes,
+                'value'     => $current,
+            ]);
+        } else {
+            $this->add([
+                'name'      => 'pageType',
+                'type'      => 'hidden',
+                'required'  => true,
+                'value'     => $current,
+            ]);
+        }
 
         $this->add([
             'name'      => 'name',
