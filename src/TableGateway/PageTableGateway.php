@@ -27,6 +27,7 @@ class PageTableGateway extends AbstractTableGateway
         'publishedUntil' => 'dateTime',
         'status' => 'string',
         'slug' => 'string',
+        'route' => 'string',
         'updated' => 'dateTime',
         'created' => 'dateTime',
     ];
