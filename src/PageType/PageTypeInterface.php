@@ -165,4 +165,15 @@ interface PageTypeInterface
      * @return PageContent
      */
     public function mutate(PageContent $pageContent);
+
+    /**
+     * @return boolean
+     */
+    public function isSorting();
+
+    /**
+     * @param boolean $sorting
+     * @return $this
+     */
+    public function setSorting($sorting);
 }

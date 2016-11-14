@@ -74,6 +74,11 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     protected $mutator;
 
     /**
+     * @var bool
+     */
+    protected $sorting = true;
+
+    /**
      * @return string
      */
     public function getName()
@@ -292,6 +297,25 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     public function setDefaults(array $defaults)
     {
         $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSorting()
+    {
+        return $this->sorting;
+    }
+
+    /**
+     * @param boolean $sorting
+     * @return $this
+     */
+    public function setSorting($sorting)
+    {
+        $this->sorting = $sorting;
 
         return $this;
     }

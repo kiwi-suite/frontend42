@@ -79,6 +79,7 @@ class AngularSitemapSelector extends AbstractSelector
                 'title'     => $title,
                 'status'    => $_item['page']->getStatus(),
                 'isTerminal'=> $pageType->isTerminal(),
+                'isSorting' => $pageType->isSorting(),
                 'pageTypes' => $availablePageTypes,
                 'alternateNames' => $alternateNames,
                 'items'     => [],
