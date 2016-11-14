@@ -34,6 +34,7 @@ class CurrentPageContentFactory implements FactoryInterface
             $pageContent = $routeMatch->getParam('__pageContent__');
         }
 
+
         return new Proxy($pageContent);
     }
 }

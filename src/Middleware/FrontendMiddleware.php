@@ -3,6 +3,7 @@ namespace Frontend42\Middleware;
 
 use Core42\I18n\Localization\Localization;
 use Core42\Stdlib\DefaultGetterTrait;
+use Frontend42\Model\Page;
 use Frontend42\PageType\Service\PageTypePluginManager;
 use Frontend42\Selector\ApprovedPageContentSelector;
 use Frontend42\Selector\PageSelector;
@@ -46,12 +47,29 @@ class FrontendMiddleware
             throw new \Exception("no pageId set inside frontend route");
         }
 
+        /** @var Page $page */
         $page = $this->getSelector(PageSelector::class)->setPageId($pageId)->getResult();
         if (empty($page)) {
             throw new \Exception("no pageId set inside frontend route");
         }
 
-        //TODO Check status/published
+        $routeMatch = $this->getServiceManager()->get('Application')->getMvcEvent()->getRouteMatch();
+        if ($page->getStatus() == Page::STATUS_OFFLINE) {
+            $routeMatch->setParam('action', 'not-found');
+
+            return;
+        }
+        if ($page->getPublishedFrom() instanceof \DateTime && $page->getPublishedFrom()->getTimestamp() > time()) {
+            $routeMatch->setParam('action', 'not-found');
+
+            return;
+        }
+        if ($page->getPublishedUntil() instanceof \DateTime && $page->getPublishedUntil()->getTimestamp() < time()) {
+            $routeMatch->setParam('action', 'not-found');
+
+            return;
+        }
+
 
         $localization = $this->getServiceManager()->get(Localization::class);
         $localization->acceptLocale($page->getLocale());
