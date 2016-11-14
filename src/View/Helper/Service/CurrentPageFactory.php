@@ -32,8 +32,6 @@ class CurrentPageFactory implements FactoryInterface
             $page = $routeMatch->getParam('__page__');
         }
 
-        pri
-
         return new Proxy($page);
     }
 }
