@@ -218,8 +218,6 @@ class AddSitemapCommand extends AbstractCommand
 
         $this->getTableGateway(SitemapTableGateway::class)->insert($sitemap);
 
-        $this->getCommand(UpdateNestedInfoCommand::class)->run();
-
         foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
             /** @var AddPageCommand $cmd */
             $cmd = $this->getCommand(AddPageCommand::class);
@@ -233,5 +231,9 @@ class AddSitemapCommand extends AbstractCommand
 
             $cmd->run();
         }
+
+        $this->getCommand(UpdateNestedInfoCommand::class)->run();
+
+        return $sitemap;
     }
 }

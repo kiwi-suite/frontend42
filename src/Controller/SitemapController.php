@@ -10,6 +10,7 @@ use Frontend42\Command\Sitemap\ResortSitemapCommand;
 use Frontend42\Form\AddPageForm;
 use Frontend42\Selector\AngularSitemapSelector;
 use Frontend42\Selector\AvailablePageTypesSelector;
+use Frontend42\TableGateway\PageTableGateway;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Json\Json;
 
@@ -124,13 +125,18 @@ class SitemapController extends AbstractAdminController
                 ->setParentId($this->params()->fromRoute("parentId"));
 
             $formCommand = $this->getFormCommand();
-            $formCommand->setForm($addPageForm)
+            $sitemap = $formCommand->setForm($addPageForm)
                 ->setData($prg)
                 ->setCommand($cmd)
                 ->run();
 
             if (!$formCommand->hasErrors()) {
-                //ToDo Redirect
+                $page = $this->getTableGateway(PageTableGateway::class)->select([
+                    'locale' => $this->params()->fromRoute("locale"),
+                    'sitemapId' => $sitemap->getId()
+                ])->current();
+
+                return $this->redirect()->toRoute('admin/page/edit', ['id' => $page->getId()]);
             }
         }
 
