@@ -21,6 +21,8 @@ use Core42\Stdlib\DateTime;
  * @method string getStatus() getStatus()
  * @method Page setSlug() setSlug(string $slug)
  * @method string getSlug() getSlug()
+ * @method Page setRoute() setRoute(string $route)
+ * @method string getRoute() getRoute()
  * @method Page setUpdated() setUpdated(DateTime $updated)
  * @method DateTime getUpdated() getUpdated()
  * @method Page setCreated() setCreated(DateTime $created)
@@ -43,6 +45,7 @@ class Page extends AbstractModel
         'publishedUntil',
         'status',
         'slug',
+        'route',
         'updated',
         'created',
     ];
