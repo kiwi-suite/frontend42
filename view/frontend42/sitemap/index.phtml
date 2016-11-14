@@ -7,18 +7,18 @@ $this->angular()->addHtmlPartial('sitemap/node.html', 'partial/sitemap-node');
     <div class="panel b-a">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-<?= (count($this->availableLocales) > 1) ? '9' : '12'?>">
                     <input placeholder="<?= $this->translate('frontend42.sitemap.search-placeholder', 'admin') ?>" class="form-control" type="text" ng-model="query">
                 </div>
+                <?php if (count($this->availableLocales) > 1): ?>
                 <div class="col-sm-3">
-                    <?php if (count($this->availableLocales) > 1): ?>
-                        <select class="form-control" ng-model="locale">
-                            <?php foreach ($this->availableLocales as $locale => $localeDisplay): ?>
-                                <option value="<?= $locale?>"><?= $localeDisplay ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    <?php endif; ?>
+                    <select class="form-control" ng-model="locale">
+                        <?php foreach ($this->availableLocales as $locale => $localeDisplay): ?>
+                            <option value="<?= $locale?>"><?= $localeDisplay ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="panel-body">
