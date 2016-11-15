@@ -45,11 +45,6 @@ class Page extends AbstractPage implements PageInterface
         $this->pageRoute = $pageRoute;
     }
 
-    public function getPageSelector()
-    {
-        return $this->pageSelector;
-    }
-
     /**
      * @param int $pageId
      * @return int
@@ -87,5 +82,23 @@ class Page extends AbstractPage implements PageInterface
         }
 
         return parent::getLabel();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        $route = $this->pageRoute->getRoute($this->pageId);
+
+        if (strlen($route) > strlen($this->routeMatch->getMatchedRouteName())) {
+            return false;
+        }
+
+        if (substr($this->routeMatch->getMatchedRouteName(), 0, strlen($route)) != $route) {
+            return false;
+        }
+
+        return true;
     }
 }

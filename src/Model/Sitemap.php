@@ -16,6 +16,10 @@ use Core42\Model\AbstractModel;
  * @method string getPageType() getPageType()
  * @method Sitemap setHandle() setHandle(string $handle)
  * @method string getHandle() getHandle()
+ * @method Sitemap setOffspring() setOffspring(int $offspring)
+ * @method int getOffspring() getOffspring()
+ * @method Sitemap setLevel() setLevel(int $level)
+ * @method int getLevel() getLevel()
  */
 class Sitemap extends AbstractModel
 {
@@ -30,6 +34,8 @@ class Sitemap extends AbstractModel
         'nestedRight',
         'pageType',
         'handle',
+        'offspring',
+        'level',
     ];
 
 

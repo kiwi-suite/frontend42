@@ -25,7 +25,6 @@ class Sitemap extends Proxy
     {
         if ($sitemapId !== null) {
             $sitemap = $this->sitemapSelector->setSitemapId((int)$sitemapId)->getResult();
-
             if ($sitemap instanceof \Frontend42\Model\Sitemap) {
                 $this->object = $sitemap;
             }

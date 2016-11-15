@@ -26,6 +26,8 @@ class SitemapTableGateway extends AbstractTableGateway
         'nestedRight' => 'integer',
         'pageType' => 'string',
         'handle' => 'string',
+        'offspring' => 'integer',
+        'level' => 'integer',
     ];
 
     /**

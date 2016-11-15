@@ -62,14 +62,26 @@ class PageRoute
      */
     public function assemble($pageId)
     {
+        $route = $this->getRoute($pageId);
+        if (empty($route)) {
+            return "";
+        }
+
+        return $this->router->assemble([], ['name' => $route]);
+    }
+
+    /**
+     * @param int $pageId
+     * @return string
+     */
+    public function getRoute($pageId)
+    {
         /** @var Page $page */
         $page = $this->pageSelector->setPageId((int) $pageId)->getResult();
         if (empty($page)) {
             return "";
         }
 
-        $route = $this->routePrefix . '/' . $page->getRoute();
-
-        return $this->router->assemble([], ['name' => $route]);
+        return $this->routePrefix . '/' . $page->getRoute();
     }
 }
