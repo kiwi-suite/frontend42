@@ -28,7 +28,7 @@ class CurrentSitemapFactory implements FactoryInterface
     {
         $sitemap = new Sitemap();
         $routeMatch = $container->get('Application')->getMvcEvent()->getRouteMatch();
-        if ($routeMatch->getParam('__sitemap__') instanceof Sitemap) {
+        if ($routeMatch && $routeMatch->getParam('__sitemap__') instanceof Sitemap) {
             $sitemap = $routeMatch->getParam('__sitemap__');
         }
 

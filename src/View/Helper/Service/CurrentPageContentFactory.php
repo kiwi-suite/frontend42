@@ -30,7 +30,7 @@ class CurrentPageContentFactory implements FactoryInterface
         $routeMatch = $container->get('Application')->getMvcEvent()->getRouteMatch();
 
         $pageContent = new GenericModel();
-        if ($routeMatch->getParam('__pageContent__') instanceof PageContent) {
+        if ($routeMatch && $routeMatch->getParam('__pageContent__') instanceof PageContent) {
             $pageContent = $routeMatch->getParam('__pageContent__');
         }
 

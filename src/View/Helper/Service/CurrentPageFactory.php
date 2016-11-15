@@ -28,7 +28,7 @@ class CurrentPageFactory implements FactoryInterface
     {
         $page = new Page();
         $routeMatch = $container->get('Application')->getMvcEvent()->getRouteMatch();
-        if ($routeMatch->getParam('__page__') instanceof Page) {
+        if ($routeMatch && $routeMatch->getParam('__page__') instanceof Page) {
             $page = $routeMatch->getParam('__page__');
         }
 
