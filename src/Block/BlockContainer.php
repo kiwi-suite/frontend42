@@ -51,6 +51,10 @@ class BlockContainer
         $html = "";
 
         foreach ($this->blocks as $blockModel) {
+            if (!$this->blockPluginManager->has($blockModel->getType())) {
+                continue;
+            }
+
             /** @var BlockInterface $blockType */
             $blockType = $this->blockPluginManager->get($blockModel->getType());
 

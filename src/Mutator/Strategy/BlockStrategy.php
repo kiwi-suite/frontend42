@@ -42,9 +42,10 @@ class BlockStrategy implements StrategyInterface
 
     /**
      * @param mixed $value
+     * @param array $spec
      * @return mixed
      */
-    public function hydrate($value)
+    public function hydrate($value, array $spec = [])
     {
         $blockContainer = clone $this->blockContainerProtoType;
         if (!is_array($value)) {
@@ -52,14 +53,18 @@ class BlockStrategy implements StrategyInterface
         }
 
         $blocks = [];
-        foreach ($value as $id => $spec) {
+        foreach ($value as $id => $blockSpec) {
+            if (!$this->blockPluginManager->has($blockSpec['__type__'])) {
+                continue;
+            }
+
             $blockModel = new Block();
             $blockModel->setId($id)
-                ->setType($spec['__type__'])
-                ->setName($spec['__name__'])
-                ->setIndex($spec['__index__']);
+                ->setType($blockSpec['__type__'])
+                ->setName($blockSpec['__name__'])
+                ->setIndex($blockSpec['__index__']);
 
-            $elements = array_filter($spec, function ($key){
+            $elements = array_filter($blockSpec, function ($key){
                 return !in_array($key, ['__index__', '__type__', '__name__', '__deleted__']);
             }, ARRAY_FILTER_USE_KEY);
 
