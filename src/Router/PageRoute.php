@@ -58,16 +58,17 @@ class PageRoute
 
     /**
      * @param int $pageId
+     * @param array $params
      * @return string
      */
-    public function assemble($pageId)
+    public function assemble($pageId, array $params = [])
     {
         $route = $this->getRoute($pageId);
         if (empty($route)) {
             return "";
         }
 
-        return $this->router->assemble([], ['name' => $route]);
+        return $this->router->assemble($params, ['name' => $route]);
     }
 
     /**
