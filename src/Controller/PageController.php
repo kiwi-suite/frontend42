@@ -82,12 +82,13 @@ class PageController extends AbstractAdminController
                         ->redirect()
                         ->toRoute('admin/page/edit', ['id' => $page->getId()]);
                 }
-
-                $this->flashMessenger()->addErrorMessage([
-                    'title' => 'frontend42.toaster.page.edit.title.error',
-                    'message' => 'frontend42.toaster.page.edit.message.error',
-                ]);
             }
+
+            $this->flashMessenger()->addErrorMessage([
+                'title' => 'frontend42.toaster.page.edit.title.error',
+                'message' => 'frontend42.toaster.page.edit.message.error',
+            ]);
+
         } else {
             $form->setDatabaseData($version->getContent());
         }

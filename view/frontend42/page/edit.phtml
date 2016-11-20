@@ -20,7 +20,34 @@ $this->pageForm->prepare();
             </div>
             <div class="clearfix"></div>
         </div>
+
+        <?php if($this->versions->count() > 2 && $this->versions->current()->getApproved() === null): ?>
+            <div class="alert alert-warning">
+                <?= $this->translate('alert.unpublished-version', 'admin') ?>
+            </div>
+        <?php endif; ?>
+        <?php $this->versions->rewind() ?>
+
         <div class="wrapper-md">
+            <?php if (count($this->pageForm->getMessages())): ?>
+            <div class="alert alert-danger">
+                <b><?= $this->translate('frontend42.toaster.page.edit.message.error', 'admin')?></b>
+                <ul class="list-unstyled">
+                <?php foreach ($this->pageForm as $fieldset): ?>
+                    <?php
+                    if (!($fieldset instanceof \Zend\Form\FieldsetInterface)) {
+                        continue;
+                    }
+                    if (count($fieldset->getMessages()) == 0) {
+                        continue;
+                    }
+                    ?>
+                    <li><?= $this->translate('frontend42.error-tab', 'admin') ?> <b>"<?= $this->translate($fieldset->getLabel(), 'admin') ?>"</b></li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
             <form class="form-horizontal" action="<?= $this->url(null, [], [], true)?>" method="post">
                 <?php foreach ($this->pageForm as $fieldset): ?>
                     <?php
@@ -38,8 +65,14 @@ $this->pageForm->prepare();
                         }
                         ?>
                         <uib-tab>
-                            <uib-tab-heading>
-                                <span class="fa fa-fw fa-pencil-square-o"></span> <?= $this->translate($fieldset->getLabel(), 'admin') ?>
+                            <uib-tab-heading<?= (count($fieldset->getMessages())) ? ' class="text-danger"' : '' ?>>
+                                <?php if (count($fieldset->getMessages())): ?>
+                                    <i class="fa fa-fw fa-exclamation-triangle"></i>
+                                    <b><?= $this->translate($fieldset->getLabel(), 'admin') ?></b>
+                                <?php else: ?>
+                                    <i class="fa fa-fw fa-pencil-square-o"></i>
+                                    <?= $this->translate($fieldset->getLabel(), 'admin') ?>
+                                <?php endif; ?>
                             </uib-tab-heading>
                             <?= $this->formRow($fieldset) ?>
                         </uib-tab>
@@ -70,7 +103,7 @@ $this->pageForm->prepare();
                             <div class="m-b text-md"><?= $this->translate('frontend42.version-history', 'admin') ?></div>
                             <div class="streamline b-l m-b">
                                 <?php foreach ($this->versions as $version): ?>
-                                    <div class="sl-item b-l b-2x <?= ($version->getApproved() !== null) ? 'b-success': 'b-dark'?><?= $this->currentVersion->getId() == $version->getId() ? ' bg-light dker' : '' ?>">
+                                    <div class="sl-item b-l b-2x <?= ($version->getApproved() !== null) ? 'b-success': 'b-dark'?><?= $this->currentVersion->getId() == $version->getId() ? ' bg-light dker' : '' ?>" style="padding: 5px 0;">
                                         <div class="m-l m-b-md">
                                             <div><code>#<?= $version->getVersionName() ?></code> - <small class="text-xs"><?= $this->user()->getDisplayName($version->getCreatedBy()) ?></small></div>
                                             <div class="text-muted"><small class="text-xs"><?= $version->getCreated()->format('Y-m-d H:i') ?></small></div>
