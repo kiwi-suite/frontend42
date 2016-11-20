@@ -99,6 +99,7 @@ class PageController extends AbstractAdminController
                 $select->where(['pageId' => $page->getId()]);
                 $select->order('created DESC');
         });
+        $versions->buffer();
 
         return [
             'page'              => $page,
