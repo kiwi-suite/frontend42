@@ -8,6 +8,8 @@ use Frontend42\Block\Service\BlockPluginManagerFactory;
 use Frontend42\Event\PageEventListener;
 use Frontend42\Event\Service\PageEventListenerFactory;
 use Frontend42\Event\Service\PageEventManagerFactory;
+use Frontend42\Link\Adapter\Service\SitemapLinkFactory;
+use Frontend42\Link\Adapter\SitemapLink;
 use Frontend42\Middleware\FrontendMiddleware;
 use Frontend42\Middleware\Service\FrontendMiddlewareFactory;
 use Frontend42\PageType\Service\PageTypePluginManager;
@@ -34,6 +36,7 @@ return [
             PageRoute::class                    => PageRouteFactory::class,
             BlockPluginManager::class           => BlockPluginManagerFactory::class,
             BlockContainer::class               => BlockContainerFactory::class,
+            SitemapLink::class                  => SitemapLinkFactory::class,
         ],
     ],
     'view_helpers' => [

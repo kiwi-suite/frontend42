@@ -30,4 +30,6 @@ return [
 
     'alert.unpublished-version'                                 => 'The most recent version of this page is pending approval.',
 
+    'link-type.sitemap'                                         => 'Sitemap',
+
 ];

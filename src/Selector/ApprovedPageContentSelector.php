@@ -68,7 +68,6 @@ class ApprovedPageContentSelector extends AbstractSelector
             ->setVersionId(PageVersionSelector::VERSION_APPROVED)
             ->getResult();
 
-
         return $pageType->getPageContent($pageVersion->getContent(), $page);
     }
 }

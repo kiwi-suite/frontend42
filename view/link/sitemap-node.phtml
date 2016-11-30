@@ -1,0 +1,13 @@
+<div class="dd3-content" style="padding-left:10px;" ng-style="selectableStyle(item)" ng-click="select(item)">
+    <div class="row">
+        <div class="col-md-10">
+            {{item.title}}
+        </div>
+        <div class="col-md-2 text-right">
+            <span ng-if="targetPageId == item.pageId" class="fa fa-check"></span>
+        </div>
+    </div>
+</div>
+<ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
+    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'link/sitemap/node.html'" ng-show="visible(item)"></li>
+</ol>
