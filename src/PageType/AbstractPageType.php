@@ -79,6 +79,11 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     protected $sorting = true;
 
     /**
+     * @var string
+     */
+    protected $layout = 'layout/layout';
+
+    /**
      * @return string
      */
     public function getName()
@@ -317,6 +322,24 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
     {
         $this->sorting = $sorting;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayout()
+    {
+        return $this->layout;
+    }
+
+    /**
+     * @param string $layout
+     * @return AbstractPageType
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
         return $this;
     }
 

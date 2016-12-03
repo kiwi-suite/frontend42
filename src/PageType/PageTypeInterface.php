@@ -176,4 +176,15 @@ interface PageTypeInterface
      * @return $this
      */
     public function setSorting($sorting);
+
+    /**
+     * @param string $layout
+     * @return $this
+     */
+    public function setLayout($layout);
+
+    /**
+     * @return string
+     */
+    public function getLayout();
 }

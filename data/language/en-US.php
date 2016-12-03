@@ -32,4 +32,6 @@ return [
 
     'link-type.sitemap'                                         => 'Sitemap',
 
+    'frontend42.title.preview'                                  => 'Preview',
+    'frontend42.page.preview.message.error'                     => 'Can\'t show preview. Some errors occurred'
 ];

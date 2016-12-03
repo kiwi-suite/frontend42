@@ -2,6 +2,7 @@
 namespace Frontend42\Controller;
 
 use Admin42\Mvc\Controller\AbstractAdminController;
+use Core42\I18n\Localization\Localization;
 use Frontend42\Command\Page\EditPageCommand;
 use Frontend42\Command\PageVersion\ApproveCommand;
 use Frontend42\Command\PageVersion\DeleteCommand;
@@ -16,6 +17,9 @@ use Frontend42\TableGateway\PageVersionTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Http\PhpEnvironment\Response;
+use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Mvc\Console\Router\RouteMatch;
+use Zend\Mvc\MvcEvent;
 
 class PageController extends AbstractAdminController
 {
@@ -107,6 +111,78 @@ class PageController extends AbstractAdminController
             'pageForm'          => $form,
             'versions'          => $versions,
         ];
+    }
+
+    public function previewAction()
+    {
+        /** @var Page $page */
+        $page = $this
+            ->getTableGateway(PageTableGateway::class)
+            ->selectByPrimary((int) $this->params()->fromRoute('id'));
+
+        if (empty($page)) {
+            return $this->notFoundAction();
+        }
+
+        /** @var Sitemap $sitemap */
+        $sitemap = $this->getTableGateway(SitemapTableGateway::class)->selectByPrimary($page->getSitemapId());
+        if (empty($sitemap)) {
+            return $this->notFoundAction();
+        }
+
+        /** @var PageTypeInterface $pageType */
+        $pageType = $this->getServiceManager()->get(PageTypePluginManager::class)->get($sitemap->getPageType());
+
+        if ($this->getRequest()->isPost()) {
+            /** @var EditPageForm $form */
+            $form = $this->getForm(EditPageForm::class);
+            $form->setSections($pageType->getSections())
+                ->setDefaults($pageType->getDefaults())
+                ->addPageElements();
+
+            $data = $this->getRequest()->getPost()->toArray();
+            $form->setData($data);
+            if (!$form->isValid()) {
+
+                return [
+                    'pageForm' => $form,
+                ];
+            }
+
+            $pageContent = $pageType->getPageContent($form->getDataForDatabase(), $page);
+        } else {
+            $version = $this->getSelector(PageVersionSelector::class)
+                ->setVersionId($this->params()->fromRoute('versionId', PageVersionSelector::VERSION_HEAD))
+                ->setPageId($page->getId())
+                ->getResult();
+
+            $pageContent = $pageType->getPageContent($version->getContent(), $page);
+        }
+
+        $pageContent = $pageType->mutate($pageContent);
+        $this->layout($pageType->getLayout());
+
+        /** @var MvcEvent $mvcEvent */
+        $mvcEvent = $this->getServiceManager()->get('Application')->getMvcEvent();
+
+        $localization = $this->getServiceManager()->get(Localization::class);
+        $localization->acceptLocale($page->getLocale());
+        $this->getServiceManager()->get(TranslatorInterface::class)->setLocale($localization->getActiveLocale());
+
+        /** @var RouteMatch $routeMatch */
+        $routeMatch = $mvcEvent->getRouteMatch();
+        $routeMatch->setParam("__page__", $page);
+        $routeMatch->setParam("__sitemap__", $sitemap);
+        $routeMatch->setParam("__pageContent__", $pageContent);
+
+        $result = $this->forward()->dispatch($pageType->getController(), [
+            'action' => $pageType->getAction(),
+            '__page__' => $page,
+            '__sitemap__' => $sitemap,
+            '__pageContent__' => $pageContent,
+        ]);
+
+        return $result;
     }
 
     /**

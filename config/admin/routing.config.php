@@ -81,6 +81,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'preview' => [
+                                'type' => AngularSegment::class,
+                                'options' => [
+                                    'route' => 'preview/:id/[:versionId/]',
+                                    'defaults' => [
+                                        'action' => 'preview',
+                                    ],
+                                ],
+                            ],
                             'approve' => [
                                 'type' => Segment::class,
                                 'options' => [

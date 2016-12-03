@@ -1,0 +1,24 @@
+<?= $this->pageHeader($this->translate('frontend42.title.preview', 'admin'), 'fa fa-sitemap') ?>
+
+<div class="wrapper-md">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-danger">
+                <b><?= $this->translate('frontend42.page.preview.message.error', 'admin')?></b>
+                <ul class="list-unstyled">
+                    <?php foreach ($this->pageForm as $fieldset): ?>
+                        <?php
+                        if (!($fieldset instanceof \Zend\Form\FieldsetInterface)) {
+                            continue;
+                        }
+                        if (count($fieldset->getMessages()) == 0) {
+                            continue;
+                        }
+                        ?>
+                        <li><?= $this->translate('frontend42.error-tab', 'admin') ?> <b>"<?= $this->translate($fieldset->getLabel(), 'admin') ?>"</b></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
