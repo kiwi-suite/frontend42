@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'button.preview'                                            => 'Preview',
     'frontend42.title.sitemap'                                  => 'Sitemap',
     'frontend42.sitemap.search-placeholder'                     => 'Search',
     'frontend42.title.add-page'                                 => 'Add Page',
