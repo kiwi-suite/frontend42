@@ -31,10 +31,13 @@ class AddPageForm extends Form
             ]);
         } else {
             $this->add([
-                'name'      => 'pageType',
-                'type'      => 'hidden',
-                'required'  => true,
-                'value'     => $current,
+                'name'              => 'pageType',
+                'label'             => 'frontend42.label.pageType',
+                'type'              => 'hidden',
+                'required'          => true,
+                'value'             => $current,
+                'staticControl'     => true,
+                'staticControlText' => $pageTypes[$current],
             ]);
         }
 
