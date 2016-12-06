@@ -1,48 +1,33 @@
-
 <?php
-$langOptions = [];
-foreach($this->localization()->getAvailableLocalesDisplay() as $_locale => $_name){
-    $langOptions[] = "<option value=\"{$_locale}\">{$_name}</option>";
+$defaultLocale = $this->localization()->getDefaultLocale();
+$availableLocales = $this->localization()->getAvailableLocalesDisplay();
+if (!array_key_exists($defaultLocale, $availableLocales)) {
+    reset($availableLocales);
+    $defaultLocale = key($availableLocales);
 }
-$langOptions = implode(PHP_EOL, $langOptions);
+?>
 
-$templateContent = <<<EOT
-<div ng-controller="LinkSitemapController" data-active-locale="{$this->localization()->getDefaultLocale()}" data-request-url="{$this->url('admin/sitemap/list')}">
-<div class="row">
-<div class="col-sm-9">
-    <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
-</div>
-<div class="col-sm-3">
-    <select ng-model="locale" class="form-control" ng-change="loadTree()">
-        {$langOptions}
-    </select>
-</div>
-</div>
-<div ng-show="isLoading" class="angular-ui-tree-loading text-center">
-    <i class="fa fa-spin fa-refresh"></i>
-</div>
-<div ng-hide="isLoading" class="dd" ui-tree="treeOptions" data-drag-enabled="false">
-    <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
-        <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'linkSitemapNode.html'" ng-show="visible(item)"></li>
-    </ol>
-</div>
-</div>
-EOT;
-$this->admin()->addHtmlTemplate("/link/sitemap.html", $templateContent);
-
-$sitemapContent = <<<EOT
-<div class="dd3-content" style="padding-left:10px;" ng-style="selectableStyle(item)" ng-click="select(item)">
+<div ng-controller="SitemapLinkController" data-active-locale="<?= $this->localization()->getDefaultLocale() ?>" data-request-url="<?= $this->url('admin/sitemap/list') ?>">
     <div class="row">
-        <div class="col-md-10">
-            <code>#{{item.pageId}}</code> {{item.title}}
+        <div class="col-sm-<?= (count($availableLocales) > 1 ? "9" : "12")?>">
+            <input placeholder="Search for Pages" class="form-control" type="text" ng-model="query" ng-change="findNodes()">
         </div>
-        <div class="col-md-2 text-right">
-            <span ng-if="targetPageId == item.pageId" class="fa fa-check"></span>
+        <?php if (count($availableLocales) > 1): ?>
+        <div class="col-sm-3">
+            <select ng-model="locale" class="form-control" ng-change="loadTree()">
+                <?php foreach ($availableLocales as $locale => $localeDisplay): ?>
+                <option value="<?= $locale?>"><?= $localeDisplay ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
+        <?php endif; ?>
+    </div>
+    <div ng-show="isLoading" class="angular-ui-tree-loading text-center">
+        <i class="fa fa-spin fa-refresh"></i>
+    </div>
+    <div ng-hide="isLoading" class="dd" ui-tree="treeOptions" data-drag-enabled="false">
+        <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root">
+            <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'link/sitemap/node.html'" ng-show="visible(item)"></li>
+        </ol>
     </div>
 </div>
-<ol class="dd-list" ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
-    <li class="dd-item dd3-item" ng-repeat="item in item.items" ui-tree-node ng-include="'linkSitemapNode.html'" ng-show="visible(item)"></li>
-</ol>
-EOT;
-$this->admin()->addHtmlTemplate("linkSitemapNode.html", $sitemapContent);

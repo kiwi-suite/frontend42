@@ -1,26 +1,28 @@
 <?php
+namespace Frontend42;
+
 return [
-    'caches' => [
-        'Cache\Sitemap' => [
-            'adapter' => [
-                'name' => 'memory',
-                'options' => [
-                    'namespace' => 'sitemap',
-                ],
+    'cache' => [
+        'caches' => [
+            'page' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'page',
             ],
-            'plugins' => [
-                'Serializer'
+            'sitemap' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'sitemap',
             ],
-        ],
-        'Cache\Block' => [
-            'adapter' => [
-                'name' => 'memory',
-                'options' => [
-                    'namespace' => 'block',
-                ],
+            'pageContent' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'pageContent',
             ],
-            'plugins' => [
-                'Serializer'
+            'routing' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'routing',
+            ],
+            'navigation' => [
+                'driver' => (DEVELOPMENT_MODE === true) ? 'development' : 'production',
+                'namespace' =>  'navigation',
             ],
         ],
     ],

@@ -1,1 +1,1 @@
-angular.module('frontend42', ['ui.tree']);
+angular.module('frontend42', []);

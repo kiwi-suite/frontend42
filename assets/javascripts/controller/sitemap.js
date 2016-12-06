@@ -1,21 +1,53 @@
-angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', '$uibModal', '$window', function($scope, $http, $attrs, $uibModal, $window){
+angular.module('frontend42').controller('SitemapController',['$scope', '$http', '$attrs', function($scope, $http, $attrs){
     $scope.isLoading = true;
-    $scope.showOnline = true;
-    $scope.showOffline = true;
-    $scope.locale = $attrs.activeLocale;
+    $scope.locale = $attrs.locale;
+    $scope.sitemap = [];
     $scope.query = "";
 
-    var requestUrl = $attrs.requestUrl;
-    var saveUrl = $attrs.saveUrl;
+    $scope.treeOptions = {
+        accept: function(sourceNodeScope, destNodesScope) {
+            var parent = destNodesScope.$parent;
+            if (angular.isUndefined(parent.$modelValue)) {
+                return false;
+            }
+
+            if (angular.isUndefined(sourceNodeScope.$modelValue)) {
+                return false;
+            }
+
+            if (parent.$modelValue.isTerminal === true) {
+                return false;
+            }
+
+            if (parent.$modelValue.pageTypes.length === 0) {
+                return false;
+            }
+
+            if(!parent.$modelValue.pageTypes.hasOwnProperty(sourceNodeScope.$modelValue.pageType)) {
+                return false;
+            }
+
+            return true;
+        },
+        dropped: function(event) {
+            $scope.isLoading = true;
+            $http.post($attrs.sortSaveUrl, $scope.sitemap).
+            success(function(data) {
+                loadTree();
+            }).
+            error(function() {
+                $scope.isLoading = false;
+            });
+        }
+    };
 
     var loadTree = function() {
         $scope.isLoading = true;
         var options = {
-            showOnline: $scope.showOnline,
-            showOffline: $scope.showOffline,
             locale: $scope.locale
-        }
-        $http.post(requestUrl, options).
+        };
+
+        $http.post($attrs.sitemapUrl, options).
             success(function(data) {
                 $scope.sitemap = data;
                 $scope.isLoading = false;
@@ -25,18 +57,8 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
                 $scope.isLoading = false;
             });
     };
-    $scope.loadTree = loadTree;
 
-    var saveTree = function (){
-        $scope.isLoading = true;
-        $http.post(saveUrl, $scope.sitemap).
-            success(function(data) {
-                $scope.isLoading = false;
-            }).
-            error(function() {
-                loadTree();
-            });
-    };
+    loadTree();
 
     $scope.visible = function(item) {
         if (!$scope.query || $scope.query.length == 0) {
@@ -57,136 +79,17 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
         return false;
     };
-
-    $scope.findNodes = function(){
-
-    };
-
-    $scope.treeOptions = {
-        accept: function(sourceNodeScope, destNodesScope) {
-            var parent = destNodesScope.$parent;
-            if (angular.isUndefined(parent.$modelValue)) {
-                return true;
-            }
-            if (angular.isUndefined(parent.$modelValue.droppable)) {
-                return true;
-            }
-
-            return parent.$modelValue.droppable;
-        },
-        dropped: function() {
-            if ($scope.sitemap.length == 0) {
-                return;
-            }
-
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'sortModalContent.html',
-                controller: 'ModalController',
-                size: 'lg'
-            });
-
-            modalInstance.result.then(function () {
-                saveTree();
-            }, function () {
-                loadTree();
-            });
+    
+    $scope.canAddPage = function(item) {
+        if (item.isTerminal === true) {
+            return false;
         }
-    };
-    $scope.sitemap = [];
-    loadTree();
 
-    $scope.addSubPage = function(parentId) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'addSubPageModalContent.html',
-            controller: 'AddPageModalController',
-            size: 'lg',
-            resolve: {
-                addSitemapUrl: function(){
-                    return $attrs.addUrl;
-                },
-                parentId: function(){
-                    return parentId;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (data) {
-            if (angular.isDefined(data.url)) {
-                $window.location.href = data.url;
-            }
-
-        }, function () {
-
-        });
-    };
-
-    $scope.addPage = function(parentId) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'addPageModalContent.html',
-            controller: 'AddPageModalController',
-            size: 'lg',
-            resolve: {
-                addSitemapUrl: function(){
-                    return $attrs.addUrl;
-                },
-                parentId: function(){
-                    return null;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (data) {
-            if (angular.isDefined(data.url)) {
-                $window.location.href = data.url;
-            }
-
-        }, function () {
-
-        });
-    };
-
-    $scope.deleteCallback = function() {
-        loadTree();
+        return (item.pageTypes.length !== 0);
     }
 
-}]);
-
-angular.module('frontend42').controller('AddPageModalController', ['$scope', '$uibModalInstance', '$http', 'addSitemapUrl', 'parentId', function ($scope, $uibModalInstance, $http, addSitemapUrl, parentId) {
-    $scope.ok = function () {
-        if (parentId !== null) {
-        } else {
-            parentId = $scope.formElement.page_selector;
-        }
-        $http({
-                method: 'POST',
-                url: addSitemapUrl,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                data: {
-                    page_selector: parentId,
-                    page_type_selector: $scope.formElement.page_type_selector,
-                    name: $scope.formElement.name
-                },
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj)
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                }
-            })
-            .success(function (data){
-                $uibModalInstance.close(data);
-            })
-            .error(function (){
-
-            });
-
-    };
-
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
+    $scope.deleteCallback = function () {
+        loadTree();
+    }
 }]);
 

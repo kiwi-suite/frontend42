@@ -2,6 +2,8 @@
 
 return [
     'blocks' => [
-        'paths' => [],
+        'search_path' => [],
+        'blocks' => [],
+        'service_manager' => [],
     ]
 ];

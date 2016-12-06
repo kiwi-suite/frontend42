@@ -1,0 +1,137 @@
+<?php $this->pageHeader($this->page->getName()) ?>
+<?php
+$this->pageForm->prepare();
+?>
+
+<div class="hbox hbox-auto-sm hbox-auto-xs" ng-init="app.appContentFull = true">
+    <div class="col">
+        <div class="wrapper-md bg-white b-b box-shadow">
+            <h1 class="m-n font-thin h3 pull-left">
+                <span class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($this->page->getLocale())) ?>"></span>
+                <?= $this->page->getName() ?>
+            </h1>
+            <div class="pull-right hidden-sm hidden-xs">
+                <?php foreach ($this->localization()->getAvailableLocalesDisplay() as $locale => $displayName): ?>
+                    <?php if ($this->page->getLocale() == $locale) continue; ?>
+                    <a href="<?= $this->url('admin/page/change-locale', ['locale' => $locale, 'sitemapId' => $this->page->getSitemapId()]) ?>" title="<?= $displayName ?>">
+                        <i class="flag-icon flag-icon-<?= strtolower(\Locale::getRegion($locale))?> m-r-xs"></i>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <?php if($this->versions->count() > 2 && $this->versions->current()->getApproved() === null): ?>
+            <div class="alert alert-warning">
+                <?= $this->translate('alert.unpublished-version', 'admin') ?>
+            </div>
+        <?php endif; ?>
+        <?php $this->versions->rewind() ?>
+
+        <div class="wrapper-md">
+            <?php if (count($this->pageForm->getMessages())): ?>
+            <div class="alert alert-danger">
+                <b><?= $this->translate('frontend42.toaster.page.edit.message.error', 'admin')?></b>
+                <ul class="list-unstyled">
+                <?php foreach ($this->pageForm as $fieldset): ?>
+                    <?php
+                    if (!($fieldset instanceof \Zend\Form\FieldsetInterface)) {
+                        continue;
+                    }
+                    if (count($fieldset->getMessages()) == 0) {
+                        continue;
+                    }
+                    ?>
+                    <li><?= $this->translate('frontend42.error-tab', 'admin') ?> <b>"<?= $this->translate($fieldset->getLabel(), 'admin') ?>"</b></li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
+            <form class="form-horizontal" action="<?= $this->url('admin/page/edit', [], [], true)?>" method="post">
+                <?php foreach ($this->pageForm as $fieldset): ?>
+                    <?php
+                    if ($fieldset instanceof \Zend\Form\FieldsetInterface) {
+                        continue;
+                    }
+                    ?>
+                    <?= $this->formRow($fieldset) ?>
+                <?php endforeach; ?>
+                <uib-tabset class="tab-container">
+                    <?php foreach ($this->pageForm as $fieldset): ?>
+                        <?php
+                        if (!($fieldset instanceof \Zend\Form\FieldsetInterface)) {
+                            continue;
+                        }
+                        ?>
+                        <uib-tab>
+                            <uib-tab-heading<?= (count($fieldset->getMessages())) ? ' class="text-danger"' : '' ?>>
+                                <?php if (count($fieldset->getMessages())): ?>
+                                    <i class="fa fa-fw fa-exclamation-triangle"></i>
+                                    <b><?= $this->translate($fieldset->getLabel(), 'admin') ?></b>
+                                <?php else: ?>
+                                    <i class="fa fa-fw fa-pencil-square-o"></i>
+                                    <?= $this->translate($fieldset->getLabel(), 'admin') ?>
+                                <?php endif; ?>
+                            </uib-tab-heading>
+                            <?= $this->formRow($fieldset) ?>
+                        </uib-tab>
+                    <?php endforeach; ?>
+                </uib-tabset>
+                <div class="panel b-a">
+                    <div class="panel-body">
+                        <div class="pull-left">
+                            <submit submit-text="<?= $this->translate('frontend42.button.publish', 'admin') ?>" name="__save__" value="approve"></submit>
+                            <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="__save__" value="save" btn-class="btn-default"></submit>
+                        </div>
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-default btn-addon" formaction="<?= $this->url('admin/page/preview', [], [], true)?>" formmethod="post" formtarget="_blank">
+                                <i class="fa fa-eye"></i>
+                                <?= $this->translate('button.preview', 'admin') ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col w-lg bg-light lter b-l">
+        <div class="vbox">
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <div class="cell-inner">
+                        <div class="wrapper-md">
+                            <div class="m-b text-md"><?= $this->translate('frontend42.version-history', 'admin') ?></div>
+                            <div class="streamline b-l m-b">
+                                <?php foreach ($this->versions as $version): ?>
+                                    <div class="sl-item b-l b-2x <?= ($version->getApproved() !== null) ? 'b-success': 'b-dark'?><?= $this->currentVersion->getId() == $version->getId() ? ' bg-light dker' : '' ?>" style="padding: 5px 0;">
+                                        <div class="m-l m-b-md">
+                                            <div><code>#<?= $version->getVersionName() ?></code> - <small class="text-xs"><?= $this->user()->getDisplayName($version->getCreatedBy()) ?></small></div>
+                                            <div class="text-muted"><small class="text-xs"><?= $version->getCreated()->format('Y-m-d H:i') ?></small></div>
+                                            <p>
+                                                <a href="<?= $this->url('admin/page/edit', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-default btn-sm btn-rounded btn-icon">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                <?php if ($version->getApproved() === null): ?>
+                                                    <a href="<?= $this->url('admin/page/approve', ['versionId' => $version->getId()]) ?>" class="btn btn-info btn-sm btn-rounded btn-icon">
+                                                        <i class="fa fa-check"></i>
+                                                    </a>
+                                                    <a href="<?= $this->url('admin/page/delete-version', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-danger btn-sm btn-rounded btn-icon">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                <?php endif; ?>
+                                                <a href="<?= $this->url('admin/page/preview', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-default btn-sm btn-rounded btn-icon" target="_blank">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

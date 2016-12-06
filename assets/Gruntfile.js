@@ -12,23 +12,18 @@ module.exports = function(grunt) {
         },
 
         concurrent: {
-            all: ['compile-vendor-js', 'compile-app-js', 'less:app']
+            all: ['compile-app-js', 'less:app']
         },
 
         concat: {
             options: {
                 separator: ';'
             },
-            vendor: {
-                src: [
-                    '<%= vendor_dir %>/angular-ui-tree/dist/angular-ui-tree.js'
-                ],
-                dest: '<%= dist %>/js/vendor.js'
-            },
             app: {
                 src: [
                     'javascripts/*.js',
                     'javascripts/directive/*.js',
+                    'javascripts/directive/form/*.js',
                     'javascripts/filter/*.js',
                     'javascripts/controller/*.js'
                 ],
@@ -39,10 +34,6 @@ module.exports = function(grunt) {
         uglify: {
             options: {
                 mangle: false
-            },
-            vendor: {
-                src: '<%= dist %>/js/vendor.js',
-                dest: '<%= dist %>/js/vendor.min.js'
             },
             app: {
                 src: '<%= dist %>/js/frontend42.js',
@@ -67,7 +58,6 @@ module.exports = function(grunt) {
         clean: {
             all: ['<%= dist %>/fonts/', '<%= dist %>/css/', '<%= dist %>/js/', '<%= dist %>/images/'],
 
-            vendorjs: ['<%= dist %>/js/vendor.js'],
             appjs: ['<%= dist %>/js/frontend42.js']
         },
 
@@ -89,7 +79,6 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default', ['bower', 'concurrent:all']);
-    grunt.registerTask('compile-vendor-js', ['concat:vendor', 'uglify:vendor', 'clean:vendorjs']);
     grunt.registerTask('compile-app-js', ['concat:app', 'uglify:app', 'clean:appjs']);
     grunt.registerTask('compile-css', ['less:app']);
     grunt.registerTask('clear', ['clean:all']);
