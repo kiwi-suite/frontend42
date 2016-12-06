@@ -27,7 +27,7 @@ class Sitemap extends AbstractModel
     /**
      * @var array
      */
-    public $properties = [
+    protected $properties = [
         'id',
         'parentId',
         'nestedLeft',

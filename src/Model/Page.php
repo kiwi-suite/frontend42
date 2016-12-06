@@ -36,7 +36,7 @@ class Page extends AbstractModel
     /**
      * @var array
      */
-    public $properties = [
+    protected $properties = [
         'id',
         'sitemapId',
         'locale',

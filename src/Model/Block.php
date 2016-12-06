@@ -20,7 +20,7 @@ class Block extends AbstractModel
     /**
      * @var array
      */
-    public $properties = [
+    protected $properties = [
         'id',
         'index',
         'type',

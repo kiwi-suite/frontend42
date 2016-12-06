@@ -14,7 +14,7 @@ class Navigation extends AbstractModel
     /**
      * @var array
      */
-    public $properties = [
+    protected $properties = [
         'pageId',
         'nav',
     ];
