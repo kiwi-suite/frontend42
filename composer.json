@@ -10,7 +10,9 @@
     ],
     "homepage": "https://www.raum42.at/",
     "require": {
-        "php": "^5.6 || ^7.0"
+        "php": "^5.6 || ^7.0",
+        "fruit42/core42": "^4.0",
+        "fruit42/admin42": "^4.0"
     },
     "require-dev": {
         "zendframework/zend-test": "^3.0"
