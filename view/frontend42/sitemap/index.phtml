@@ -26,12 +26,12 @@ $this->angular()->addHtmlPartial('sitemap/node.html', 'partial/sitemap-node');
                 <i class="fa fa-spin fa-refresh"></i>
             </div>
             <div ng-hide="isLoading" class="dd" ui-tree="treeOptions">
-                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root"<?= (!$this->permission('admin42')->isGranted('route/admin/sitemap/sort-save')) ? ' data-nodrag' : '' ?>>
+                <ol class="dd-list" ui-tree-nodes="" ng-model="sitemap" id="tree-root"<?= (!$this->permission('admin42')->authorized('route/admin/sitemap/sort-save')) ? ' data-nodrag' : '' ?>>
                     <li class="dd-item dd3-item" ng-repeat="item in sitemap" ui-tree-node ng-include="'sitemap/node.html'" ng-show="visible(item)"></li>
                 </ol>
             </div>
         </div>
-        <?php if ($this->canAddRoutePages && $this->permission('admin42')->isGranted('route/admin/sitemap/add-page')): ?>
+        <?php if ($this->canAddRoutePages && $this->permission('admin42')->authorized('route/admin/sitemap/add-page')): ?>
         <div class="panel-footer">
             <a class="btn btn-default btn-addon" ng-href="<?= $this->url('admin/sitemap/add-page', ['locale' => '{{ locale }}']) ?>">
                 <i class="fa fa-plus-circle"></i>
