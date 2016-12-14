@@ -3,6 +3,7 @@ namespace Frontend42\View\Helper\Service;
 
 use Frontend42\Router\PageRoute;
 use Frontend42\Selector\PageSelector;
+use Frontend42\Selector\SitemapSelector;
 use Frontend42\View\Helper\Page;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -29,7 +30,8 @@ class PageFactory implements FactoryInterface
     {
         return new Page(
             $container->get('Selector')->get(PageSelector::class),
-            $container->get(PageRoute::class)
+            $container->get(PageRoute::class),
+            $container->get('Selector')->get(SitemapSelector::class)
         );
     }
 }
