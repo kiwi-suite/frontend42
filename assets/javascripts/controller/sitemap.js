@@ -60,6 +60,10 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
 
     loadTree();
 
+    $scope.change = function() {
+        loadTree();
+    };
+
     $scope.visible = function(item) {
         if (!$scope.query || $scope.query.length == 0) {
             return true;
