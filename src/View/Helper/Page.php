@@ -2,7 +2,7 @@
 namespace Frontend42\View\Helper;
 
 use Core42\View\Helper\Proxy;
-use Frontend42\Model\Sitemap;
+use Frontend42\Model\Sitemap as SitemapModel;
 use Frontend42\Router\PageRoute;
 use Frontend42\Selector\PageSelector;
 use Frontend42\Selector\SitemapSelector;
@@ -84,7 +84,7 @@ class Page extends Proxy
         }
 
         $sitemap = $this->getSitemapSelector()->setHandle($handle)->getResult();
-        if (!($sitemap instanceof Sitemap)) {
+        if (!($sitemap instanceof SitemapModel)) {
             return $this;
         }
 
