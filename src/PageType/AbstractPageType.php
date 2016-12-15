@@ -418,10 +418,7 @@ abstract class AbstractPageType extends AbstractOptions implements PageTypeInter
                     continue;
                 }
 
-                $spec[] = [
-                    'name' => $element['name'],
-                    'type' => $element['type'],
-                ];
+                $spec[] = $element;
             }
         }
 
