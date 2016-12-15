@@ -76,7 +76,8 @@ class PageListSelector extends AbstractSelector
 
         $select->where([
             'parentId' => $this->sitemapId,
-            'p.locale' => $this->locale
+            'p.locale' => $this->locale,
+            'p.status' => \Frontend42\Model\Page::STATUS_ONLINE,
         ]);
 
         $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
