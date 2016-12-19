@@ -21,6 +21,21 @@ class PageContent extends AbstractModel
     }
 
     /**
+     * @param  string $name
+     * @param mixed $default
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function get($name, $default = null)
+    {
+        if (!array_key_exists($name, $this->data)) {
+            return $default;
+        }
+
+        return $this->data[$name];
+    }
+
+    /**
      * @param array $properties
      * @return $this
      */

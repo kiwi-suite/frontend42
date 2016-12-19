@@ -1,7 +1,6 @@
 <?php
 namespace Frontend42\View\Helper\Service;
 
-use Core42\Model\GenericModel;
 use Core42\View\Helper\Proxy;
 use Frontend42\Model\PageContent;
 use Interop\Container\ContainerInterface;
@@ -28,7 +27,7 @@ class CurrentPageContentFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $routeMatch = $container->get('Application')->getMvcEvent()->getRouteMatch();
-        $pageContent = new GenericModel();
+        $pageContent = new PageContent([]);
         if ($routeMatch && $routeMatch->getParam('__pageContent__') instanceof PageContent) {
             $pageContent = $routeMatch->getParam('__pageContent__');
         }
