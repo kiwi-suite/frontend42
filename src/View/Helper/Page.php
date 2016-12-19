@@ -114,10 +114,10 @@ class Page extends Proxy
      * @param array $params
      * @return string
      */
-    public function getUrl(array $params = [])
+    public function getUrl(array $params = [], array $options = [])
     {
         if ($this->getId()) {
-            return $this->pageRoute->assemble($this->getId(), $params);
+            return $this->pageRoute->assemble($this->getId(), $params, $options);
         }
 
         return "";
