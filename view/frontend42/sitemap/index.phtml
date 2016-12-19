@@ -12,7 +12,7 @@ $this->angular()->addHtmlPartial('sitemap/node.html', 'partial/sitemap-node');
                 </div>
                 <?php if (count($this->availableLocales) > 1): ?>
                 <div class="col-sm-3">
-                    <select class="form-control" ng-model="locale">
+                    <select class="form-control" ng-model="locale" ng-change="change()">
                         <?php foreach ($this->availableLocales as $locale => $localeDisplay): ?>
                             <option value="<?= $locale?>"><?= $localeDisplay ?></option>
                         <?php endforeach; ?>

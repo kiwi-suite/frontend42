@@ -57,7 +57,10 @@ class AngularSitemapSelector extends AbstractSelector
             $title = $_item['page']->getName();
             if (empty($title)) {
                 foreach ($_item['allPages'] as $alternatePage) {
-                    $alternateNames[] = $alternatePage->getName();
+                    $alternateNames[] = [
+                        'region' => strtolower(\Locale::getRegion($alternatePage->getLocale())),
+                        'name' => $alternatePage->getName(),
+                    ];
                 }
             }
 

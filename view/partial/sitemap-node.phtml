@@ -9,7 +9,10 @@
             <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
             <span ng-if="item.alternateNames.length > 0">
                 <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">
-                    [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.title }}</del> ]
+                    <span ng-if="alternatives.name">
+                        [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.name }}</del> ]
+                    </span>
+
                 </small>
             </span>
         </div>
