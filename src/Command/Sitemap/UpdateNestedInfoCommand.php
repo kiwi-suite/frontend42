@@ -18,12 +18,13 @@ class UpdateNestedInfoCommand extends AbstractCommand
 
         $sql = "UPDATE {$tableName} as s INNER JOIN
 (SELECT n.id,
+         n.nestedLeft,
          COUNT(*)-1 AS level,
          ROUND ((n.nestedRight - n.nestedLeft - 1) / 2) AS offspring
     FROM {$tableName} AS n,
          {$tableName} AS p
    WHERE n.nestedLeft BETWEEN p.nestedLeft AND p.nestedRight
-GROUP BY n.nestedLeft
+GROUP BY n.id, n.nestedLeft
 ORDER BY n.nestedLeft) as sub ON (s.id = sub.id)
 SET s.level=sub.level, s.offspring=sub.offspring";
 
