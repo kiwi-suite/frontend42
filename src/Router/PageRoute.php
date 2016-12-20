@@ -61,14 +61,16 @@ class PageRoute
      * @param array $params
      * @return string
      */
-    public function assemble($pageId, array $params = [])
+    public function assemble($pageId, array $params = [], array $options = [])
     {
         $route = $this->getRoute($pageId);
         if (empty($route)) {
             return "";
         }
 
-        return $this->router->assemble($params, ['name' => $route]);
+        $options['name'] = $route;
+
+        return $this->router->assemble($params, $options);
     }
 
     /**
