@@ -85,7 +85,7 @@ $this->pageForm->prepare();
                             <submit submit-text="<?= $this->translate('button.save', 'admin') ?>" name="__save__" value="save" btn-class="btn-default"></submit>
                         </div>
                         <div class="pull-right">
-                            <button type="submit" class="btn btn-default btn-addon" formaction="<?= $this->url('admin/page/preview', [], [], true)?>" formmethod="post" formtarget="_blank">
+                            <button type="submit" class="btn btn-default btn-addon" formtarget="preview" formaction="<?= $this->url('admin/page/preview', [], [], true)?>" formmethod="post" formtarget="_blank">
                                 <i class="fa fa-eye"></i>
                                 <?= $this->translate('button.preview', 'admin') ?>
                             </button>
