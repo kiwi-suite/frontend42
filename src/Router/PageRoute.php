@@ -32,7 +32,7 @@ class PageRoute
     /**
      * @var string
      */
-    protected $routePrefix;
+    protected $routePrefix = "frontend";
 
     /**
      * PageRoute constructor.
@@ -46,14 +46,12 @@ class PageRoute
         PageTypePluginManager $pageTypePluginManager,
         SitemapSelector $sitemapSelector,
         PageSelector $pageSelector,
-        RouteStackInterface $router,
-        $routePrefix
+        RouteStackInterface $router
     ) {
         $this->pageTypePluginManager = $pageTypePluginManager;
         $this->sitemapSelector = $sitemapSelector;
         $this->pageSelector = $pageSelector;
         $this->router = $router;
-        $this->routePrefix = $routePrefix;
     }
 
     /**
@@ -84,7 +82,6 @@ class PageRoute
         if (empty($page)) {
             return "";
         }
-
         return $this->routePrefix . '/' . $page->getRoute();
     }
 }

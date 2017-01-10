@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
+use Frontend42\Selector\RoutingSelector;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Adapter\Adapter;
@@ -54,6 +55,10 @@ SET p.route=sub.route";
             $adapter = $this->getTableGateway(PageTableGateway::class)->getAdapter();
             $adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
         }
+
+        $this->getSelector(RoutingSelector::class)
+            ->setDisableCache(true)
+            ->getResult();
 
     }
 }
