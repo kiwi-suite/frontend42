@@ -4,6 +4,11 @@ namespace Frontend42\Event;
 use Core42\Stdlib\DefaultGetterTrait;
 use Frontend42\Command\Navigation\SaveNavigationCommand;
 use Frontend42\Model\Page;
+use Frontend42\Selector\ApprovedPageContentSelector;
+use Frontend42\Selector\PageListSelector;
+use Frontend42\Selector\PageSelector;
+use Frontend42\Selector\RoutingSelector;
+use Frontend42\Selector\SitemapSelector;
 use Frontend42\Selector\SlugSelector;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -45,6 +50,8 @@ class PageEventListener extends AbstractListenerAggregate
         $events->attach(PageEvent::EVENT_ADD_POST, [$this, 'saveNavigation']);
         $events->attach(PageEvent::EVENT_EDIT_POST, [$this, 'saveNavigation']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'saveNavigation']);
+
+        $events->attach(PageEvent::EVENT_APPROVED, [$this, 'updateCache']);
     }
 
     /**
@@ -130,5 +137,39 @@ class PageEventListener extends AbstractListenerAggregate
             ->setPageId($event->getTarget()->getId())
             ->setNavs($navs)
             ->run();
+    }
+
+    public function updateCache(PageEvent $event)
+    {
+        if ($event->getApproved() === false) {
+            return;
+        }
+
+        /** @var Page $page */
+        $page = $event->getTarget();
+        $this->getSelector(PageSelector::class)
+            ->setPageId($page->getId())
+            ->setDisableCache(true)
+            ->getResult();
+
+        $this->getSelector(SitemapSelector::class)
+            ->setSitemapId($page->getSitemapId())
+            ->setDisableCache(true)
+            ->getResult();
+
+        $this->getSelector(ApprovedPageContentSelector::class)
+            ->setPageId($page->getId())
+            ->setDisableCache(true)
+            ->getResult();
+
+        $this->getSelector(RoutingSelector::class)
+            ->setDisableCache(true)
+            ->getResult();
+
+        $this->getSelector(PageListSelector::class)
+            ->setSitemapId($page->getSitemapId())
+            ->setLocale($page->getLocale())
+            ->setDisableCache(true)
+            ->getResult();
     }
 }
