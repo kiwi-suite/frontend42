@@ -40,12 +40,11 @@ SET s.level=sub.level, s.offspring=sub.offspring";
             $sql = "UPDATE {$pageTableName} as p INNER JOIN 
 (
 SELECT 
- (SELECT GROUP_CONCAT(CONCAT('p', page.id) SEPARATOR '/')
+ (SELECT GROUP_CONCAT(CONCAT('p', page.id)  ORDER BY parent.nestedLeft SEPARATOR '/')
  FROM {$tableName} parent
  INNER JOIN {$pageTableName} as page ON (parent.id = page.sitemapId AND page.locale='{$locale}') 
  WHERE node.nestedLeft >= parent.nestedLeft
  AND node.nestedRight <= parent.nestedRight
- ORDER BY nestedLeft
  ) as route, node.id
 FROM {$tableName} node
 ORDER BY nestedLeft
