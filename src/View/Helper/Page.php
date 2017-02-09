@@ -99,6 +99,32 @@ class Page extends Proxy
     }
 
     /**
+     * @param int $sitemapId
+     * @param string $locale
+     * @return $this
+     */
+    public function loadBySitemapId($sitemapId, $locale = null)
+    {
+        if ($locale === null) {
+            $locale = $this->getView()->localization()->getActiveLocale();
+        }
+
+        $sitemap = $this->getSitemapSelector()->setSitemapId($sitemapId)->getResult();
+        if (!($sitemap instanceof SitemapModel)) {
+            return $this;
+        }
+
+        $page = $this->getPageSelector()->setLocale($locale)->setSitemapId($sitemap->getId())->getResult();
+        if (!($page instanceof \Frontend42\Model\Page)) {
+            return $this;
+        }
+
+        $this->object = $page;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getRoute()
