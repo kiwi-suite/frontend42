@@ -88,8 +88,8 @@ class FrontendNavigationAbstractFactory implements AbstractFactoryInterface
     {
         $page = new Page(
             $this->pageSelector,
-            $this->routeMatch,
-            $this->pageRoute
+            $this->pageRoute,
+            $this->routeMatch
         );
         $page->setPageId($spec['pageId']);
 
