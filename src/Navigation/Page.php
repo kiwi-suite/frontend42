@@ -37,8 +37,8 @@ class Page extends AbstractPage implements PageInterface
      */
     public function __construct(
         PageSelector $pageSelector,
-        RouteMatch $routeMatch,
-        PageRoute $pageRoute
+        PageRoute $pageRoute,
+        RouteMatch $routeMatch = null
     ) {
         $this->pageSelector = $pageSelector;
         $this->routeMatch = $routeMatch;
@@ -89,6 +89,10 @@ class Page extends AbstractPage implements PageInterface
      */
     public function isActive()
     {
+        if (empty($this->routeMatch)) {
+            return false;
+        }
+        
         $route = $this->pageRoute->getRoute($this->pageId);
 
         if (strlen($route) > strlen($this->routeMatch->getMatchedRouteName())) {
