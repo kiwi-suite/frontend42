@@ -5,7 +5,6 @@ use Core42\Stdlib\DefaultGetterTrait;
 use Frontend42\Command\Navigation\SaveNavigationCommand;
 use Frontend42\Model\Page;
 use Frontend42\Selector\ApprovedPageContentSelector;
-use Frontend42\Selector\PageListSelector;
 use Frontend42\Selector\PageSelector;
 use Frontend42\Selector\RoutingSelector;
 use Frontend42\Selector\SitemapSelector;
@@ -163,12 +162,6 @@ class PageEventListener extends AbstractListenerAggregate
             ->getResult();
 
         $this->getSelector(RoutingSelector::class)
-            ->setDisableCache(true)
-            ->getResult();
-
-        $this->getSelector(PageListSelector::class)
-            ->setSitemapId($page->getSitemapId())
-            ->setLocale($page->getLocale())
             ->setDisableCache(true)
             ->getResult();
     }
