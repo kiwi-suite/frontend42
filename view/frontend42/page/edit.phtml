@@ -106,7 +106,7 @@ $this->pageForm->prepare();
                                 <?php foreach ($this->versions as $version): ?>
                                     <div class="sl-item b-l b-2x <?= ($version->getApproved() !== null) ? 'b-success': 'b-dark'?><?= $this->currentVersion->getId() == $version->getId() ? ' bg-light dker' : '' ?>" style="padding: 5px 0;">
                                         <div class="m-l m-b-md">
-                                            <div><code>#<?= $version->getVersionName() ?></code> - <small class="text-xs"><?= $this->user()->getDisplayName($version->getCreatedBy()) ?></small></div>
+                                            <div><code>#<?= $version->getVersionName() ?></code> - <small class="text-xs" ng-non-bindable><?= $this->escapeHtml($this->user()->getDisplayName($version->getCreatedBy())) ?></small></div>
                                             <div class="text-muted"><small class="text-xs"><?= $version->getCreated()->format('Y-m-d H:i') ?></small></div>
                                             <p>
                                                 <a href="<?= $this->url('admin/page/edit', ['id' => $this->page->getId(), 'versionId' => $version->getId()]) ?>" class="btn btn-default btn-sm btn-rounded btn-icon">
