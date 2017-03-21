@@ -68,12 +68,12 @@ class LocalizationPageType extends AbstractPageType
         $localizationPartName = 'language';
         $localizationCondition = array_map(function ($value){
             return \Locale::getPrimaryLanguage($value);
-        }, $this->localization->getAvailableLocales());
+        }, [$this->localization->getDefaultLocale()]);
 
         if ($this->localization->getType() == Localization::TYPE_REGION) {
             $localizationPart = \Locale::getPrimaryLanguage($page->getLocale());
             $localizationPartName = 'locale';
-            $localizationCondition = $this->localization->getAvailableLocales();
+            $localizationCondition = [$this->localization->getDefaultLocale()];
         }
 
         $routing = [
