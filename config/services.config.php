@@ -24,6 +24,7 @@ use Frontend42\View\Helper\Service\PageContentFactory;
 use Frontend42\View\Helper\Service\PageFactory;
 use Frontend42\View\Helper\Service\PageListFactory;
 use Frontend42\View\Helper\Service\SitemapFactory;
+use Frontend42\View\Helper\Service\SwitchLanguageFactory;
 use Zend\Router\Http\TreeRouteStack;
 
 return [
@@ -49,6 +50,7 @@ return [
             'sitemap'                           => SitemapFactory::class,
             'pageContent'                       => PageContentFactory::class,
             'pageList'                          => PageListFactory::class,
+            'switchLanguage'                    => SwitchLanguageFactory::class,
         ],
     ],
 ];

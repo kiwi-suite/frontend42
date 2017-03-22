@@ -3,15 +3,20 @@ namespace Frontend42;
 
 use Admin42\ModuleManager\Feature\AdminAwareModuleInterface;
 use Admin42\ModuleManager\GetAdminConfigTrait;
+use Core42\I18n\Localization\Localization;
 use Core42\ModuleManager\Feature\CliConfigProviderInterface;
 use Core42\ModuleManager\GetConfigTrait;
+use Core42\Mvc\Environment\Environment;
 use Frontend42\Event\PageEventListener;
 use Zend\EventManager\EventInterface;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManagerInterface;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Glob;
 
@@ -118,9 +123,27 @@ class Module implements
      */
     public function onBootstrap(EventInterface $e)
     {
-        $e->getApplication()
-            ->getServiceManager()
-            ->get(PageEventListener::class)
-            ->attach($e->getApplication()->getServiceManager()->get('Frontend42\Page\EventManager'));
+        /** @var ServiceManager $serviceManager */
+        $serviceManager = $e->getApplication()->getServiceManager();
+
+        /** @var Environment $environment */
+        $environment = $serviceManager->get(Environment::class);
+
+        if ($environment->is(\Admin42\Module::ENVIRONMENT_ADMIN)) {
+            $serviceManager
+                ->get(PageEventListener::class)
+                ->attach($e->getApplication()->getServiceManager()->get('Frontend42\Page\EventManager'));
+        }
+
+        if (!$environment->is(\Admin42\Module::ENVIRONMENT_ADMIN)) {
+            $e->getApplication()
+                ->getEventManager()
+                ->attach(MvcEvent::EVENT_DISPATCH_ERROR, function ($e) use ($serviceManager){
+                    /** @var Localization $localization */
+                    $localization = $serviceManager->get(Localization::class);
+                    $localization->acceptLocale($localization->getDefaultLocale());
+                    $serviceManager->get(TranslatorInterface::class)->setLocale($localization->getActiveLocale());
+                }, 100);
+        }
     }
 }

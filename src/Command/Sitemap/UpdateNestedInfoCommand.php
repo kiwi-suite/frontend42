@@ -3,6 +3,7 @@ namespace Frontend42\Command\Sitemap;
 
 use Core42\Command\AbstractCommand;
 use Core42\I18n\Localization\Localization;
+use Frontend42\Selector\NavigationSelector;
 use Frontend42\Selector\RoutingSelector;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
@@ -58,6 +59,17 @@ SET p.route=sub.route";
         $this->getSelector(RoutingSelector::class)
             ->setDisableCache(true)
             ->getResult();
+
+        $navs = array_keys($this->getServiceManager()->get("config")["navigation"]["nav"]);
+        foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
+            foreach ($navs as $nav) {
+                $this->getSelector(NavigationSelector::class)
+                    ->setNavigation($nav)
+                    ->setLocale($locale)
+                    ->setDisableCache(true)
+                    ->getResult();
+            }
+        }
 
     }
 }

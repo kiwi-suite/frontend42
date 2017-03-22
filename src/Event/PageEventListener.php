@@ -1,10 +1,12 @@
 <?php
 namespace Frontend42\Event;
 
+use Core42\I18n\Localization\Localization;
 use Core42\Stdlib\DefaultGetterTrait;
 use Frontend42\Command\Navigation\SaveNavigationCommand;
 use Frontend42\Model\Page;
 use Frontend42\Selector\ApprovedPageContentSelector;
+use Frontend42\Selector\NavigationSelector;
 use Frontend42\Selector\PageSelector;
 use Frontend42\Selector\RoutingSelector;
 use Frontend42\Selector\SitemapSelector;
@@ -46,8 +48,6 @@ class PageEventListener extends AbstractListenerAggregate
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setSlug']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'setSlug']);
 
-        $events->attach(PageEvent::EVENT_ADD_POST, [$this, 'saveNavigation']);
-        $events->attach(PageEvent::EVENT_EDIT_POST, [$this, 'saveNavigation']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'saveNavigation']);
 
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'updateCache']);
@@ -164,5 +164,16 @@ class PageEventListener extends AbstractListenerAggregate
         $this->getSelector(RoutingSelector::class)
             ->setDisableCache(true)
             ->getResult();
+
+        $navs = array_keys($this->getServiceManager()->get("config")["navigation"]["nav"]);
+        foreach ($this->getServiceManager()->get(Localization::class)->getAvailableLocales() as $locale) {
+            foreach ($navs as $nav) {
+                $this->getSelector(NavigationSelector::class)
+                    ->setNavigation($nav)
+                    ->setLocale($locale)
+                    ->setDisableCache(true)
+                    ->getResult();
+            }
+        }
     }
 }
