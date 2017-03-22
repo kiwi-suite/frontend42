@@ -46,8 +46,6 @@ class PageEventListener extends AbstractListenerAggregate
         $events->attach(PageEvent::EVENT_EDIT_PRE, [$this, 'setSlug']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'setSlug']);
 
-        $events->attach(PageEvent::EVENT_ADD_POST, [$this, 'saveNavigation']);
-        $events->attach(PageEvent::EVENT_EDIT_POST, [$this, 'saveNavigation']);
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'saveNavigation']);
 
         $events->attach(PageEvent::EVENT_APPROVED, [$this, 'updateCache']);

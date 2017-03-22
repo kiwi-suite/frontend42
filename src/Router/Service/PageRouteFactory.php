@@ -32,7 +32,7 @@ class PageRouteFactory implements FactoryInterface
             $container->get(PageTypePluginManager::class),
             $container->get('Selector')->get(SitemapSelector::class),
             $container->get('Selector')->get(PageSelector::class),
-            $container->get('Router')
+            $container->get('HttpRouter')
         );
     }
 }
