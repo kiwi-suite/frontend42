@@ -2,6 +2,7 @@
 namespace Frontend42;
 
 use Core42\Mvc\Router\Http\AngularSegment;
+use Frontend42\Controller\FlatController;
 use Frontend42\Controller\PageController;
 use Frontend42\Controller\SitemapController;
 use Zend\Router\Http\Literal;
@@ -58,6 +59,16 @@ return [
                                         'action' => 'delete',
                                     ],
                                 ],
+                            ],
+                        ],
+                    ],
+                    'flat-sitemap' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => 'flat-sitemap/:handle/',
+                            'defaults' => [
+                                'controller' => FlatController::class,
+                                'action' => 'index',
                             ],
                         ],
                     ],
