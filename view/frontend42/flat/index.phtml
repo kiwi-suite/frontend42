@@ -1,0 +1,89 @@
+<?php
+$this->angular()->addHtmlPartial('published/clock.html', 'partial/published-clock');
+?>
+
+<?= $this->pageHeader($this->translate($this->pageName, 'admin'), $this->pageIcon) ?>
+
+<div class="wrapper-md" ng-controller="FlatController" data-locale="<?= $this->defaultLocale?>">
+    <div class="panel panel-default">
+        <div class="table-responsive" ng-controller="DataGridController" data-url="<?= $this->url(null, [], [], true)?>">
+            <table st-table="collection"  st-pipe="callServer" class="table table-striped top-border-radius" st-persist="flat_sitemap_<?= $this->sitemap->getId() ?>_<?= $this->pageName ?>">
+                <thead>
+                <tr>
+                    <th st-sort="name"><?= $this->translate('field.name', 'admin') ?></th>
+                    <th width="20%" st-sort="created"><?= $this->translate('field.created', 'admin') ?></th>
+                    <th width="20%"></th>
+                </tr>
+                <tr>
+                    <th>
+                        <input st-search="name" class="form-control input-sm" type="text"/>
+                    </th>
+                    <th></th>
+                    <th>
+                        <?php if (count($this->availableLocales) > 1): ?>
+                            <select class="form-control" st-input-event="change" st-search42="locale" ng-model="flat.locale">
+                                <?php foreach ($this->availableLocales as $locale => $localeDisplay): ?>
+                                    <option value="<?= $locale?>"><?= $localeDisplay ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <input st-search="locale" class="form-control input-sm" type="hidden" value="<?= $this->defaultLocale?>"/>
+                        <?php endif; ?>
+                    </th>
+                </tr>
+                </thead>
+                <tbody ng-hide="isLoading">
+                <tr ng-repeat="row in collection">
+                    <td class="vertical-middle">
+                        <i class="fa fa-circle" ng-class="{'text-success': row.status == 'online', 'text-danger': row.status == 'offline'}"></i>
+                        <published-clock published-from="row.publishedFrom" published-until="row.publishedUntil" is-published="row.isPublished"></published-clock>
+                        <span ng-if="row.name.length > 0">{{row.name}}</span>
+                        <span ng-if="row.alternateNames.length > 0">
+                            <small ng-repeat="alternatives in row.alternateNames" style="color:#888888;">
+                                <span ng-if="alternatives.name">
+                                    [ <i class="flag-icon flag-icon-{{ alternatives.region }}"></i> <del>{{ alternatives.name }}</del> ]
+                                </span>
+
+                            </small>
+                        </span>
+                    </td>
+                    <td class="vertical-middle"><small>{{row.created | datetime}}</small></td>
+                    <td class="vertical-middle text-right">
+                        <a class="btn btn-info btn-xs" ng-href="<?= $this->url('admin/page/edit', ['id' => '{{ row.id }}']) ?>">
+                            <span class="fa fa-pencil"></span>
+                        </a>
+                        <a class="btn btn-default btn-xs" target="_blank" ng-href="<?= $this->url('admin/page/preview', ['id' => '{{ row.id }}']) ?>">
+                            <span class="fa fa-eye"></span>
+                        </a>
+                        <delete
+                            url="<?= $this->url('admin/sitemap/delete') ?>"
+                            title="<?= $this->translate("sitemap.modal.delete.title", "admin") ?>"
+                            size="xs"
+                            content="<?= $this->translate("sitemap.modal.delete.content", "admin") ?>"
+                            request-id="{{row.sitemapId}}"
+                        </delete>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody ng-show="isLoading">
+                <tr>
+                    <td colspan="3" class="text-center"><i class="fa fa-spin fa-refresh"></i></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3" class="text-center">
+                        <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="panel-footer">
+            <a class="btn btn-default btn-addon" ng-href="<?= $this->url('admin/sitemap/add-page', ['locale' => '{{ flat.locale }}', 'parentId' => $this->sitemap->getId()]) ?>">
+                <i class="fa fa-plus-circle"></i>
+                <?= $this->translate('frontend42.title.add-page', 'admin') ?>
+            </a>
+        </div>
+    </div>
+</div>

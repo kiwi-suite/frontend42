@@ -5,6 +5,7 @@ use Core42\Selector\AbstractSelector;
 use Frontend42\Model\Page;
 use Frontend42\Model\Sitemap;
 use Frontend42\PageType\Service\PageTypePluginManager;
+use Frontend42\Stdlib\PageStatus;
 use Frontend42\TableGateway\PageTableGateway;
 use Frontend42\TableGateway\SitemapTableGateway;
 use Zend\Db\Sql\Where;
@@ -79,6 +80,9 @@ class AngularSitemapSelector extends AbstractSelector
                 'pageType'  => $_item['sitemap']->getPageType(),
                 'pageId'    => $_item['page']->getId(),
                 'locale'    => $_item['page']->getLocale(),
+                'publishedFrom'  => $_item['page']->getPublishedFrom(),
+                'publishedUntil' => $_item['page']->getPublishedUntil(),
+                'isPublished'    => PageStatus::isPublished($_item['page']->getPublishedFrom(), $_item['page']->getPublishedUntil()),
                 'title'     => $title,
                 'status'    => $_item['page']->getStatus(),
                 'isTerminal'=> $pageType->isTerminal(),

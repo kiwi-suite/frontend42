@@ -13,6 +13,8 @@ return [
     'frontend42.label.name'                                     => 'Name',
     'frontend42.label.status'                                   => 'Status',
 
+    'frontend42.label.publishedFrom'                            => 'Published from',
+    'frontend42.label.publishedUntil'                           => 'Published until',
 
     'frontend42.toaster.page-version.approve.title.success'     => 'Approved',
     'frontend42.toaster.page-version.approve.message.success'   => 'Successfully approved',

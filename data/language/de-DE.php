@@ -13,6 +13,8 @@ return [
     'frontend42.label.name'                                     => 'Name',
     'frontend42.label.status'                                   => 'Status',
 
+    'frontend42.label.publishedFrom'                            => 'Verfügbar ab',
+    'frontend42.label.publishedUntil'                           => 'Verfügbar bis',
 
     'frontend42.toaster.page-version.approve.title.success'     => 'Freigegeben',
     'frontend42.toaster.page-version.approve.message.success'   => 'Erfolgreich freigegeben',
