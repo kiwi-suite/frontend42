@@ -1,3 +1,7 @@
+<?php
+$this->angular()->addHtmlPartial('published/clock.html', 'partial/published-clock');
+?>
+
 <?= $this->pageHeader($this->translate($this->pageName, 'admin'), $this->pageIcon) ?>
 
 <div class="wrapper-md" ng-controller="FlatController" data-locale="<?= $this->defaultLocale?>">
@@ -32,6 +36,7 @@
                 <tr ng-repeat="row in collection">
                     <td class="vertical-middle">
                         <i class="fa fa-circle" ng-class="{'text-success': row.status == 'online', 'text-danger': row.status == 'offline'}"></i>
+                        <published-clock published-from="row.publishedFrom" published-until="row.publishedUntil" is-published="row.isPublished"></published-clock>
                         <span ng-if="row.name.length > 0">{{row.name}}</span>
                         <span ng-if="row.alternateNames.length > 0">
                             <small ng-repeat="alternatives in row.alternateNames" style="color:#888888;">

@@ -1,0 +1,7 @@
+<i class="fa fa-clock-o"
+    ng-class="{'text-light': published === null, 'text-danger-dk': published === false, 'text-success-dk': published === true}"
+    aria-hidden="true"
+    uib-popover-html="getHtmlContent('<?= $this->translate('frontend42.label.publishedFrom', 'admin')?>', '<?= $this->translate('frontend42.label.publishedUntil', 'admin')?>')"
+    popover-title
+    popover-trigger="'outsideClick'"
+></i>

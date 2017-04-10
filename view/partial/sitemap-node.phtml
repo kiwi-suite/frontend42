@@ -6,6 +6,7 @@
                 <span class="glyphicon text-muted" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
             </a>
             <i class="fa fa-circle" ng-class="{'text-success': item.status == 'online', 'text-danger': item.status == 'offline'}"></i>
+            <published-clock published-from="item.publishedFrom" published-until="item.publishedUntil" is-published="item.isPublished"></published-clock>
             <span ng-if="item.title.length > 0" ng-bind-html="item.title | highlight: query"></span>
             <span ng-if="item.alternateNames.length > 0">
                 <small ng-repeat="alternatives in item.alternateNames" style="color:#888888;">

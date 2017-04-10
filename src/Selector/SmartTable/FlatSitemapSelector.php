@@ -5,6 +5,7 @@ use Admin42\Selector\SmartTable\AbstractSmartTableSelector;
 use Core42\Db\ResultSet\ResultSet;
 use Core42\I18n\Localization\Localization;
 use Frontend42\Model\Sitemap;
+use Frontend42\Stdlib\PageStatus;
 use Frontend42\TableGateway\PageTableGateway;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
@@ -26,6 +27,23 @@ class FlatSitemapSelector extends AbstractSmartTableSelector
         $this->sitemap = $sitemap;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDatabaseTypeMap()
+    {
+        return [
+            'id'            => 'integer',
+            'name'          => 'string',
+            'created'       => 'dateTime',
+            'status'        => 'string',
+            'publishedFrom' => 'dateTime',
+            'publishedUntil'=> 'dateTime',
+            'sitemapId'     => 'integer',
+            'locale'        => 'string',
+        ];
     }
 
     /**
@@ -83,6 +101,7 @@ class FlatSitemapSelector extends AbstractSmartTableSelector
 
         foreach ($data as $key => $item) {
             $data[$key]['alternateNames'] = [];
+            $data[$key]['isPublished'] = PageStatus::isPublished($item['publishedFrom'], $item['publishedUntil']);
 
             if (empty($item['name']) && count($localization->getAvailableLocales()) > 1) {
                 $result = $this->getTableGateway(PageTableGateway::class)->select([
