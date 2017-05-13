@@ -1,8 +1,8 @@
 <?php
 namespace Frontend42\View\Helper;
 
-use Frontend42\Model\Page;
-use Frontend42\Model\Sitemap;
+use Frontend42\Model\Page as PageModel;
+use Frontend42\Model\Sitemap as SitemapModel;
 use Frontend42\Router\PageRoute;
 use Frontend42\Selector\PageSelector;
 use Frontend42\Selector\SitemapSelector;
@@ -110,16 +110,16 @@ class SwitchLanguage extends AbstractHelper
     protected function getPageId()
     {
         $sitemap = $this->sitemapSelector->setSitemapId($this->sitemapId)->getResult();
-        if (!($sitemap instanceof Sitemap)) {
+        if (!($sitemap instanceof SitemapModel)) {
             return $this->getHandlePageId();
         }
 
         $page = $this->pageSelector->setLocale($this->locale)->setSitemapId($sitemap->getId())->getResult();
-        if (!($page instanceof Page)) {
+        if (!($page instanceof PageModel)) {
             return $this->getHandlePageId();
         }
 
-        if ($page->getStatus() !== Page::STATUS_ONLINE) {
+        if ($page->getStatus() !== PageModel::STATUS_ONLINE) {
             return $this->getHandlePageId();
         }
 
@@ -137,16 +137,16 @@ class SwitchLanguage extends AbstractHelper
     protected function getHandlePageId()
     {
         $sitemap = $this->sitemapSelector->setHandle($this->fallbackHandle)->getResult();
-        if (!($sitemap instanceof Sitemap)) {
+        if (!($sitemap instanceof SitemapModel)) {
             return 0;
         }
 
         $page = $this->pageSelector->setLocale($this->locale)->setSitemapId($sitemap->getId())->getResult();
-        if (!($page instanceof Page)) {
+        if (!($page instanceof PageModel)) {
             return 0;
         }
 
-        if ($page->getStatus() !== Page::STATUS_ONLINE) {
+        if ($page->getStatus() !== PageModel::STATUS_ONLINE) {
             return 0;
         }
 
