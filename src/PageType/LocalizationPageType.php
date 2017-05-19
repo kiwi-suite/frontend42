@@ -71,7 +71,7 @@ class LocalizationPageType extends AbstractPageType
         }, [$this->localization->getDefaultLocale()]);
 
         if ($this->localization->getType() == Localization::TYPE_REGION) {
-            $localizationPart = \Locale::getPrimaryLanguage($page->getLocale());
+            $localizationPart = $page->getLocale();
             $localizationPartName = 'locale';
             $localizationCondition = [$this->localization->getDefaultLocale()];
         }
