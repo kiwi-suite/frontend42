@@ -89,7 +89,7 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             return false;
         }
 
-        return (item.pageTypes.length !== 0);
+        return (item.allowedPageTypes.length !== 0);
     }
 
     $scope.deleteCallback = function () {
