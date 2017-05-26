@@ -72,6 +72,13 @@ class AngularSitemapSelector extends AbstractSelector
 
             $availablePageTypes = $this
                 ->pageTypeSelector
+                ->setCheckHandle(false)
+                ->setParent($_item['sitemap'])
+                ->getResult();
+
+            $allowedPageTypes = $this
+                ->pageTypeSelector
+                ->setCheckHandle(true)
                 ->setParent($_item['sitemap'])
                 ->getResult();
 
@@ -88,6 +95,7 @@ class AngularSitemapSelector extends AbstractSelector
                 'isTerminal'=> $pageType->isTerminal(),
                 'isSorting' => $pageType->isSorting(),
                 'pageTypes' => $availablePageTypes,
+                'allowedPageTypes' => $allowedPageTypes,
                 'alternateNames' => $alternateNames,
                 'items'     => [],
             ];
