@@ -88,7 +88,7 @@ class PageVersionSelector extends AbstractDatabaseSelector
         });
 
         if ($this->versionId === self::VERSION_HEAD) {
-            $select->order('created DESC');
+            $select->order('created DESC, versionName DESC');
         }
 
         $select->limit(1);
