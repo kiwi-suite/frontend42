@@ -32,6 +32,11 @@ class AvailablePageTypesSelector extends AbstractSelector
     protected $parent;
 
     /**
+     * @var bool
+     */
+    protected $checkHandle = true;
+
+    /**
      * @param $parentId
      * @return $this
      */
@@ -49,6 +54,17 @@ class AvailablePageTypesSelector extends AbstractSelector
     public function setParent($parent)
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $checkHandle
+     * @return $this
+     */
+    public function setCheckHandle($checkHandle)
+    {
+        $this->checkHandle = $checkHandle;
 
         return $this;
     }
@@ -79,7 +95,7 @@ class AvailablePageTypesSelector extends AbstractSelector
             /** @var PageTypeInterface $pageType */
             $pageType = $pageTypePluginManager->get($pageTypeName);
 
-            if (!$this->checkHandle($pageType)) {
+            if ($this->checkHandle && !$this->checkHandle($pageType)) {
                 continue;
             }
 
