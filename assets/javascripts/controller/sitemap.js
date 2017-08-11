@@ -30,7 +30,16 @@ angular.module('frontend42').controller('SitemapController',['$scope', '$http', 
             return true;
         },
         dropped: function(event) {
+            if (angular.isDefined(event.dest) && angular.isDefined(event.dest.nodesScope) && angular.isDefined(event.dest.nodesScope.$nodeScope) && angular.isDefined(event.dest.nodesScope.$nodeScope.$modelValue)) {
+                if (angular.isDefined(event.source) && angular.isDefined(event.source.nodesScope) && angular.isDefined(event.source.nodesScope.$nodeScope) && angular.isDefined(event.source.nodesScope.$nodeScope.$modelValue)) {
+                    if (event.source.nodesScope.$nodeScope.$modelValue.id == event.dest.nodesScope.$nodeScope.$modelValue.id && event.dest.index == event.source.index) {
+                        return;
+                    }
+                }
+            }
+
             $scope.isLoading = true;
+
             $http.post($attrs.sortSaveUrl, $scope.sitemap).
             success(function(data) {
                 loadTree();
