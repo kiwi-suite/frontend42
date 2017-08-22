@@ -1,7 +1,7 @@
 {
-  "name": "raum42-frontend",
+  "name": "kiwi-suite-frontend",
   "version": "2.0.0",
-  "title": "raum42-frontend",
+  "title": "kiwi-suite-frontend",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-bower-task": "^0.4.0",

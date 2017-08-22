@@ -8,7 +8,7 @@
         "kiwi42",
         "cms"
     ],
-    "homepage": "https://www.raum42.at/",
+    "homepage": "https://www.kiwi-suite.com/",
     "require": {
         "php": "^5.6 || ^7.0",
         "fruit42/core42": "^4.0",
