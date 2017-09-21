@@ -82,15 +82,16 @@ class ResortSitemapCommand extends AbstractCommand
                 );
                 $adapter = $this->getTableGateway(SitemapTableGateway::class)->getAdapter();
                 $adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
-
-                $diff = $sitemap->getNestedRight() - $prevNestedLeft;
-                $left = $sitemap->getNestedLeft() + $diff - 1;
             }
+
+            $diff = $sitemap->getNestedRight() - $prevNestedLeft;
+            $left = $sitemap->getNestedLeft() + $diff - 1;
         } else if (!empty($data['items'])) {
             foreach ($data['items'] as $subData) {
                 $left = $this->regenerateRecursive($subData, $left + 1, $sitemap->getId());
             }
         }
+
         $sitemap->setNestedRight($left + 1);
 
         $this->getTableGateway(SitemapTableGateway::class)->update($sitemap);
