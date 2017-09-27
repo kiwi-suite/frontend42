@@ -130,6 +130,7 @@ class PageEventListener extends AbstractListenerAggregate
             $navs = [];
         }
 
+        $navs = array_unique($navs);
 
         $this
             ->getCommand(SaveNavigationCommand::class)
