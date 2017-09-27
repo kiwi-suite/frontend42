@@ -131,7 +131,7 @@ class PageEventListener extends AbstractListenerAggregate
         }
 
         $navs = array_unique($navs);
-        
+
         $this
             ->getCommand(SaveNavigationCommand::class)
             ->setPageId($event->getTarget()->getId())
