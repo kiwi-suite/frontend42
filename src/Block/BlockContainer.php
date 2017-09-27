@@ -75,6 +75,25 @@ class BlockContainer
         return $html;
     }
 
+    public function getBlockValues()
+    {
+        $values = [];
+
+        foreach ($this->blocks as $blockModel) {
+            if (!$this->blockPluginManager->has($blockModel->getType())) {
+                continue;
+            }
+
+            /** @var BlockInterface $blockType */
+            $blockType = $this->blockPluginManager->get($blockModel->getType());
+
+            $values[] = $blockType->getViewModel($blockModel->getElements());
+
+        }
+
+        return $values;
+    }
+
     public function __toString()
     {
         try {
