@@ -117,6 +117,21 @@ class PageList extends AbstractHelper
     }
 
     /**
+     * @param int $sortDirection
+     * @return $this
+     */
+    public function enableNameSort($sortDirection = SORT_DESC)
+    {
+        $this->sort = PageListSelector::SORT_NAME;
+        if (!in_array($sortDirection, [SORT_ASC, SORT_DESC])) {
+            $sortDirection = SORT_DESC;
+        }
+        $this->sortDirection = $sortDirection;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getResult()
@@ -137,6 +152,8 @@ class PageList extends AbstractHelper
             $selector->enableSitemapSort();
         } elseif ($this->sort === PageListSelector::SORT_CREATED) {
             $selector->enableCreatedSort();
+        } elseif ($this->sort === PageListSelector::SORT_NAME) {
+            $selector->enableNameSort();
         }
 
         return $selector->getResult();

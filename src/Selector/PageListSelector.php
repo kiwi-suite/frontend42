@@ -17,6 +17,8 @@ class PageListSelector extends AbstractSelector
 
     const SORT_CREATED = 'sort_created';
 
+    const SORT_NAME = 'sort_name';
+
     /**
      * @var int
      */
@@ -94,6 +96,16 @@ class PageListSelector extends AbstractSelector
     }
 
     /**
+     * @return $this
+     */
+    public function enableNameSort()
+    {
+        $this->sort = self::SORT_NAME;
+
+        return $this;
+    }
+
+    /**
      * @param $sortDirection
      * @return $this
      */
@@ -157,6 +169,8 @@ class PageListSelector extends AbstractSelector
             $select->order($sitemapTableName . '.nestedLeft ' . $sortDirection);
         } elseif ($this->sort === self::SORT_CREATED) {
             $select->order(new Literal('IFNULL(p.publishedFrom,p.created) ' . $sortDirection));
+        } elseif ($this->sort === self::SORT_NAME) {
+            $select->order("p.name " . $sortDirection);
         }
 
         $sql = $this->getTableGateway(SitemapTableGateway::class)->getSql();
