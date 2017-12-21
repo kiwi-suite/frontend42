@@ -9,6 +9,12 @@
         "cms"
     ],
     "homepage": "https://www.kiwi-suite.com/",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ThePixelDeveloper/Sitemap"
+        }
+    ],
     "require": {
         "php": "^5.6 || ^7.0",
         "fruit42/core42": "^4.0",
