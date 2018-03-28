@@ -54,6 +54,8 @@ class FrontendMiddleware
         }
 
         $routeMatch = $this->getServiceManager()->get('Application')->getMvcEvent()->getRouteMatch();
+        $this->initLocalization($page->getLocale());
+
         if ($page->getStatus() == Page::STATUS_OFFLINE) {
             $routeMatch->setParam('action', 'not-found');
 
@@ -70,11 +72,6 @@ class FrontendMiddleware
             return;
         }
 
-
-        $localization = $this->getServiceManager()->get(Localization::class);
-        $localization->acceptLocale($page->getLocale());
-        $this->getServiceManager()->get(TranslatorInterface::class)->setLocale($localization->getActiveLocale());
-
         $sitemap = $this->getSelector(SitemapSelector::class)->setSitemapId($page->getSitemapId())->getResult();
 
         $routeMatch->setParam("__page__", $page);
@@ -88,5 +85,12 @@ class FrontendMiddleware
             ->mutate($pageContent);
 
         $routeMatch->setParam('__pageContent__', $pageContent);
+    }
+
+    protected function initLocalization($locale)
+    {
+        $localization = $this->getServiceManager()->get(Localization::class);
+        $localization->acceptLocale($locale);
+        $this->getServiceManager()->get(TranslatorInterface::class)->setLocale($localization->getActiveLocale());
     }
 }
