@@ -95,11 +95,15 @@ class Page extends AbstractPage implements PageInterface
         
         $route = $this->pageRoute->getRoute($this->pageId);
 
-        if (strlen($route) > strlen($this->routeMatch->getMatchedRouteName())) {
+        if ($route === $this->routeMatch->getMatchedRouteName()) {
+            return true;
+        }
+
+        if (\strlen($route) > \strlen($this->routeMatch->getMatchedRouteName())) {
             return false;
         }
 
-        if (substr($this->routeMatch->getMatchedRouteName(), 0, strlen($route)) != $route) {
+        if (\substr($this->routeMatch->getMatchedRouteName(), 0, \strlen($route) + 1) !== ($route . '/')) {
             return false;
         }
 
